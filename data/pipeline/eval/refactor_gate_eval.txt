@@ -1,0 +1,71 @@
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+JUDGE_MODEL: gemini-2.5-flash
+EXTRACT_MODEL: gemini-2.5-flash-lite
+GIs: ['ribkoff', 'hallmark', 'cemaco']
+Arms: ['policy_guard']
+Mode: offline | vision=off
+
+==============================================================================
+GI: ribkoff
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected
+    Q2614146161: blocking=2 total=3 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=['5_1_4', '5_2_5', '5_3_1']
+    Q2614430689: blocking=2 total=3 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=['5_1_4', '5_2_5', '5_3_1']
+    -> 4 blocking false positives
+  RECALL — flawed
+    Q2613916538_Jun29_flawed: blocking=3 total=6 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_6', '3_2_3', '5_2_2'] caught=['3_1_6', '3_2_3', '5_2_2'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.50 R=1.00
+    Q2614146161_flawed: blocking=4 total=9 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] caught=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.67 R=1.00
+    Q2614154465_Jun29_flawed: blocking=2 total=5 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_7', '3_2_3', '5_2_1'] caught=['3_1_7', '3_2_3', '5_2_1'] missed=[] extra=['5_1_4', '5_2_5'] P=0.60 R=1.00
+    Q2614157738_271904_flawed: blocking=3 total=6 unable=38 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_7', '5_1_1', '5_2_1'] caught=['3_1_7', '5_1_1', '5_2_1'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.50 R=1.00
+    Q2614430288_flawed: blocking=3 total=6 unable=39 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_3_2', '3_1_7', '5_1_1'] caught=['3_1_7', '5_1_1'] missed=['1_3_2'] extra=['1_2_1', '5_1_4', '5_2_5', '5_3_1'] P=0.33 R=0.67
+    Q2614430689_flawed: blocking=3 total=8 unable=39 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_2_1', '1_3_2', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] caught=['1_2_1', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] missed=['1_3_2'] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.62 R=0.83
+    Q2614489409_flawed: blocking=2 total=6 unable=39 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_3_2', '3_1_6', '5_2_2'] caught=['3_1_6', '5_2_2'] missed=['1_3_2'] extra=['1_2_1', '5_1_4', '5_2_5', '5_3_1'] P=0.33 R=0.67
+    -> MACRO P=0.508 R=0.881
+
+==============================================================================
+GI: hallmark
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected
+    1HGO3708: blocking=0 total=0 unable=88 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    1SOX2223: blocking=0 total=0 unable=88 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    5QGO2803: blocking=0 total=0 unable=88 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    -> 0 blocking false positives
+  RECALL — flawed
+    1HGO3708_flawed: blocking=3 total=3 unable=89 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_1_1', '4_3_2', '9_2_6'] caught=['2_1_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+    1SOX2223_flawed: blocking=3 total=3 unable=88 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_2_1', '4_3_2', '9_2_6'] caught=['2_2_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+    5QGO2803_flawed: blocking=3 total=3 unable=89 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_1_1', '4_3_2', '9_2_6'] caught=['2_1_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+    -> MACRO P=1.000 R=1.000
+
+==============================================================================
+GI: cemaco
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected
+    Q2519476686: blocking=0 total=0 unable=0 det=3 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    -> 0 blocking false positives
+  RECALL — flawed
+    Q2519476686_flawed: blocking=3 total=3 unable=0 det=3 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['9_3_1', '9_3_2', '9_3_3'] caught=['9_3_1', '9_3_2', '9_3_3'] missed=[] extra=[] P=1.00 R=1.00
+    -> MACRO P=1.000 R=1.000
+
+Wrote /Users/williambrun/Documents/test_GI_reports/data/pipeline/eval/eval_all_results.json

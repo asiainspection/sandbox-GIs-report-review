@@ -1,0 +1,59 @@
+JUDGE_MODEL: gemini-2.5-flash
+EXTRACT_MODEL: gemini-2.5-flash-lite
+GIs: ['ribkoff', 'hallmark', 'cemaco']
+Arms: ['policy_guard']
+Mode: offline | vision=off
+
+==============================================================================
+GI: ribkoff
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected / synthetic-correct
+    Q2614146161: blocking=3 total=3 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=['5_1_4', '5_2_5', '5_3_1']
+    Q2614430689: blocking=3 total=3 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=['5_1_4', '5_2_5', '5_3_1']
+    -> 6 blocking false positives
+  RECALL — flawed / synthetic-flawed
+    Q2613916538_Jun29_flawed: blocking=6 total=6 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_6', '3_2_3', '5_2_2'] caught=['3_1_6', '3_2_3', '5_2_2'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.50 R=1.00
+    Q2614146161_flawed: blocking=9 total=9 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] caught=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.67 R=1.00
+    Q2614154465_Jun29_flawed: blocking=5 total=5 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_7', '3_2_3', '5_2_1'] caught=['3_1_7', '3_2_3', '5_2_1'] missed=[] extra=['5_1_4', '5_2_5'] P=0.60 R=1.00
+    Q2614157738_271904_flawed: blocking=6 total=6 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['3_1_7', '5_1_1', '5_2_1'] caught=['3_1_7', '5_1_1', '5_2_1'] missed=[] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.50 R=1.00
+    Q2614430288_flawed: blocking=5 total=5 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_3_2', '3_1_7', '5_1_1'] caught=['3_1_7', '5_1_1'] missed=['1_3_2'] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.40 R=0.67
+    Q2614430689_flawed: blocking=7 total=7 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_2_1', '1_3_2', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] caught=['3_1_6', '3_1_7', '5_1_1', '5_2_2'] missed=['1_2_1', '1_3_2'] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.57 R=0.67
+    Q2614489409_flawed: blocking=5 total=5 unable=4 det=20 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['1_3_2', '3_1_6', '5_2_2'] caught=['3_1_6', '5_2_2'] missed=['1_3_2'] extra=['5_1_4', '5_2_5', '5_3_1'] P=0.40 R=0.67
+==============================================================================
+GI: hallmark
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected / synthetic-correct
+    1HGO3708: blocking=0 total=0 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    1SOX2223: blocking=0 total=0 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    5QGO2803: blocking=0 total=0 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    -> 0 blocking false positives
+  RECALL — flawed / synthetic-flawed
+    1HGO3708_flawed: blocking=3 total=3 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_1_1', '4_3_2', '9_2_6'] caught=['2_1_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+    1SOX2223_flawed: blocking=3 total=3 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_2_1', '4_3_2', '9_2_6'] caught=['2_2_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+    5QGO2803_flawed: blocking=3 total=3 unable=6 det=10 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['2_1_1', '4_3_2', '9_2_6'] caught=['2_1_1', '4_3_2', '9_2_6'] missed=[] extra=[] P=1.00 R=1.00
+==============================================================================
+GI: cemaco
+==============================================================================
+
+ARM: policy_guard
+  PRECISION — corrected / synthetic-correct
+    Q2519476686: blocking=0 total=0 unable=0 det=3 atom_leaves=0 vision_leaves=0 $0.0000 0.0s flags=[]
+    -> 0 blocking false positives
+  RECALL — flawed / synthetic-flawed
+    Q2519476686_flawed: blocking=3 total=3 unable=0 det=3 atom_leaves=0 vision_leaves=0 $0.0000 0.0s
+      expected=['9_3_1', '9_3_2', '9_3_3'] caught=['9_3_1', '9_3_2', '9_3_3'] missed=[] extra=[] P=1.00 R=1.00
+

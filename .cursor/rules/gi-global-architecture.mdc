@@ -1,0 +1,70 @@
+---
+description: Prevent checkpoint-specific overfitting; require global GI/rule architecture
+alwaysApply: true
+---
+
+# GI review — global architecture (no checkpoint overfitting)
+
+This project targets **~100k checkpoints across heterogeneous GIs** (Ribkoff, DFI, Hallmark, …). Do not optimize for one client or one checkpoint id.
+
+## Forbidden patterns
+
+- **No checkpoint-named operators** (`no_photos_when_pass`, `ribkoff_3_1_6`, …)
+- **No Ribkoff-only examples** as the design justification
+- **No new hand-authored spec per checkpoint** unless explicitly asked for a benchmark fixture
+- **No single `_violation` boolean** as the default compile target for all rules
+- **Do not conflate** a surface symptom (photo count) with the underlying pattern (conditional obligation)
+
+## Required mental model
+
+1. **Rule (checkpoint spec)** — client intent: requirement, `fail_if`, `never_flag_if`, `applies_when`, scope. *What* must hold *when*.
+2. **Operator / primitive** — small reusable kernel on semantic facts. *How* to evaluate a typed predicate or obligation. **Not** 1:1 with checkpoints.
+3. **Compiler** — maps each checkpoint → structured **CheckSpec** (bind evidence, triggers, obligations, formula). Amortized per GI version, not per report.
+
+## The real pattern (not Ribkoff anecdotes)
+
+Most GI rules are **conditional obligations**:
+
+```
+WHEN <context predicate>  THEN  <obligation on evidence>
+UNLESS <excuse / never_flag>
+```
+
+Examples across GIs (same shape, different bindings):
+
+| WHEN | THEN | GI |
+|------|------|-----|
+| `result = PASS` | photos must be absent | Ribkoff carton drop |
+| `result = FAIL` | remark must describe finding | DFI carton drop observation |
+| `result = N/A` | field/photo rules differ | Hallmark HA/HCLP by destination |
+| `SR checkpoint ≠ Passed` | overall result must be FAIL | Hallmark |
+| `product_type = health_supplement` | remark must state tolerance | DFI |
+| `HCLP = Yes` | all photo fields blank + caption | Hallmark |
+
+**Photo count when PASS is one leaf**, not a rule type.
+
+## Before proposing a solution, answer
+
+1. Does this generalize to DFI (101 cp) and Hallmark (96 cp) without renaming?
+2. Is it compile-time (per GI) or runtime (per report)?
+3. Does Python decide `violates`, with LLM only grounding atoms?
+4. What is the primitive count? If it grows with checkpoints, stop and redesign.
+
+## Preferred architecture
+
+```
+SemanticReport (parse once, PDF-aligned facts)
+    → bind scope (checklist item / section / full report)
+    → evaluate applicability (applies_when + derived context)
+    → for each obligation: ground facts (JSON | atom | vision)
+    → symbolic formula → violates | clear | unable
+```
+
+Expand **obligation types** and **predicate constructors**, not checkpoint-specific functions.
+
+## When adding code
+
+- Add to `semantic_report` / fact schema if it's a **new fact type**
+- Add to **primitive kernel** if it's a reusable predicate/obligation
+- Add to **compiler** if it's checkpoint → CheckSpec logic
+- Never add a fourth category: "Ribkoff helper"

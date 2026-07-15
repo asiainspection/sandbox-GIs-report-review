@@ -1,0 +1,51 @@
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+========================================================================
+GI: ribkoff
+NOTE: Fair JSON head-to-head (holdout).
+========================================================================
+
+ARM: policy_guard
+  PRECISION — corrected
+    Q2614146161: blocking=0 total=0 unable=19 $0.0255 22.0s flags=[]
+    Q2614430689: blocking=0 total=0 unable=21 $0.0274 21.8s flags=[]
+    -> 0 blocking FPs on corrected
+  RECALL — labeled flawed
+    Q2614146161_flawed: P=1.00 R=1.00 caught=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] missed=[] extra=[] $0.0198 32.0s
+    Q2614430689_flawed: P=1.00 R=1.00 caught=['1_2_1', '1_3_2', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] missed=[] extra=[] $0.0196 22.8s
+    -> MACRO P=1.000 R=1.000
+
+ARM: judge
+  PRECISION — corrected
+    Q2614146161: blocking=6 total=12 unable=27 $0.0537 50.4s flags=['1_1_1', '1_1_2', '1_2_1', '1_4_1', '2_1_1', '3_1_2', '3_1_4', '3_2_2', '4_2_1', '5_1_2', '5_1_3', '6_1_2']
+    Q2614430689: blocking=3 total=6 unable=29 $0.0556 50.2s flags=['1_4_1', '3_1_4', '4_2_1', '5_1_2', '5_1_3', '6_1_2']
+    -> 9 blocking FPs on corrected
+  RECALL — labeled flawed
+    Q2614146161_flawed: P=0.07 R=0.17 caught=['3_1_6'] missed=['3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] extra=['1_1_1', '1_1_2', '1_2_1', '1_4_1', '2_1_1', '3_1_2', '3_1_4', '3_2_2', '4_2_1', '5_1_2', '5_1_3', '6_1_2', '8_1_1'] $0.0503 52.2s
+    Q2614430689_flawed: P=0.25 R=0.33 caught=['1_2_1', '3_1_6'] missed=['1_3_2', '3_1_7', '5_1_1', '5_2_2'] extra=['1_4_1', '3_1_4', '4_2_1', '5_1_2', '5_1_3', '6_1_2'] $0.0531 56.7s
+    -> MACRO P=0.161 R=0.250
+========================================================================
+GI: hallmark
+NOTE: PDF covers from real Hallmark reports; checklist JSON is synthetic overlay. QIMAone JSON not fetched: qimaone_report_fetch requires QSP id/rows, not PDF CDN URLs.
+========================================================================
+
+ARM: policy_guard
+  PRECISION — corrected
+Traceback (most recent call last):
+  File "/Users/williambrun/Documents/test_GI_reports/scripts/head_to_head.py", line 166, in <module>
+    main()
+  File "/Users/williambrun/Documents/test_GI_reports/scripts/head_to_head.py", line 157, in main
+    all_results.extend(_eval_gi(gi, cfg, arms))
+  File "/Users/williambrun/Documents/test_GI_reports/scripts/head_to_head.py", line 80, in _eval_gi
+    s = _run(arm, report, cfg["checkpoints"], cfg.get("specs"))
+  File "/Users/williambrun/Documents/test_GI_reports/scripts/head_to_head.py", line 40, in _run
+    run = run_production_review(
+  File "/Users/williambrun/Documents/test_GI_reports/src/facts_review.py", line 270, in run_production_review
+    return run_policy_review(
+  File "/Users/williambrun/Documents/test_GI_reports/src/policy_review.py", line 202, in run_policy_review
+    hand_specs_path=hand_specs_path if hand_specs_path.exists() else None,
+AttributeError: 'NoneType' object has no attribute 'exists'

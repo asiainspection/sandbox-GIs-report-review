@@ -1,0 +1,71 @@
+{
+  "Q2614313993_flawed": {
+    "source": "corrected/Q2614313993.json",
+    "injected": [
+      {
+        "element_id": "2-9-1-2",
+        "checkpoint": "Green Seal Sample(GSS)",
+        "field": "comment",
+        "old": "Checked OK",
+        "new": "Sample checked OK, sample matched the approval",
+        "gi_rationale": "DFI GI: use only the term 'GSS' in report and pictures; 'sample' is banned.",
+        "report_team_claim": "GI: use only the term GSS in the report, but 'sample' found."
+      },
+      {
+        "element_id": "2-12-1-3",
+        "checkpoint": "Carton Check: Dimensions and Weight",
+        "field": "photo_count",
+        "old": 7,
+        "new": 0,
+        "gi_rationale": "DFI GI: outer carton dimension and weight images are required.",
+        "report_team_claim": "missing carton weight and dimension images."
+      }
+    ]
+  },
+  "Q2615301660_flawed": {
+    "source": "corrected/Q2615301660.json",
+    "injected": [
+      {
+        "element_id": "2-9-1-2",
+        "checkpoint": "Green Seal Sample(GSS)",
+        "field": "comment",
+        "old": "",
+        "new": "Sample re-sealed and checked OK",
+        "gi_rationale": "DFI GI: use only the term 'GSS'; 'sample' is banned.",
+        "report_team_claim": "GI: use only the term GSS in the report and pictures."
+      },
+      {
+        "element_id": "2-8-1-6",
+        "checkpoint": "Adhesive test",
+        "field": "comment",
+        "old": "Slight peeling of the date code was observed after the 3M 500 tape test; however, it remained legible.",
+        "new": "Checked OK",
+        "gi_rationale": "DFI GI: adhesive test remark must state the type of tape used.",
+        "report_team_claim": "add type of tape used during adhesive tape test."
+      }
+    ]
+  },
+  "Q2616195180_flawed": {
+    "source": "corrected/Q2616195180.json",
+    "injected": [
+      {
+        "element_id": "2-9-1-2",
+        "checkpoint": "Green Seal Sample(GSS)",
+        "field": "comment",
+        "old": "",
+        "new": "Sample checked OK",
+        "gi_rationale": "DFI GI: use only the term 'GSS'; 'sample' is banned.",
+        "report_team_claim": "GI: use only the term GSS in the report and pictures."
+      },
+      {
+        "element_id": "2-12-1-3",
+        "checkpoint": "Carton Check: Dimensions and Weight",
+        "field": "photo_count",
+        "old": 6,
+        "new": 0,
+        "gi_rationale": "DFI GI: outer carton dimension and weight images are required.",
+        "report_team_claim": "missing carton weight and dimension images / barcode info."
+      }
+    ]
+  }
+}

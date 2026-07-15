@@ -1,0 +1,134 @@
+{
+  "meta": {
+    "name": "cemaco",
+    "source": "data/GI/cemaco_review_rules.md",
+    "generated_at": "2026-07-14T15:10:50"
+  },
+  "checkpoints": [
+    {
+      "id": "9_3_1",
+      "section": "report_writing_photo_metadata",
+      "requirement": "Outer Packing & Shipping Marks: Front & Side — Tests checklist / report photos — Add captions to all outer packing photos as per GI (TAG / SKU captions), not just on 1 photo. Every uploaded outer-packing photo must have a non-blank caption.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "check photo captions on Outer Packing & Shipping Marks: Front & Side",
+      "focus_terms": [
+        "Outer Packing & Shipping Marks: Front & Side",
+        "Tests checklist",
+        "report photos"
+      ],
+      "md_sections": [
+        "Outer Packing & Shipping Marks: Front & Side",
+        "Tests",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "47 outer packing photos uploaded but only 1 has a caption/TAG",
+        "Report does not satisfy: Add captions to all outer packing photos as per GI (TAG / SKU captions), not just on 1 photo. Every uploaded outer-packing photo must have a non-blank caption."
+      ],
+      "source_rule_id": "9.3.1",
+      "source_lines": {
+        "start": 12,
+        "end": 21
+      },
+      "context": "QUESTION — check photo captions on Outer Packing & Shipping Marks: Front & Side",
+      "examples": {
+        "pass": [
+          "Every outer packing photo has a SKU/TAG caption"
+        ],
+        "fail": [
+          "47 outer packing photos uploaded but only 1 has a caption/TAG"
+        ]
+      },
+      "photo_check": "metadata"
+    },
+    {
+      "id": "9_3_2",
+      "section": "report_writing_photo_metadata",
+      "requirement": "Product Dimensions Result — Tests checklist / report photos — Measurement photos also need captions as per GI. Every uploaded measurement / product-dimensions photo must have a non-blank caption.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "check photo captions on Product Dimensions Result",
+      "focus_terms": [
+        "Product Dimensions Result",
+        "Tests checklist",
+        "report photos",
+        "photo captions on product dimensions"
+      ],
+      "md_sections": [
+        "Product Dimensions Result",
+        "Tests",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Measurement photos uploaded with blank captions",
+        "Report does not satisfy: Measurement photos also need captions as per GI. Every uploaded measurement / product-dimensions photo must have a non-blank caption."
+      ],
+      "source_rule_id": "9.3.2",
+      "source_lines": {
+        "start": 22,
+        "end": 31
+      },
+      "context": "QUESTION — check photo captions on Product Dimensions Result",
+      "examples": {
+        "pass": [
+          "Every measurement photo has a descriptive caption (e.g. size check / SKU)"
+        ],
+        "fail": [
+          "Measurement photos uploaded with blank captions"
+        ]
+      },
+      "photo_check": "metadata"
+    },
+    {
+      "id": "9_3_3",
+      "section": "report_writing_photo_metadata",
+      "requirement": "Product Dimensions Result — Tests checklist / report photos — Spotlight the measurement screenshot instead of leaving measurement images without spotlight. When measurement photos are present, at least one must be marked as spotlight.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "check spotlight flag on Product Dimensions Result photos",
+      "focus_terms": [
+        "Product Dimensions Result",
+        "Tests checklist",
+        "report photos",
+        "spotlight flag on product dimensions"
+      ],
+      "md_sections": [
+        "Product Dimensions Result",
+        "Tests",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Measurement screenshot present but none marked spotlight",
+        "Report does not satisfy: Spotlight the measurement screenshot instead of leaving measurement images without spotlight. When measurement photos are present, at least one must be marked as spotlight."
+      ],
+      "source_rule_id": "9.3.3",
+      "source_lines": {
+        "start": 32,
+        "end": 40
+      },
+      "context": "QUESTION — check spotlight flag on Product Dimensions Result photos",
+      "examples": {
+        "pass": [
+          "Measurement screenshot is spotlighted in Product Dimensions Result"
+        ],
+        "fail": [
+          "Measurement screenshot present but none marked spotlight"
+        ]
+      },
+      "photo_check": "content"
+    }
+  ]
+}

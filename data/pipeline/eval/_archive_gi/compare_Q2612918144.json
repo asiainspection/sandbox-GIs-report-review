@@ -1,0 +1,153 @@
+{
+  "pdf": "/Users/williambrun/Downloads/Q2612918144.pdf",
+  "json": "data/reports/Q2612918144.json",
+  "cover": {
+    "pdf": {
+      "overall_result": "PASS",
+      "ordered_quantity": 20000,
+      "real_produced_quantity": 20000,
+      "expected_produced_quantity": 20000,
+      "real_packed_quantity": 16000,
+      "expected_packed_quantity": 16000,
+      "found_major": 8,
+      "found_minor": 16,
+      "workmanship_result": "PASS"
+    },
+    "parser": {
+      "overall_result": "PASS",
+      "ordered_quantity": 20000,
+      "real_produced_quantity": 20000,
+      "expected_produced_quantity": 20000,
+      "real_packed_quantity": 16000,
+      "expected_packed_quantity": 16000,
+      "found_major": 8.0,
+      "found_minor": 16.0,
+      "workmanship_result": "PASS"
+    },
+    "mismatches": [],
+    "match": true
+  },
+  "checklist": {
+    "items_total": 45,
+    "items_found_in_pdf_text": 39,
+    "mismatches": [
+      {
+        "item": "Random carton selection",
+        "field": "photo_count",
+        "pdf": 8,
+        "parser": 0
+      },
+      {
+        "item": "Cartons before selection",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Cartons after selection",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Selected cartons",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Match packing info",
+        "field": "photo_count",
+        "pdf": 3,
+        "parser": 1
+      },
+      {
+        "item": "Shake test info",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Product Style & Construction",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "PASS"
+      },
+      {
+        "item": "Product Colors",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "PASS"
+      },
+      {
+        "item": "Product Logo",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Product Labels",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Finger entrapment test",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Pull test",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Battery capacity check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Battery check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Hi-pot test",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Magnetic check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Frequency band test",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Logo check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Internal check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      }
+    ],
+    "mismatch_count": 19
+  },
+  "parse_warnings": [],
+  "production_ready_cover": true
+}

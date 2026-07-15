@@ -1,0 +1,30 @@
+{
+  "id": "hallmark",
+  "name": "Hallmark Cards",
+  "gi_rules": "gi/rules.md",
+  "corrected_dir": "corrected",
+  "flawed_dir": "flawed",
+  "introduced_checkpoints": {
+    "report_1hgo3708_flawed": {
+      "9_2_6": "injected by _inj_defect_extra_photos",
+      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
+      "2_1_1": "injected by _inj_sr_failed_overall_pass"
+    },
+    "report_1sox2223_flawed": {
+      "9_2_6": "injected by _inj_defect_extra_photos",
+      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
+      "2_2_1": "injected by _inj_fr_failed_overall_pass"
+    },
+    "report_5qgo2803_flawed": {
+      "9_2_6": "injected by _inj_defect_extra_photos",
+      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
+      "2_1_1": "injected by _inj_sr_failed_overall_pass"
+    }
+  },
+  "holdout_keys": [
+    "report_1hgo3708_flawed",
+    "report_1sox2223_flawed",
+    "report_5qgo2803_flawed"
+  ],
+  "fixture_note": "QIMAone report GET returned 404/500 for inspection refs from PDFs (tenant/token mismatch). Fixtures overlay real PDF cover facts onto a Hallmark-shaped synthetic checklist scaffold."
+}

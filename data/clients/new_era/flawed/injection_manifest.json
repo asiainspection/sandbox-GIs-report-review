@@ -1,0 +1,71 @@
+{
+  "Q2616262288_flawed": {
+    "source": "corrected/Q2616262288.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-1",
+        "checkpoint": "Available Quantity Check",
+        "field": "comment",
+        "old": "The available qty 18537pcs/ 694ctns (80.40%) against to booking qty 23056pcs/ 1034ctns were finished and packed, while the qty 4591pcs /340Ctns (19.60%) are under product finished and unpacked.",
+        "new": "The available qty 15530 pcs (67.32%) against booking were finished and packed",
+        "gi_rationale": "New Era GI: quantity section must FAIL when packed is 60-80%; PASS at 67.32% is a violation.",
+        "report_team_claim": "as per GI packed quantity should be >=80%, 67.32% packed but report passed."
+      },
+      {
+        "element_id": "2-12-1-2",
+        "checkpoint": "Fabric Weight Test",
+        "field": "result",
+        "old": "NOT_APPLICABLE",
+        "new": "PASS",
+        "gi_rationale": "New Era GI: Fabric Weight Test must be N/A for this scope; marking PASS is wrong.",
+        "report_team_claim": "why is the Fabric weight test Pass instead of N/A as per GI."
+      }
+    ]
+  },
+  "Q2616171227_flawed": {
+    "source": "corrected/Q2616171227.json",
+    "injected": [
+      {
+        "element_id": "2-13-1-2",
+        "checkpoint": "Fabric Weight Test",
+        "field": "result",
+        "old": "NOT_APPLICABLE",
+        "new": "PASS",
+        "gi_rationale": "New Era GI: Fabric Weight Test must be N/A for this scope; marking PASS is wrong.",
+        "report_team_claim": "Fabric weight test should be N/A as per GI."
+      },
+      {
+        "element_id": "2-8-1-4",
+        "checkpoint": "Selected cartons",
+        "field": "photo_count",
+        "old": 2,
+        "new": 0,
+        "gi_rationale": "New Era GI: selected carton photos are mandatory.",
+        "report_team_claim": "please provide selected carton as per GI."
+      }
+    ]
+  },
+  "Q2616292623_flawed": {
+    "source": "corrected/Q2616292623.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-1",
+        "checkpoint": "Available Quantity Check",
+        "field": "comment",
+        "old": "As per booking quantity is 21334 pcs, factory provided packing/offer list for ready carton packed quantity 21334 pcs (100.00%) of 1130 cartons.",
+        "new": "As per booking quantity 21334 pcs, factory packed 14352 pcs (67.28%)",
+        "gi_rationale": "New Era GI: quantity section must FAIL when packed is 60-80%.",
+        "report_team_claim": "packed between 60-80% must fail per GI."
+      },
+      {
+        "element_id": "2-11-2-9",
+        "checkpoint": "Fabric weight test",
+        "field": "result",
+        "old": "NOT_APPLICABLE",
+        "new": "PASS",
+        "gi_rationale": "New Era GI: Fabric weight test must be N/A for this scope; marking PASS is wrong.",
+        "report_team_claim": "Fabric weight test Pass instead of N/A."
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+GI: ribkoff
+ARM: policy_guard
+    -> 4 blocking false positives
+    -> MACRO P=0.508 R=0.881
+GI: hallmark
+ARM: policy_guard
+    -> 0 blocking false positives
+    -> MACRO P=1.000 R=1.000
+GI: cemaco
+ARM: policy_guard
+    -> 0 blocking false positives
+    -> MACRO P=1.000 R=1.000

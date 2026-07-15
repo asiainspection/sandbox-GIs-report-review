@@ -1,0 +1,750 @@
+[
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 2,
+    "total_flags_count": 3,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614146161.json",
+    "gi": "ribkoff"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 2,
+    "total_flags_count": 3,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614430689.json",
+    "gi": "ribkoff"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "3_1_6",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_2_3",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_2",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 6,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2613916538_Jun29_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2613916538_jun29_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "3_1_6",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_1_7",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_2_3",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_2",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 4,
+    "total_flags_count": 9,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614146161_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614146161_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "3_1_7",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_2_3",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 2,
+    "total_flags_count": 5,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614154465_Jun29_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614154465_jun29_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "3_1_7",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 6,
+    "unable_to_check_count": 38,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614157738_271904_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614157738_271904_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "1_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_1_7",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 6,
+    "unable_to_check_count": 39,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614430288_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614430288_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "1_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_1_6",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_1_7",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_2",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 8,
+    "unable_to_check_count": 39,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614430689_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614430689_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "1_2_1",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "3_1_6",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_1_4",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_2",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_2_5",
+        "severity": "MINOR",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "5_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 2,
+    "total_flags_count": 6,
+    "unable_to_check_count": 39,
+    "obligation_stats": {
+      "deterministic": 20,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2614489409_flawed.json",
+    "gi": "ribkoff",
+    "label_key": "report_q2614489409_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [],
+    "blocking_flags_count": 0,
+    "total_flags_count": 0,
+    "unable_to_check_count": 88,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "1HGO3708.json",
+    "gi": "hallmark"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [],
+    "blocking_flags_count": 0,
+    "total_flags_count": 0,
+    "unable_to_check_count": 88,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "1SOX2223.json",
+    "gi": "hallmark"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [],
+    "blocking_flags_count": 0,
+    "total_flags_count": 0,
+    "unable_to_check_count": 88,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "5QGO2803.json",
+    "gi": "hallmark"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "2_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "4_3_2",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "9_2_6",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 3,
+    "unable_to_check_count": 89,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "1HGO3708_flawed.json",
+    "gi": "hallmark",
+    "label_key": "report_1hgo3708_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "2_2_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "4_3_2",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "9_2_6",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 3,
+    "unable_to_check_count": 88,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "1SOX2223_flawed.json",
+    "gi": "hallmark",
+    "label_key": "report_1sox2223_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "2_1_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "4_3_2",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "9_2_6",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 3,
+    "unable_to_check_count": 89,
+    "obligation_stats": {
+      "deterministic": 10,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "5QGO2803_flawed.json",
+    "gi": "hallmark",
+    "label_key": "report_5qgo2803_flawed"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [],
+    "blocking_flags_count": 0,
+    "total_flags_count": 0,
+    "unable_to_check_count": 0,
+    "obligation_stats": {
+      "deterministic": 3,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2519476686.json",
+    "gi": "cemaco"
+  },
+  {
+    "arm": "policy_guard",
+    "flags": [
+      {
+        "checkpoint_id": "9_3_1",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "9_3_2",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      },
+      {
+        "checkpoint_id": "9_3_3",
+        "severity": "BLOCKING",
+        "match": "clear_unmatch",
+        "reason": "Report evidence violates this requirement."
+      }
+    ],
+    "blocking_flags_count": 3,
+    "total_flags_count": 3,
+    "unable_to_check_count": 0,
+    "obligation_stats": {
+      "deterministic": 3,
+      "atom_leaves": 0,
+      "vision_leaves": 0
+    },
+    "cost_usd": {
+      "total": {
+        "total_cost_usd": 0.0
+      }
+    },
+    "elapsed_seconds": 0.0,
+    "report": "Q2519476686_flawed.json",
+    "gi": "cemaco",
+    "label_key": "report_q2519476686_flawed"
+  }
+]

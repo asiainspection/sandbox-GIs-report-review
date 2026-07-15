@@ -1,0 +1,850 @@
+{
+    "meta": {
+      "name": "DFI H&B PSI Review Checkpoints",
+      "version": "1.0.0",
+      "source": "DFI_KH__All_instructions.txt",
+      "platform": "QIMAone",
+      "schema": ["id", "section", "requirement", "md_sections", "fail_if", "examples", "applies_when"]
+    },
+    "checkpoints": [
+  
+      {
+        "id": "preliminary.product_matches_booking",
+        "section": "before_starting",
+        "requirement": "Product inspected must match what was booked.",
+        "md_sections": ["Executive Summary", "Products & Quantities", "Additional Fields"],
+        "fail_if": ["Product in report does not match booked product", "SKU or reference order mismatch with booking"]
+      },
+      {
+        "id": "preliminary.qimaone_platform",
+        "section": "before_starting",
+        "requirement": "Inspection must be performed in QIMAone, never IAPP.",
+        "md_sections": ["Executive Summary"],
+        "fail_if": ["Evidence suggests inspection was performed in IAPP instead of QIMAone"]
+      },
+  
+      {
+        "id": "cover.supplier_factory_name",
+        "section": "cover_page",
+        "requirement": "Supplier and Factory names must be in English, combined format: Supplier Name (Factory Name). Both fields filled.",
+        "md_sections": ["Parties & Location", "Executive Summary"],
+        "fail_if": [
+          "Chinese characters in supplier or factory name",
+          "Only one of supplier or factory name is filled",
+          "Format is not combined Supplier (Factory)"
+        ],
+        "examples": {
+          "pass": ["Ruby Beauty Corporation Limited (ZHEJIANG YASILI COSMETICS CO., LTD)"],
+          "fail": ["ZHEJIANG YASILI COSMETICS CO., LTD", "Ruby Beauty (浙江公司)"]
+        }
+      },
+      {
+        "id": "cover.product_name_not_sku",
+        "section": "cover_page",
+        "requirement": "Product name must be the real product name, not SKU or barcode string.",
+        "md_sections": ["Executive Summary", "Products & Quantities", "Additional Fields"],
+        "fail_if": [
+          "Product name is mostly digits or barcode",
+          "Product name equals SKU",
+          "Booking name looks like barcode while QSP product name exists in Additional Fields"
+        ],
+        "examples": {
+          "fail": ["1_9557514024035 [Q2611274887_3]"],
+          "pass": ["guardian OMEGA-3 FISH OIL 1000mg SOFTGEL 90s"]
+        }
+      },
+      {
+        "id": "cover.cover_photo",
+        "section": "cover_page",
+        "requirement": "Cover photo must show Consumer Pack, frontal angle, vertical orientation, full product name readable.",
+        "md_sections": ["Product cover photo", "Checklist Sections"],
+        "fail_if": [
+          "Photo shows bare product without packaging",
+          "Photo shows outer carton instead of consumer pack",
+          "Blurry, angled, or product name not readable"
+        ]
+      },
+      {
+        "id": "cover.po_number",
+        "section": "cover_page",
+        "requirement": "If no PO on site, field must be N/A with no additional comment.",
+        "md_sections": ["Products & Quantities", "Executive Summary"],
+        "fail_if": ["PO field blank", "PO field contains comment instead of N/A when PO not found"]
+      },
+      {
+        "id": "cover.date_code_all_na_replacement",
+        "section": "cover_page",
+        "requirement": "If MFG, EXP, and Batch are all N/A on cover, replace with: Refer to the individual batch/date code in the date code check section",
+        "md_sections": ["Executive Summary", "DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["All three cover date fields show N/A but replacement sentence is absent"]
+      },
+      {
+        "id": "cover.location_english",
+        "section": "cover_page",
+        "requirement": "Location must be written entirely in English.",
+        "md_sections": ["Parties & Location"],
+        "fail_if": ["Chinese characters in location field"]
+      },
+      {
+        "id": "cover.unit_not_other",
+        "section": "cover_page",
+        "requirement": "Unit must not display Other. Use actual unit from booking (typically Boxes or Packs).",
+        "md_sections": ["Products & Quantities", "Executive Summary"],
+        "fail_if": ["Unit field shows Other"]
+      },
+      {
+        "id": "cover.result_matches_body",
+        "section": "cover_page",
+        "requirement": "Cover/overall result must match findings in report body.",
+        "md_sections": ["Executive Summary", "Attention Items (read first)", "Closing Summary", "Checklist Sections"],
+        "fail_if": [
+          "Overall result contradicts checklist findings or defects",
+          "Result is Pending or Failed but Important Remarks do not explain why"
+        ]
+      },
+  
+      {
+        "id": "result.overall_logic",
+        "section": "overall_result",
+        "requirement": "Overall result must follow DFI Pass/Pending/Fail/Missing logic.",
+        "md_sections": ["Executive Summary", "Attention Items (read first)", "Important Remarks", "AQL & Sampling", "Checklist Sections", "Closing Summary"],
+        "fail_if": [
+          "PASS assigned but failures, beyond AQL, or inconsistencies exist",
+          "PENDING triggers present but result is PASS or FAIL",
+          "FAIL triggers present but result is PASS or PENDING",
+          "Missing inspection scenario not classified correctly"
+        ]
+      },
+      {
+        "id": "result.adhesive_fail_is_pending",
+        "section": "overall_result",
+        "requirement": "Adhesive test fail (printing unreadable) must yield Pending, never Fail.",
+        "md_sections": ["Checklist Sections", "Executive Summary", "Attention Items (read first)"],
+        "fail_if": ["Adhesive test printing unreadable but overall result is FAIL instead of PENDING"]
+      },
+      {
+        "id": "result.pass_quantity_threshold",
+        "section": "overall_result",
+        "requirement": "For PASS: finished quantity >= ordered AND packed quantity >= ordered.",
+        "md_sections": ["Products & Quantities", "DFI(H&B) - Quantity & Packaging", "Inspection preparation", "Attention Items (read first)"],
+        "fail_if": [
+          "Produced quantity below ordered but result is PASS",
+          "Packed quantity below ordered but result is PASS",
+          "Quantity table says 100% packed but products.packedQuantity is lower"
+        ]
+      },
+      {
+        "id": "result.pending_quantity_threshold",
+        "section": "overall_result",
+        "requirement": "Quantity on site < 100% finished OR < 80% packed should trigger Pending.",
+        "md_sections": ["Products & Quantities", "DFI(H&B) - Quantity & Packaging", "Attention Items (read first)"],
+        "fail_if": ["Below 100% finished or 80% packed but result is PASS"]
+      },
+      {
+        "id": "result.pending_gss_issues",
+        "section": "overall_result",
+        "requirement": "No GSS, expired GSS, or GSS inconsistent with bulk should trigger Pending.",
+        "md_sections": ["Reference sample (GSS)", "DFI(H&B) - Product Specifications", "Important Remarks"],
+        "fail_if": [
+          "GSS absent or unavailable but result is PASS",
+          "GSS expired but result is PASS",
+          "GSS inconsistent with bulk product but result is PASS"
+        ]
+      },
+      {
+        "id": "result.pending_adhesive_unreadable",
+        "section": "overall_result",
+        "requirement": "Adhesive test failed with unreadable printing should trigger Pending.",
+        "md_sections": ["Checklist Sections", "Attention Items (read first)"],
+        "fail_if": ["Adhesive unreadable but result is PASS"]
+      },
+      {
+        "id": "result.pending_factory_refusal",
+        "section": "overall_result",
+        "requirement": "Factory refused drop test, did not provide tools, or test could not be completed → Pending.",
+        "md_sections": ["QIMA - Factory Review", "DFI(H&B) - Shipping Carton Verification", "Important Remarks"],
+        "fail_if": ["Factory refusal or missing tools noted but result is PASS"]
+      },
+      {
+        "id": "result.fail_measurement_out_of_spec",
+        "section": "overall_result",
+        "requirement": "Measurement below spec or outside tolerance → Fail.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "Important Remarks", "Attention Items (read first)"],
+        "fail_if": ["Measurement failure evident but result is PASS or PENDING"]
+      },
+      {
+        "id": "result.fail_beyond_aql",
+        "section": "overall_result",
+        "requirement": "Defects beyond AQL acceptance → Fail.",
+        "md_sections": ["AQL & Sampling", "Checklist Sections", "Executive Summary"],
+        "fail_if": ["Defects exceed AQL limits but result is PASS"]
+      },
+      {
+        "id": "result.fail_test_except_adhesive",
+        "section": "overall_result",
+        "requirement": "Any onsite test failed except adhesive → Fail.",
+        "md_sections": ["Checklist Sections", "Executive Summary"],
+        "fail_if": ["Non-adhesive test failed but result is PASS or PENDING"]
+      },
+  
+      {
+        "id": "remarks.mandatory_result_statement",
+        "section": "important_remarks",
+        "requirement": "Remark required: The inspection result is [Passed/Pending/Failed] due to [reason].",
+        "md_sections": ["Important Remarks", "Attention Items (read first)"],
+        "fail_if": ["Mandatory result statement missing or vague"]
+      },
+      {
+        "id": "remarks.defects_presented_to_factory",
+        "section": "important_remarks",
+        "requirement": "Remark required: All defective items and failure findings are presented to the factory.",
+        "md_sections": ["Important Remarks"],
+        "fail_if": ["Defects or failures found but factory presentation not mentioned"]
+      },
+      {
+        "id": "remarks.tolerance_health_product",
+        "section": "important_remarks",
+        "requirement": "For health product weight checks: remark must state tolerance range regardless of pass/fail.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Product Dimensions & Weights", "Attention Items (read first)"],
+        "fail_if": [
+          "Health product measurement done but only Checked OK without tolerance range",
+          "Tolerance range not stated in remark"
+        ],
+        "applies_when": { "product_type": "health_supplement" },
+        "examples": {
+          "pass": ["Checked OK, the tolerance range of weight is 950mg – 1050mg."],
+          "fail": ["Checked OK"]
+        }
+      },
+      {
+        "id": "remarks.tolerance_dimension",
+        "section": "important_remarks",
+        "requirement": "For dimension checks with tolerance: remark must state tolerance range.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Dimension measurement with tolerance but range not stated in remark"]
+      },
+      {
+        "id": "remarks.adhesive_date_code_waiver",
+        "section": "important_remarks",
+        "requirement": "If adhesive test waived on date code area (Appendix A products): required waiver remark.",
+        "md_sections": ["Important Remarks", "Checklist Sections"],
+        "fail_if": ["Date code adhesive waived but remark missing: Adhesive test on the date code waived due to limitation of the can and ink."],
+        "applies_when": { "adhesive_date_code_exemption": true }
+      },
+      {
+        "id": "remarks.carton_drop_observation",
+        "section": "important_remarks",
+        "requirement": "Carton drop test with findings must describe exactly what was observed using required formats.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Shipping Carton Verification"],
+        "fail_if": ["Drop test has findings but remark does not describe outcome"],
+        "applies_when": { "carton_drop_has_findings": true }
+      },
+      {
+        "id": "remarks.defect_outside_workmanship",
+        "section": "important_remarks",
+        "requirement": "Defect found outside workmanship stage must be described separately in remarks.",
+        "md_sections": ["Important Remarks", "Attention Items (read first)"],
+        "fail_if": ["Defect found during quantity/dimension check but no separate remark with section name"]
+      },
+      {
+        "id": "remarks.multiple_batches",
+        "section": "important_remarks",
+        "requirement": "Multiple batches: all batch codes found must be mentioned in remarks.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["Multiple batches on site but not all batch codes mentioned"],
+        "applies_when": { "multiple_batches": true }
+      },
+      {
+        "id": "remarks.no_calibration_noted",
+        "section": "important_remarks",
+        "requirement": "If no calibration record for tools, note explicitly without impacting result.",
+        "md_sections": ["Important Remarks", "QIMA - Factory Review"],
+        "fail_if": ["No calibration record but not remarked"],
+        "applies_when": { "no_calibration_record": true }
+      },
+      {
+        "id": "remarks.factory_internal_calibration",
+        "section": "important_remarks",
+        "requirement": "Factory internal calibration accepted must be remarked.",
+        "md_sections": ["Important Remarks", "QIMA - Factory Review"],
+        "fail_if": ["Factory internal calibration used but not remarked"],
+        "applies_when": { "factory_internal_calibration": true }
+      },
+      {
+        "id": "remarks.no_chinese",
+        "section": "important_remarks",
+        "requirement": "No Chinese characters in remarks (except Chinese date codes recorded exactly as printed elsewhere).",
+        "md_sections": ["Important Remarks", "Attention Items (read first)"],
+        "fail_if": ["Chinese characters in remarks"]
+      },
+      {
+        "id": "remarks.not_vague",
+        "section": "important_remarks",
+        "requirement": "Remarks must be specific, not vague.",
+        "md_sections": ["Important Remarks"],
+        "fail_if": ["Vague statements like some issues found without specifics"]
+      },
+      {
+        "id": "remarks.match_overall_result",
+        "section": "important_remarks",
+        "requirement": "Result stated in remark must match overall inspection result.",
+        "md_sections": ["Important Remarks", "Executive Summary", "Closing Summary"],
+        "fail_if": ["Remark says passed but overall is Failed/Pending or vice versa"]
+      },
+      {
+        "id": "remarks.pending_fail_reason",
+        "section": "important_remarks",
+        "requirement": "Pending or Failed reports must state reason explicitly.",
+        "md_sections": ["Important Remarks", "Executive Summary"],
+        "fail_if": ["Result is Pending or Failed but no reason in remarks"],
+        "applies_when": { "result_in": ["PENDING", "FAILED", "FAIL"] }
+      },
+  
+      {
+        "id": "standards.sampling_level_match",
+        "section": "inspection_standards",
+        "requirement": "Sampling levels must match DFI Sampling Plan Excel.",
+        "md_sections": ["AQL & Sampling", "Checklist Sections"],
+        "fail_if": ["Sampling level in report does not match DFI Sampling Plan"]
+      },
+      {
+        "id": "standards.aql_values_product_type",
+        "section": "inspection_standards",
+        "requirement": "AQL values must match product type: general Not Allowed/1.5/4.0; earplug same; mask percentage-based from plan.",
+        "md_sections": ["AQL & Sampling", "Executive Summary"],
+        "fail_if": ["AQL CRI/MAJ/MIN values do not match product type rules"]
+      },
+      {
+        "id": "standards.aql_checked_max",
+        "section": "inspection_standards",
+        "requirement": "Checked must match sample size; Max acceptance: size 8→0/0/0, 13→0/0/1, 32→0/1/3.",
+        "md_sections": ["AQL & Sampling", "DFI(H&B) - Workmanship check"],
+        "fail_if": ["Checked number does not match sampling plan", "Max acceptance numbers incorrect for sample size"]
+      },
+      {
+        "id": "standards.individual_pack_aql_table",
+        "section": "inspection_standards",
+        "requirement": "Individual Pack AQL table present only if product has individual packaging.",
+        "md_sections": ["DFI(H&B) - Workmanship check", "DFI(H&B) - Product Specifications"],
+        "fail_if": [
+          "Individual Pack AQL table present but product has no individual pack",
+          "Individual Pack AQL table absent but product has individual pack"
+        ]
+      },
+      {
+        "id": "standards.colors_labels_not_na",
+        "section": "inspection_standards",
+        "requirement": "Colors, Labels, Artworks: if no finding, must be OK not auto N/A.",
+        "md_sections": ["DFI(H&B) - Product Specifications"],
+        "fail_if": ["N/A in colors/labels/artworks without corresponding finding"]
+      },
+  
+      {
+        "id": "date_code.recorded_as_printed",
+        "section": "date_code",
+        "requirement": "Record date codes exactly as printed: format, separators, casing.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["Date code reformatted or does not match printed format"]
+      },
+      {
+        "id": "date_code.mfg_exp_lot_present",
+        "section": "date_code",
+        "requirement": "At least one of MFG Date, EXP Date, or Lot#/Batch# must be present per product.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["All three absent without N/A where applicable", "No date code and no batch on any packaging"]
+      },
+      {
+        "id": "date_code.gss_format_position",
+        "section": "date_code",
+        "requirement": "Date code format and printing position must match GSS. Values may differ.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details", "DFI(H&B) - Product Specifications"],
+        "fail_if": [
+          "GSS has MFG+Lot but product only Lot# or format/position differs",
+          "Format or printing position differs between GSS and product"
+        ]
+      },
+      {
+        "id": "date_code.comparison_photo",
+        "section": "date_code",
+        "requirement": "Mandatory close-up comparison photo of date code area GSS vs actual product.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details", "DFI(H&B) - Product Specifications"],
+        "fail_if": ["Date code GSS vs product comparison photo absent or insufficient photos"]
+      },
+      {
+        "id": "date_code.multiple_batches_separated",
+        "section": "date_code",
+        "requirement": "Multiple batches: each separated clearly, recommended one batch per line.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details", "Important Remarks"],
+        "fail_if": ["Multiple batches not clearly separated"],
+        "applies_when": { "multiple_batches": true }
+      },
+      {
+        "id": "date_code.chinese_recorded_exactly",
+        "section": "date_code",
+        "requirement": "Chinese date codes must be recorded in Chinese exactly as printed.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["Chinese date code translated or reformatted instead of recorded as printed"],
+        "applies_when": { "chinese_date_code": true }
+      },
+      {
+        "id": "date_code.barcode_fields_filled",
+        "section": "date_code",
+        "requirement": "Full barcode for Individual Pack, Consumer Pack, Outer Carton. N/A if no individual pack.",
+        "md_sections": ["DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["Barcode fields left blank instead of filled or N/A"]
+      },
+  
+      {
+        "id": "gss.terminology_only_gss",
+        "section": "gss",
+        "requirement": "Only GSS term allowed. Never Approved Sample, Golden Sample, etc.",
+        "md_sections": ["Checklist Sections", "Important Remarks", "DFI(H&B) - Product Specifications"],
+        "fail_if": ["Alternative terms to GSS used anywhere in report text"]
+      },
+      {
+        "id": "gss.validity_four_criteria",
+        "section": "gss",
+        "requirement": "GSS valid only if: on site, real product, DFI QA signed label, within EXP timeframe.",
+        "md_sections": ["Reference sample (GSS)", "DFI(H&B) - Product Specifications", "Green Seal Sample(GSS)"],
+        "fail_if": [
+          "GSS not physically on site",
+          "GSS is copy/photo not real product",
+          "GSS missing DFI QA signed label",
+          "GSS expired based on product EXP on GSS"
+        ]
+      },
+      {
+        "id": "gss.absent_pending",
+        "section": "gss",
+        "requirement": "If GSS absent: pending report with clear remark.",
+        "md_sections": ["Reference sample (GSS)", "Important Remarks", "Executive Summary"],
+        "fail_if": ["GSS absent but result is PASS without pending/remark"]
+      },
+      {
+        "id": "gss.expired_pending",
+        "section": "gss",
+        "requirement": "If GSS expired: inform back office, seal 1 good bulk pc, pending with remark.",
+        "md_sections": ["Reference sample (GSS)", "Important Remarks"],
+        "fail_if": ["GSS expired but not pending or missing remark"]
+      },
+      {
+        "id": "gss.comparison_elements",
+        "section": "gss",
+        "requirement": "Compare all faces, date code, composition, volume/quantity, markings, barcodes, manual, inside product.",
+        "md_sections": ["DFI(H&B) - Product Specifications"],
+        "fail_if": [
+          "Missing comparison photos for required elements",
+          "Product inside not compared",
+          "Date code format or position differs between GSS and product"
+        ]
+      },
+      {
+        "id": "gss.resealed_requirements",
+        "section": "gss",
+        "requirement": "Re-sealed GSS: polybag, QIMA sticker signed with date and order number, photo mandatory.",
+        "md_sections": ["DFI(H&B) - Product Specifications", "Re-Sealed Green Seal Sample(Re-sealed GSS)"],
+        "fail_if": [
+          "Re-sealed GSS photo absent",
+          "QIMA sticker unsigned or missing date/order number"
+        ]
+      },
+  
+      {
+        "id": "measurements.claimed_specs_only",
+        "section": "measurements",
+        "requirement": "Only measure specs claimed on product name, label, or packaging.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Specs measured that are not claimed", "Claimed specs not measured"]
+      },
+      {
+        "id": "measurements.health_product_weight",
+        "section": "measurements",
+        "requirement": "Health products (NIP): measure total net weight and individual serving weight if stated on label.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": [
+          "Total net weight not measured for health product",
+          "Serving weight on label but not measured"
+        ],
+        "applies_when": { "product_type": "health_supplement" }
+      },
+      {
+        "id": "measurements.sample_size_8_or_13",
+        "section": "measurements",
+        "requirement": "Sample size 8 or 13 per packaging level from DFI Sampling Plan.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "AQL & Sampling"],
+        "fail_if": ["Wrong sample size per packaging level"]
+      },
+      {
+        "id": "measurements.pass_fail_logic",
+        "section": "measurements",
+        "requirement": "Volume/quantity/general weight: no tolerance, actual must be >= claim. Health weight and dimension: tolerance required.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "Important Remarks"],
+        "fail_if": ["Pass/Fail contradicts tolerance logic"]
+      },
+      {
+        "id": "measurements.tolerance_in_remark",
+        "section": "measurements",
+        "requirement": "Tolerance range must be stated in remark for dimension and health product weight.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Tolerance range missing in remark for applicable checks"]
+      },
+      {
+        "id": "measurements.identical_sample_values",
+        "section": "measurements",
+        "requirement": "All 8 or 13 samples must not show exactly identical values (copy-paste error).",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["All samples show identical weight or dimension values"]
+      },
+      {
+        "id": "measurements.excel_attached",
+        "section": "measurements",
+        "requirement": "Measurement Table Excel must be attached, filename without Chinese characters.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "DFI(H&B) - Workmanship check", "Checklist Sections"],
+        "fail_if": [
+          "Measurement Table Excel not attached",
+          "Excel filename contains Chinese characters"
+        ]
+      },
+      {
+        "id": "measurements.empty_bottle_separate",
+        "section": "measurements",
+        "requirement": "Empty bottle/sachet and filled product weighed separately, not tare method.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Empty and filled weights not recorded separately"]
+      },
+      {
+        "id": "measurements.no_tolerance_pending",
+        "section": "measurements",
+        "requirement": "If factory/client cannot provide tolerance: pending with remark, upload data anyway.",
+        "md_sections": ["Important Remarks", "DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["No tolerance available but result PASS without pending/remark"]
+      },
+      {
+        "id": "measurements.duplicate_spec_across_tables",
+        "section": "measurements",
+        "requirement": "Same weight/volume must not be duplicated across two tables for same spec.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Same spec value duplicated inconsistently across tables"]
+      },
+  
+      {
+        "id": "tests.carton_drop_mandatory",
+        "section": "tests",
+        "requirement": "Carton drop test mandatory for all products except defined fragile/scale exceptions.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification"],
+        "fail_if": ["Drop test missing without valid exception"]
+      },
+      {
+        "id": "tests.carton_drop_result_logic",
+        "section": "tests",
+        "requirement": "Drop test PASS/PENDING/FAIL per ISTA 1A logic and damage description.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification", "Important Remarks"],
+        "fail_if": [
+          "Drop result does not match described outcome",
+          "No remark describing what was observed",
+          "Drop test photos missing"
+        ]
+      },
+      {
+        "id": "tests.adhesive_scope",
+        "section": "tests",
+        "requirement": "Adhesive test on all printed areas, Consumer and Individual Pack if present. 3M 500/600P/810.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": [
+          "Adhesive not performed on all required areas",
+          "Photos do not show test on date code area",
+          "No 3M tape noted when required"
+        ]
+      },
+      {
+        "id": "tests.adhesive_fail_pending_not_fail",
+        "section": "tests",
+        "requirement": "Adhesive unreadable = Pending not Fail.",
+        "md_sections": ["Checklist Sections", "Executive Summary"],
+        "fail_if": ["Adhesive fail classified as overall Fail"]
+      },
+      {
+        "id": "tests.adhesive_exemption_remark",
+        "section": "tests",
+        "requirement": "Appendix A products: date code adhesive may be waived with required remark only.",
+        "md_sections": ["Important Remarks", "Checklist Sections"],
+        "fail_if": ["Exemption applicable but waiver remark missing"],
+        "applies_when": { "adhesive_date_code_exemption": true }
+      },
+      {
+        "id": "tests.rubbing_performed",
+        "section": "tests",
+        "requirement": "Rubbing test on all printings, dry and wet cloth, photos required.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Rubbing test not performed or photos missing"]
+      },
+      {
+        "id": "tests.barcode_scanning",
+        "section": "tests",
+        "requirement": "Scan all barcodes on Consumer, Individual, Outer Carton. Record full numbers.",
+        "md_sections": ["Checklist Sections", "DFI(H&B) - Date code check & Barcode details"],
+        "fail_if": ["Barcode scanning not done or numbers not recorded"]
+      },
+      {
+        "id": "tests.sensory_all_emptied",
+        "section": "tests",
+        "requirement": "Sensory: all destructive samples fully poured/emptied with photos.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Not all sensory samples emptied or photos missing"]
+      },
+      {
+        "id": "tests.content_all_emptied",
+        "section": "tests",
+        "requirement": "Content check: all 8 or 13 samples emptied with all support photos.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Not all content samples emptied or photos missing"]
+      },
+      {
+        "id": "tests.bristle_pull",
+        "section": "tests",
+        "requirement": "Brush products: bristle pull test per supplier rules.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Bristle pull missing for brush product"],
+        "applies_when": { "product_type": "brush" }
+      },
+      {
+        "id": "tests.function_test",
+        "section": "tests",
+        "requirement": "Function test all capacities per spec/manual.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Function test incomplete"]
+      },
+      {
+        "id": "tests.back_adhesive_pantyliner",
+        "section": "tests",
+        "requirement": "Pantyliner from Carmelton: back adhesive 500-800 mN per GB/T 8939-2018.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Back adhesive out of range or missing"],
+        "applies_when": { "product_type": "pantyliner", "supplier": "Carmelton" }
+      },
+  
+      {
+        "id": "workmanship.minimum_two_aql_tables",
+        "section": "workmanship",
+        "requirement": "Minimum 2 AQL tables in Workmanship check. Consumer, Individual, Destructive separate.",
+        "md_sections": ["DFI(H&B) - Workmanship check", "AQL & Sampling"],
+        "fail_if": ["Fewer than 2 AQL tables present"]
+      },
+      {
+        "id": "workmanship.defects_from_list_only",
+        "section": "workmanship",
+        "requirement": "Only defects from existing QIMAone list. Unlisted → photos, remark, Pending, not in AQL.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Unlisted defect recorded in AQL table", "Custom defect category created"]
+      },
+      {
+        "id": "workmanship.multiple_defect_remark",
+        "section": "workmanship",
+        "requirement": "Multiple defects on one sample: count most serious in AQL, full remark in defect comment and Important Remarks.",
+        "md_sections": ["Important Remarks", "Checklist Sections"],
+        "fail_if": ["Multiple defects without required remark template"]
+      },
+      {
+        "id": "workmanship.defect_outside_stage",
+        "section": "workmanship",
+        "requirement": "Defect outside workmanship: not in AQL, remark added, Pending, seal consumer pack.",
+        "md_sections": ["Important Remarks", "Attention Items (read first)"],
+        "fail_if": ["Outside-stage defect in AQL table or missing remark/Pending"]
+      },
+      {
+        "id": "workmanship.defect_photo_required",
+        "section": "workmanship",
+        "requirement": "Every defect needs photo with QIMA sticker or arrow.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Defect recorded without supporting photo", "Defect photo without arrow/sticker"]
+      },
+      {
+        "id": "workmanship.no_defects_found_text",
+        "section": "workmanship",
+        "requirement": "If no defects: No Defects Found in defect pictures section.",
+        "md_sections": ["Checklist Sections", "DFI(H&B) - Workmanship check"],
+        "fail_if": ["No defects recorded but No Defects Found text absent"]
+      },
+  
+      {
+        "id": "quantity.finished_packed_threshold",
+        "section": "quantity_packaging",
+        "requirement": "Required 100% finished and 80% packed. Below → Pending + remark.",
+        "md_sections": ["Products & Quantities", "DFI(H&B) - Quantity & Packaging", "Attention Items (read first)"],
+        "fail_if": [
+          "Below threshold but PASS without remark",
+          "Remark claims 100% packed but packedQuantity below ordered"
+        ]
+      },
+      {
+        "id": "quantity.multiple_batches_proportional",
+        "section": "quantity_packaging",
+        "requirement": "Multiple batches sampled proportionally by quantity.",
+        "md_sections": ["DFI(H&B) - Quantity & Packaging", "Important Remarks"],
+        "fail_if": ["Multiple batches but proportional sampling not applied or noted"],
+        "applies_when": { "multiple_batches": true }
+      },
+      {
+        "id": "quantity.destructive_separate_packs",
+        "section": "quantity_packaging",
+        "requirement": "Destructive samples from separate consumer packs.",
+        "md_sections": ["DFI(H&B) - Quantity & Packaging", "DFI(H&B) - Workmanship check"],
+        "fail_if": ["Destructive samples not from separate consumer packs"]
+      },
+  
+      {
+        "id": "shipping.carton_mark_photos",
+        "section": "shipping_carton",
+        "requirement": "Shipping mark: front and side photos. Inner mark if exists.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification"],
+        "fail_if": ["Shipping mark photos missing"]
+      },
+      {
+        "id": "shipping.carton_dimensions_weight",
+        "section": "shipping_carton",
+        "requirement": "One carton per style: printed vs actual size and weight recorded.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification"],
+        "fail_if": [
+          "Carton dimension/weight table incomplete",
+          "Missing photo per dimension controlled"
+        ]
+      },
+      {
+        "id": "shipping.carton_mark_diff_remark_only",
+        "section": "shipping_carton",
+        "requirement": "Carton dim/weight diff from shipping mark alone does NOT trigger Pending/Fail but should be remarked if significant.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification", "Important Remarks"],
+        "fail_if": ["Large gap vs printed spec with no remark"]
+      },
+  
+      {
+        "id": "factory.location_matches_booking",
+        "section": "factory_review",
+        "requirement": "Factory location must match booking with entrance/gate photos.",
+        "md_sections": ["QIMA - Factory Review", "Parties & Location", "Starting pictures"],
+        "fail_if": ["Factory location differs from booking", "No factory entrance photos"]
+      },
+      {
+        "id": "factory.calibration_certificates",
+        "section": "factory_review",
+        "requirement": "Tools calibrated, certificates photographed, valid 1 year.",
+        "md_sections": ["QIMA - Factory Review"],
+        "fail_if": ["Calibration certificates absent or expired"]
+      },
+      {
+        "id": "factory.qima_documents_signed",
+        "section": "factory_review",
+        "requirement": "Factory Disclaimer, Draft Report, COC signed by inspector and factory, photos mandatory.",
+        "md_sections": ["QIMA - Factory Review"],
+        "fail_if": ["Signed QIMA documents photos missing"]
+      },
+      {
+        "id": "factory.cooperation_poor",
+        "section": "factory_review",
+        "requirement": "Flag if factory cooperation/cleanliness rated Poor.",
+        "md_sections": ["QIMA - Factory Review"],
+        "fail_if": ["Factory cooperation rated Poor"]
+      },
+  
+      {
+        "id": "photos.mandatory_categories",
+        "section": "mandatory_photos",
+        "requirement": "All mandatory photo categories from Section 14 must be present.",
+        "md_sections": ["Checklist Sections", "Starting pictures", "Product cover photo"],
+        "fail_if": ["Any mandatory photo category absent"]
+      },
+      {
+        "id": "photos.adhesive_date_code_area",
+        "section": "mandatory_photos",
+        "requirement": "Adhesive test photos must show date code area.",
+        "md_sections": ["Checklist Sections"],
+        "fail_if": ["Adhesive photos do not show date code area"]
+      },
+      {
+        "id": "photos.gss_four_faces",
+        "section": "mandatory_photos",
+        "requirement": "GSS comparison: all four faces Consumer and Individual Pack if present.",
+        "md_sections": ["DFI(H&B) - Product Specifications"],
+        "fail_if": ["Comparison photos missing faces for Consumer or Individual Pack"]
+      },
+      {
+        "id": "photos.measurement_per_sample",
+        "section": "mandatory_photos",
+        "requirement": "Measurements: photo per sample (8 or 13), empty bottle + each filled weight.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights"],
+        "fail_if": ["Insufficient measurement photos for sample size"]
+      },
+      {
+        "id": "photos.carton_drop_set",
+        "section": "mandatory_photos",
+        "requirement": "Drop test: before, during, after exterior, after interior.",
+        "md_sections": ["DFI(H&B) - Shipping Carton Verification"],
+        "fail_if": ["Drop test photo set incomplete"]
+      },
+  
+      {
+        "id": "report.language_english",
+        "section": "report_writing",
+        "requirement": "All report content in English except Chinese date codes recorded as printed.",
+        "md_sections": ["Important Remarks", "Checklist Sections"],
+        "fail_if": ["Non-English content outside allowed Chinese date codes"]
+      },
+      {
+        "id": "report.data_integrity_typos",
+        "section": "report_writing",
+        "requirement": "Check wrong units, copy-paste identical values, bad decimals, N/A for measured specs.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "Checklist Sections"],
+        "fail_if": [
+          "Wrong unit e.g. kg instead of g",
+          "Unreasonable decimal precision",
+          "N/A row for spec that should be measured"
+        ]
+      },
+      {
+        "id": "report.measurement_excel_mandatory",
+        "section": "report_writing",
+        "requirement": "Measurement Table Excel mandatory attachment.",
+        "md_sections": ["DFI(H&B) - Product Dimensions & Weights", "Checklist Sections"],
+        "fail_if": ["Measurement Table Excel not attached"]
+      },
+  
+      {
+        "id": "sample_collection.sealing_rules",
+        "section": "sample_collection",
+        "requirement": "Seal samples per rules: no GSS, expired GSS, critical defects, >50% same defect.",
+        "md_sections": ["Important Remarks", "Checklist Sections"],
+        "fail_if": [
+          "Critical defects mentioned but no sealing noted",
+          "No GSS or expired GSS but sealing not mentioned"
+        ]
+      },
+      {
+        "id": "sample_collection.repacking",
+        "section": "sample_collection",
+        "requirement": "Defectives repacked in same carton; all good products fully repacked.",
+        "md_sections": ["Important Remarks"],
+        "fail_if": ["Repacking rules not followed or not mentioned when relevant"]
+      },
+  
+      {
+        "id": "escalation.back_office_contact",
+        "section": "escalation",
+        "requirement": "Section 17 triggers require back office contact CC KA during inspection.",
+        "md_sections": ["Attention Items (read first)", "Important Remarks", "Executive Summary"],
+        "fail_if": [
+          "Failed finding or beyond AQL without evidence of escalation",
+          "Factory address differs from booking",
+          "Factory refused drop test non-fragile",
+          "Factory refused special test procedure",
+          "No inspection tools provided",
+          "Performed in IAPP",
+          "Individual pack sampling mismatch",
+          "Individual pack on site vs QIMAone mismatch",
+          "No date code AND no batch on packaging",
+          "GSS not on site / unsigned / expired",
+          "Factory refused to open GSS",
+          "No 3M tape for adhesive test"
+        ]
+      }
+    ]
+  }

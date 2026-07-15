@@ -1,0 +1,71 @@
+{
+  "Q2601959645_flawed": {
+    "source": "corrected/Q2601959645.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-1",
+        "checkpoint": "Available Quantity Check: Finished&Packed&Unpacked",
+        "field": "comment",
+        "old": "100% quantity was finished and packed",
+        "new": "Actual found 145 pcs (72.50%) were finished and packed",
+        "gi_rationale": "Quantity result must FAIL when packed % is below the client threshold; PASS with low packed % is inconsistent.",
+        "report_team_claim": "quantity section is passed but not aligned with the requirements (packed % too low)."
+      },
+      {
+        "element_id": "2-7-1-9",
+        "checkpoint": "Carton drop test",
+        "field": "photo_count",
+        "old": 2,
+        "new": 0,
+        "gi_rationale": "Carton drop test result requires drop photos as evidence.",
+        "report_team_claim": "inspector needs to attach defect/evidence photos."
+      }
+    ]
+  },
+  "Q2605650175_flawed": {
+    "source": "corrected/Q2605650175.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-1",
+        "checkpoint": "Available Quantity Check: Finished&Packed&Unpacked",
+        "field": "comment",
+        "old": "8520Pcs（100%）were finished and packed",
+        "new": "Actual found 6135 pcs (72.00%) were finished and packed",
+        "gi_rationale": "Quantity result must FAIL when packed % is below the client threshold.",
+        "report_team_claim": "order and packed quantity inconsistent; packed % too low but passed."
+      },
+      {
+        "element_id": "2-7-3-5",
+        "checkpoint": "Product Details - Barcode",
+        "field": "photo_count",
+        "old": 3,
+        "new": 0,
+        "gi_rationale": "Barcode check requires photo evidence of the scanned barcode.",
+        "report_team_claim": "name/attach pictures by SKU for barcode as required in GI."
+      }
+    ]
+  },
+  "Q2610766318_flawed": {
+    "source": "corrected/Q2610766318.json",
+    "injected": [
+      {
+        "element_id": "2-9-1-2",
+        "checkpoint": "Product Weights Result",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Result must reflect findings: comment states dimensions/weight do not match spec, so result cannot be PASS.",
+        "report_team_claim": "findings for dimension and weight do not match client specs."
+      },
+      {
+        "element_id": "2-9-1-1",
+        "checkpoint": "Product Dimensions Result",
+        "field": "photo_count",
+        "old": 4,
+        "new": 0,
+        "gi_rationale": "Product dimension result requires measurement photos for the measured pieces.",
+        "report_team_claim": "for dimensions there should be photos per measured pc."
+      }
+    ]
+  }
+}

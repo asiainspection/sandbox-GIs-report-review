@@ -1,0 +1,817 @@
+# DFI H&B PSI — COMPLETE REVIEW KNOWLEDGE BASE
+# Purpose: Full reference for reviewing a DFI H&B Pre-Shipment Inspection (PSI) report.
+#          Covers all rules, logic, pass/fail criteria, photo requirements, and escalation triggers.
+#          Usable both as an AI review guide and as a human operational guideline.
+# Platform: QIMAone (never IAPP).
+# Convention: FLAG IF = issue to raise. RULE = binding requirement.
+
+---
+
+## SECTION 1 — BEFORE STARTING THE REVIEW
+
+Have the following open before reviewing any report:
+- Client product photos attached in SSO (to verify product matches booking)
+- DFI Sampling Plan Excel (found in IP Guideline of product 1 in the order)
+- Special Request of the order (QIMAone > Quality Criteria > Special section)
+- Inspector To-Do List (mandatory for EU/US/AU inspectors or inspectors unfamiliar with DFI)
+
+Preliminary checks:
+- Inspection was performed in QIMAone — not IAPP.
+- Product inspected matches what was booked.
+- Inspector completed and sent the To-Do List if required (remote areas or unfamiliar with DFI).
+
+FLAG IF: Product in the report does not match the booked product.
+
+---
+
+## SECTION 2 — COVER PAGE
+
+### Supplier & Factory Name
+RULE: Both fields (Supplier Name and Factory Name) must be filled in English using the combined format: "Supplier Name (Factory Name)".
+Correct example: "Ruby Beauty Corporation Limited (ZHEJIANG YASILI COSMETICS CO., LTD)"
+FLAG IF: Chinese characters present. FLAG IF: Only one of the two names is filled. FLAG IF: Format is not combined.
+
+### Product Name
+RULE: Must be the real product name — NOT the SKU or barcode string. QIMAone populates the SKU by default; it must be replaced manually using the product name from General Information or the IP Guideline.
+FLAG IF: Field contains a number string (e.g. "4894514123593") or SKU code.
+
+### Cover Photo
+RULE: Must show the Consumer Pack (retail-facing packaging), frontal angle, vertical orientation, full product name clearly readable.
+FLAG IF: Photo shows bare product without packaging, outer carton, blurry image, angled shot, or product name not readable.
+
+### PO Number
+RULE: If no PO was found on site, write "N/A" with no additional comment.
+FLAG IF: Field is blank or contains a comment instead of "N/A".
+
+### Date Code & Batch Code on Cover
+RULE: If MFG Date, EXP Date, AND Batch Code are ALL displayed as "N/A" on the cover page, all three must be replaced with the sentence: "Refer to the individual batch/date code in the date code check section"
+FLAG IF: All three show "N/A" but replacement sentence is absent.
+
+### Location
+RULE: Must be written entirely in English.
+FLAG IF: Any Chinese characters appear in the location field.
+
+### Unit
+RULE: Must not display "Other". Replace with actual unit found in booking — typically "Boxes" or "Packs".
+FLAG IF: Unit field shows "Other".
+
+### Overall Result — Cover Consistency
+RULE: The result shown on the cover must match the findings in the body of the report.
+If Pending or Failed: Important Remarks section MUST state the reason explicitly.
+Required format: "The inspection result is [Pending/Failed] due to [specific reason]."
+FLAG IF: Result is Pending or Failed but no remark explains the reason.
+FLAG IF: Result contradicts what is found in the report body.
+
+---
+
+## SECTION 3 — OVERALL RESULT DECISION LOGIC
+
+Apply this logic to determine whether the assigned result is correct.
+
+### PASS
+All of the following must be true:
+- No inconsistency or failure found.
+- NOTE: Adhesive test with slight peel-off but printing still readable = PASS (inspector judgment).
+- Carton dimension/weight different from Shipping Mark spec alone does NOT trigger Pending or Fail.
+- Packed and finished quantity is greater than or equal to the order quantity.
+
+### PENDING — any one of the following is sufficient
+- Quantity on site < 100% finished OR < 80% packed.
+- No GSS on site, or GSS unavailable.
+- GSS is expired.
+- GSS is inconsistent with bulk product (packaging, label, instruction manual, etc.).
+- Adhesive test failed (printing unreadable after tape removal).
+- Factory did not provide inspection tools.
+- Factory refused the carton drop test.
+- Carton drop test could not be completed.
+- Any other scenario that cannot be confirmed.
+
+### FAIL — any one of the following is sufficient
+- Actual product measurement (dimension, weight, volume, quantity) is less than specification, OR exceeds the tolerance range.
+- Beyond AQL (defects exceed acceptance number).
+- Any onsite test failed — EXCEPT adhesive test (adhesive test fail = Pending, not Fail).
+
+### MISSING INSPECTION
+- No product found / wrong address / factory refused the inspection entirely.
+
+CRITICAL LOGIC: Adhesive test fail → Pending. All other test failures → Fail.
+FLAG IF: Result does not match the logic above.
+
+---
+
+## SECTION 4 — IMPORTANT REMARKS
+
+### Always required (minimum 2)
+1. "The inspection result is [Passed/Pending/Failed] due to [reason]."
+   Example: "The inspection result is failed due to beyond AQL."
+2. "All defective items (and failure findings) are presented to the factory."
+
+### Situational — required when applicable
+- Tolerance-based check (dimension or health product weight): "Checked OK, the tolerance range of [weight/dimension] is XXX – XXX." Must appear regardless of pass or fail.
+- Adhesive test waived on date code area: "Adhesive test on the date code waived due to limitation of the can and ink."
+- Carton drop test with findings: describe exactly what was observed (see Section 8.1 for formats).
+- Defect found outside workmanship check stage: describe separately (see Section 10.4).
+- Multiple batches: all batch codes found must be mentioned.
+- No calibration record for tools: note it explicitly without impacting the result.
+- Factory internal calibration accepted but must be remarked.
+
+### Prohibited
+- Chinese characters in any remark.
+- Vague statements ("some issues found") — always specify.
+- Result stated in remark must match the overall result.
+
+FLAG IF: Pending or Failed report has no reason remark.
+FLAG IF: Tolerance-based check has no tolerance range in remark.
+FLAG IF: Remark result does not match overall result.
+
+---
+
+## SECTION 5 — INSPECTION STANDARDS
+
+### Sampling Levels
+
+Onsite inspection:
+- Consumer Pack: General Level II
+- Individual Pack: S4 if consumer pack can be restored after opening / S3 if consumer pack is destroyed after opening or has a sticker (sticker = treated as destructive)
+- Destructive Sample/Test: S1
+
+Destructive sample size by lot:
+- Lot size 8–35,000 → 8 destructive samples
+- Lot size 35,001 and above → 13 destructive samples
+
+Remote inspection:
+- Consumer Pack: Level I
+- Individual Pack: S3
+- Destructive Sample/Test: S1
+
+Special — Earplug products: dedicated sampling levels. Must follow the file "Earplug only - DFI Sampling Plan, workmanship check, Date Code, measurement".
+
+FLAG IF: Sampling level in the report does not match the DFI Sampling Plan.
+
+### Workmanship AQL Values
+- General products: Not Allowed / 1.5 / 4.0 (CRI / MAJ / MIN)
+- Earplug products: Not Allowed / 1.5 / 4.0 (Consumer + Individual Pack)
+- Protection Mask products: percentage-based AQL — must match DFI Sampling Plan attachment exactly. If no "Percentage AQL Acceptance" is found in the attachment for Mask products: contact Quality team (CC KA).
+
+FLAG IF: AQL values do not match the above for the product type.
+
+### AQL Table — Checked and Max Values
+"Checked" must match the sample size in the DFI Sampling Plan.
+Acceptance numbers ("Max") must match:
+- Sample size 8 → Max 0 / 0 / 0
+- Sample size 13 → Max 0 / 0 / 1
+- Sample size 32 → Max 0 / 1 / 3
+
+FLAG IF: Checked number does not match sampling plan. FLAG IF: Max numbers do not match the above.
+
+### Individual Pack AQL Table
+Must be present if the product has individual packaging.
+Must be absent if the product has no individual packaging.
+To add or remove: QIMAone > Quality Criteria > Quantity > Checkpoint > select "S3/S4" or "NA".
+If mismatch between report and actual product: verify with inspector and inform KA.
+
+FLAG IF: Individual Pack table present but product has no individual pack.
+FLAG IF: Individual Pack table absent but product has individual pack.
+
+### Colors, Labels, Artworks Result
+If no finding was observed and system auto-generated "N/A": must be manually updated to "OK".
+FLAG IF: "N/A" appears in this field without a corresponding finding.
+
+---
+
+## SECTION 6 — DATE CODE CHECK
+
+### Recording Rules
+- Record exactly as printed: same format, separators, casing.
+- At least one of the three must be present: MFG Date / EXP Date / Lot# (= Batch#).
+- If a code is absent: record "N/A".
+- Mandatory: close-up comparison photo of date code area — GSS vs actual product.
+
+### GSS vs Product Comparison
+- Format AND printing position must match between GSS and bulk product.
+- Actual values (dates, lot numbers) may differ — acceptable.
+FLAG IF: Format or printing position differs between GSS and product (e.g. GSS has MFG + Lot# but product only has Lot#).
+FLAG IF: Comparison photo is absent.
+
+### Multiple Batches or Sub-Products
+- All date codes separated clearly using batch and item keywords.
+- Recommended: 1 batch per line.
+- Example:
+  Shampoo (batch 001) MFG 07/09/2023 EXP 06/09/2025
+  Conditioner (batch 001) MFG 17/08/2023 EXP 16/08/2025
+
+### Chinese Date Codes
+If date code is printed in Chinese on the product: record it in Chinese exactly as printed.
+Example: EXP "24个月"
+
+### Barcode Details
+- Record the full barcode number for each packaging level: Individual Pack / Consumer Pack / Outer Carton.
+- If no Individual Pack: enter "N/A" for that field.
+- Leading "0" not recognized by one scanner: test with other apps/tools. If recognized by any → PASS, no remark needed.
+
+FLAG IF: Barcode number fields are left blank instead of filled.
+
+---
+
+## SECTION 7 — GSS (GREEN SEAL SAMPLE)
+
+### Terminology — Critical
+ONLY "GSS" is accepted in the report text and in photo captions.
+NEVER use: "Approved Sample", "Golden Sample", or any equivalent.
+FLAG IF: Any alternative term appears anywhere in the report.
+
+### GSS Validity — All Four Must Be True
+1. GSS is physically present on site.
+2. GSS is a real product (not a printed copy or photo).
+3. GSS has a label signed by DFI Retail Group QA Team. Signature alone is OK; QA stamp is not required.
+4. GSS is within its valid timeframe. Validity is based on the product EXP date on the GSS itself — NOT the date it was signed.
+
+FLAG IF: Any of the four criteria is not met.
+
+### If GSS Is Absent
+- Inform back office to request Artwork from client for comparison.
+- Pending report with clear remark.
+
+### If GSS Is Expired
+- Inform back office.
+- Seal 1 pc of a good bulk product (becomes the new reference).
+- Use the expired GSS for comparison anyway.
+- Pending report with clear remark.
+
+### GSS Comparison Requirements
+The following must be compared with supporting photos, for Consumer Pack AND Individual Pack (if present):
+- All faces: top, bottom, front, back.
+- Date code area close-up (MFG / EXP / Batch — format and position must match).
+- Composition / ingredient label.
+- Volume or quantity claims.
+- All markings and barcodes.
+- Instruction manual (if applicable).
+- Any color difference or packaging variation.
+
+Product inside (capsules, liquid, tablets, gummies, etc.) must also be compared with photos.
+
+If factory refuses to open the GSS: inform Quality (CC KA) and remark in report.
+
+FLAG IF: Any comparison element is missing. FLAG IF: Date code format or position differs between GSS and product.
+
+### Re-Sealed GSS
+After use:
+1. Place opened GSS in a transparent polybag.
+2. Seal with QIMA sticker.
+3. Inspector signs and writes date + order number on the sticker.
+4. Photo of the re-sealed GSS is mandatory.
+5. Upload in QIMAone: DFI(H&B) > Product Specifications > Re-Sealed Green Seal Sample.
+
+FLAG IF: Re-sealed GSS photo is absent. FLAG IF: QIMA sticker is unsigned or date/order number is missing.
+
+---
+
+## SECTION 8 — PRODUCT MEASUREMENTS
+
+### What Must Be Measured
+Only measure specs explicitly claimed on the product name, label, or packaging.
+Do NOT measure specs that are not claimed anywhere.
+The Measurement Table is a template — only fill rows relevant to the actual product.
+Both Consumer Pack AND Individual Pack claimed specs must be measured.
+
+Mandatory additions regardless of label claim:
+- Protection Mask: always measure individual mask net weight.
+- Health product (identified by NIP — Nutrition Information Panel — on the label):
+  Always measure total net weight.
+  Always measure individual serving weight if stated on label (e.g. "Serving size per piece", "Xx mg/piece", "Xx g/softgel").
+  Examples:
+    "1 Capsule / 1.043g" → weigh 1 capsule per measurement
+    "3 Tablets / 5.4g" → weigh 3 tablets per measurement
+    "2 gummies / 4g" → weigh 2 gummies per measurement
+    "1370mg / softgel" → weigh 1 softgel per measurement
+
+### Measurement Sample Size
+Always follows the destructive sample size from the DFI Sampling Plan: 8 or 13.
+Measure each packaging level separately: 8 (or 13) consumer packs + 8 (or 13) individual packs + 8 (or 13) products.
+For sets with different item types: measure each item type independently.
+
+### Tolerance and Pass/Fail Logic
+
+Volume (claimed on label):
+- No tolerance. Actual ≥ label claim → PASS. Actual < label claim (even by 0.01) → FAIL.
+
+Quantity (claimed on label):
+- No tolerance. Actual ≥ label claim → PASS. Actual < label claim → FAIL.
+
+Weight — general product (claimed on label):
+- No tolerance. Actual ≥ label claim → PASS. Actual < label claim → FAIL.
+
+Weight — health product only (has NIP panel):
+- Tolerance required. Get from product spec file in booking or ask factory directly.
+- Within tolerance → PASS. Remark must state the tolerance range.
+- Outside tolerance (either direction, even by 0.01) → FAIL. Remark must state the tolerance range.
+
+Size / Dimension (claimed on label):
+- Tolerance required. Get from product spec file or ask factory.
+- Within tolerance → PASS. Remark must state the tolerance range.
+- Outside tolerance (either direction) → FAIL. Remark must state the tolerance range.
+
+If no tolerance can be provided by factory or client:
+- Inform back office immediately.
+- Pending report with clear remark.
+- Upload all measurement data and photos anyway.
+
+On failed measurements: seal failure samples at factory. Remind factory NOT to throw them — DFI will follow up.
+
+FLAG IF: Pass/Fail result contradicts the logic above.
+FLAG IF: Tolerance range is not stated in remark for dimension or health product weight.
+FLAG IF: All 8 (or 13) samples show exactly the same value (likely a data entry error).
+FLAG IF: Measurement Table Excel filename contains Chinese characters (file will not open for report team).
+
+### Volume Measurement Method
+- Low viscosity liquid: graduated cylinder preferred. If no cylinder available: use scale (net weight / density = volume).
+- Special case — Sterile Normal Saline Cleansing Solution from supplier BIOFACT LIFE SDN BHD: graduated cylinder is mandatory, no exception.
+- High viscosity liquid: scale only. Formula: Volume = Product net weight / Density.
+
+### Empty Bottle / Sachet Weight
+1. Ask factory for empty bottles or sachets (quantity = destructive sample size).
+2. If factory cannot provide: empty the destructive samples and use their average weight.
+3. CRITICAL: weigh the empty bottle AND the filled product separately. Do NOT tare the scale with the empty bottle then weigh the filled product — this is an incorrect method.
+Enter both values separately in the measurement table.
+
+---
+
+## SECTION 9 — TESTS
+
+### 9.1 Carton Drop Test
+Mandatory for ALL products.
+
+Exceptions — skip drop test for:
+- Fragile products (ceramics, glass, etc.): inspector checks factory documentation to confirm packaging is validated by DFI. Inform back office for attention.
+- Product "Guardian WEIGHING SCALE BR9012" from supplier "Camry Electronic".
+
+If factory refuses (non-fragile product): inform back office immediately → result = Pending.
+
+Drop height per ISTA 1A table:
+- 0 to 10 kg → 760 mm (30 inches)
+- 10 to 19 kg → 610 mm
+- 19 to 28 kg → 460 mm
+- 28 to 45 kg → 310 mm
+- 45 to 68 kg → 200 mm
+
+Weigh the carton before dropping to determine the correct height.
+Procedure: 10 total drops = 1 corner + 3 edges + 6 faces. Drop freely from marked height on a flat firm floor.
+
+Result logic:
+- PASS: No damage on carton AND product. OR: carton deformed/dented but retail pack and product inside undamaged.
+- PENDING: Carton broken/opened before completing 10 drops, but product inside undamaged.
+- FAIL: Damage on the product. OR: carton opens and products fall out.
+
+Required remark formats:
+- PASS, carton dented only: "Checked OK, only carton was found dent after drop test, and no impact on consumer pack/product inside."
+- PASS, consumer pack deformed but product OK: "The carton was deformed and [X] pcs of consumer pack packaging at the corner was deformed, but not impact on the product."
+- PENDING, carton broke before 10 drops: "Carton damaged at drop [X] ([X] point, [X] edges, [X] faces were done) and no damage on products. Hasn't further proceeded with the rest drop as the carton already opened."
+- FAIL: "Carton damaged at drop [X] and [X] pcs of consumer pack content/product damaged."
+
+Required photos: before drop / during drop / after drop (carton exterior + interior product condition, especially after test).
+
+FLAG IF: Result does not match the described outcome.
+FLAG IF: No remark describing what was actually observed.
+FLAG IF: Drop test photos are missing.
+
+### 9.2 Adhesive Test
+Mandatory for all products on non-paper surfaces or paper protected with a coating/film.
+Tool: 3M tape model 500. Alternatives if unavailable: 3M 600P or 3M 810. Note the actual model used in the remark.
+If no 3M tape is available at all: inform back office immediately before proceeding.
+
+Procedure: Apply tape firmly over printed area → press with finger → remove at 180° angle, rapidly (0.5–1 second) → repeat 3 times.
+
+Result:
+- PASS: Printing complete and clear after test. Slight peel-off acceptable if printing is still readable (inspector judgment).
+- FAIL → report result = PENDING: Printing peeled off and unreadable.
+
+Scope: Must cover ALL printed areas (date code, logo, artwork, barcode, text) on BOTH Consumer Pack and Individual Pack if present.
+
+Exemption — date code area only — for products listed in Appendix A of the GI:
+These are specific cotton tip products in canisters from SOFT TIP (THAILAND) CO., LTD and WISE EVER ENTERPRISES LIMITED, plus PE bag products (cleansing towels, face towels).
+Exemption applies ONLY to the date code area. All other printed areas must still be tested.
+If date code area was waived: remark required — "Adhesive test on the date code waived due to limitation of the can and ink."
+
+FLAG IF: Photos do not clearly show the test being performed on the date code area.
+FLAG IF: Exemption remark is missing for an applicable product.
+FLAG IF: Adhesive test result is "Fail" but overall result is also "Fail" (should be Pending).
+
+### 9.3 Rubbing (Marking) Test
+Applicable to: ALL printings and markings on product and packaging (paper box, foil bag, product surface), especially date code.
+Tools: white cotton cloth (dry) + white cotton cloth (water-soaked) + pure water.
+
+Procedure:
+1. Pre-clean the surface with a water-soaked cloth.
+2. Rub with DRY white cotton cloth: 10 strokes, 10 cm distance, 9N force (approx. 1 kg).
+3. Repeat with WET (water-soaked) white cotton cloth.
+4. Check cloth for color transfer; check surface for damage.
+
+Result:
+- PASS: Printing clear and intact; cloth not stained.
+- FAIL: Printing rubbed off, dimmed, or illegible; label has curling edges.
+
+Required photos: test being performed + cloth result + product surface after test.
+
+### 9.4 Barcode Scanning Test
+Scan all barcodes on Consumer Pack, Individual Pack (if present), and Outer Carton.
+Use scanner or phone app.
+If barcode with leading "0" is not recognized by one scanner: test with additional apps or tools. If recognized by any → PASS, no remark needed.
+Record the full barcode number in the corresponding text field.
+
+### 9.5 Sensory Check
+Sample size: destructive sample size (8 or 13).
+For liquid/cream products: ALL sample contents must be fully poured out to check for foreign material, odor inconsistency, or visual defects.
+Only destructive samples are fully emptied. For GSS liquid: follow GSS Resealing Procedure (do not fully empty GSS).
+Upload photos supporting each sample checked.
+
+### 9.6 Content Check
+Sample size: destructive sample size (8 or 13).
+ALL sample contents must be fully emptied and checked.
+Upload ALL 8 (or 13) support photos.
+Same GSS rule as Sensory Check: only destructive samples are emptied.
+
+### 9.7 Bristle Pull Test (brush products only)
+General rule: hold brush horizontally, pull with 4 kgf.
+If factory does not provide the test tool: inform Quality (CC KA) immediately.
+
+Special rule — supplier TEENI ENTERPRISE PTE LTD (Dongguan Dingli Handicraft Industrial Co., Ltd):
+- Barcode 4894514016192 (Hair Care Essentials Small Round Brush): 2 kgf
+- Barcode 4894514016147 (Hair Care Essentials Cushion Brush): 2 kgf
+- All other barcodes from this supplier: standard 4 kgf
+
+Reason for 2 kgf: brush body is thinner with finer internal wire, or bristles are inserted into an air cushion without wire.
+
+### 9.8 Function Test
+Test ALL functions of the product to their full extent.
+Apply client specifications or product instructions when available.
+
+Special case — Toothbrush with replaceable head:
+- Check the ease of removing the replacement head.
+- Follow force requirement provided by factory.
+- Note the specific force measurement in the report remark.
+- Supplier SHANGHAI SHIFT (上海携福电器): replacement head must be pulled out between 5N and 35N.
+
+### 9.9 Back Adhesive Test — Pantyliner (specific supplier only)
+Applicable to: Pantyliner products from supplier Carmelton (Jiangmen) Healthcare Limited ONLY.
+Sample size: destructive sample size (8 or 13), pick 1 pc from each consumer pack.
+Method: cut 5 cm section with adhesive backing, paste standard jersey cloth on adhesive, pressurize with electric rolling roller, perform peel test.
+Pass criterion: 500–800 mN (per GB/T 8939-2018).
+Outside this range in either direction → FAIL.
+
+---
+
+## SECTION 10 — WORKMANSHIP DEFECTS
+
+### Structure
+Consumer Pack, Individual Pack, and Destructive Sample are checked and recorded SEPARATELY.
+Each packing level has its own AQL table.
+Minimum 2 AQL tables must be present in the DFI(H&B) - Workmanship check section.
+
+### Defect Selection
+ONLY select defects from the existing defect list in QIMAone.
+NEVER create a new defect category.
+If a defect is found that does not appear in the list:
+- Take supporting photos.
+- Add a clear remark.
+- Set report to Pending.
+- Do NOT record in the AQL table.
+
+### Multiple Defects on One Sample
+Count only the most serious defect in the AQL table.
+Remark must appear in BOTH the Defect Comment field AND the Important Remark:
+"Found [X] pcs with multiple defects: [most serious defect] (counted into AQL) + [other defect] + [other defect] (excluded from AQL), see defect pictures below, all defects are arrowed."
+
+### Defect Found Outside Workmanship Check Stage
+Example: defect spotted during quantity check or dimension measurement.
+Rule: Do NOT record in the AQL workmanship table.
+Required actions:
+- Add remark: "Found additional [X] [MIN/MAJ/CRI] defects on [X] pcs [Consumer Pack / Individual Pack / Destructive Samples] during [Quantity/Dimension] check of [section name] section."
+- Set report to Pending.
+- Seal the entire consumer pack containing the defects in a polybag with a QIMA sticker.
+
+### Pantyliner Special Defect Classification
+Applicable suppliers: Carmelton (Jiangmen) Healthcare Limited / Fujian Hengan Household Products Co., Ltd.
+Sample size: destructive sample size (1 pc per consumer pack).
+Dark spot on white surface:
+- ≤ 1 mm → MAJOR defect
+- > 1 mm → CRITICAL defect
+
+### Defect Photos
+Every defect recorded must have at least one supporting photo.
+All defects must be clearly indicated with a QIMA defect sticker or a digitally added arrow.
+If no defects found: add the text "No Defects Found" in the defect pictures section.
+
+FLAG IF: A defect is recorded without a supporting photo.
+FLAG IF: "No Defects Found" is absent when no defects are recorded.
+FLAG IF: Defect category does not exist in the defect list (unlisted defect in AQL table).
+
+---
+
+## SECTION 11 — QUANTITY & PACKAGING
+
+### Production Status Thresholds
+Required: 100% finished AND 80% packed.
+If below threshold:
+- Inform Quality Team (CC KA) with actual production status on site.
+- Proceed with inspection using available quantity, update sample size accordingly.
+- Pending report + remark with actual status.
+If above threshold:
+- Proceed normally.
+- Inform Quality Team (CC KA) to review manday allocation.
+
+### Sampling — Multiple Batches
+All batches must be sampled proportionally.
+Formula: (Batch quantity / Total quantity) × Total sample size = Batch sample size.
+Example:
+  Total: 10,000 pcs — Batch A: 8,000 (80%) / Batch B: 2,000 (20%)
+  Workmanship sample 200 → Batch A: 160 pcs / Batch B: 40 pcs
+  Test sample 8 → Batch A: 6 pcs / Batch B: 2 pcs
+
+### Sampling — Product with Multiple Item Types
+All item types must be measured and tested.
+Each item type follows the destructive sample size (8 or 13) independently.
+Example: Travel set with shampoo + conditioner + shower cream → 8 of each item type.
+If workload is too heavy: inform Quality Team (CC KA).
+
+### Destructive Sample Selection
+Destructive samples must be drawn from separate consumer packs.
+Example: if destructive sample size = 8, open 8 different consumer packs to extract 1 product each.
+
+---
+
+## SECTION 12 — SHIPPING CARTON VERIFICATION
+
+### Carton Shipping Mark
+Photos required: front face AND side face of the shipping mark.
+If inner shipping mark exists: photograph it as well.
+Record actual finding for dimensions and weight.
+If actual values differ significantly from printed spec: add a remark describing the gap.
+This difference alone does NOT trigger Pending or Fail.
+
+### Carton Check: Dimensions and Weight
+Check 1 carton per product style.
+Record: printed size (L×W×H in mm), actual measured size, printed weight (kg), actual measured weight.
+Photo: 1 photo per dimension controlled.
+
+### Carton Drop Test
+See Section 9.1.
+
+---
+
+## SECTION 13 — FACTORY REVIEW
+
+### Required Checks and Expected Values
+- Factory location matches booking: must be confirmed with photos of the factory entrance/gate.
+- Factory cooperation, organization, cleanliness: Average / Good / Poor — no pass/fail threshold but flag if Poor.
+- Inspection room lighting: Average / Good — flag if conditions are inadequate.
+- Tools calibration: tools must be calibrated. Calibration certificates must be visible and photographed. Calibration valid for 1 year. DFI accepts factory internal calibration as valid but it must be remarked in the report. If no calibration record: remark without impacting the result.
+- Mold prevention: cartons on pallets, not touching walls or floor, at least 0.5m from windows. Storage areas clean, dry, ventilated, no mold/water on walls. Humidity ≤ 70% (if no spec provided). Result: Low Risk / Medium Risk / High Risk.
+- QIMA documents signed: Factory Disclaimer, Draft Report, and COC must all be signed by both inspector and factory representative. Photos of signed documents mandatory.
+
+FLAG IF: Factory location differs from booking.
+FLAG IF: Calibration certificates are absent or expired.
+FLAG IF: Signed QIMA documents photos are missing.
+
+---
+
+## SECTION 14 — MANDATORY PHOTOS
+
+The following photos must be present in every report. Verify presence and content where possible.
+
+### Cover
+- Consumer Pack photo: frontal, vertical, product name fully readable.
+
+### GSS
+- GSS showing DFI QA label with signature visible.
+- Re-sealed GSS: polybag sealed with QIMA sticker, signed, date and order number written.
+
+### Comparison — GSS vs Actual Product
+For Consumer Pack AND Individual Pack (if present):
+- All four faces: top, bottom, front, back.
+- Date code area close-up (GSS and actual side by side or sequential).
+- Composition / ingredient label.
+- Volume or quantity claim area.
+- All barcodes and markings.
+- Instruction manual (if applicable).
+- Any packaging color difference or variation.
+Product inside (capsules, liquid, tablets, etc.): comparison photo required.
+
+### Carton
+- Shipping mark: front face + side face.
+- Inner shipping mark (if applicable).
+- Carton opened: showing inner packing method and product arrangement.
+
+### Measurements
+- At least 8 photos per measured checkpoint (one per sample).
+- Weight: photo of empty bottle/sachet + photo of each filled product weighed (all 8 or 13).
+- Dimension: photo of each sample measured (all 8 or 13).
+- Carton dimensions: 1 photo per dimension controlled.
+- Carton weight: 1 photo of scale with carton.
+
+### Tests
+- Carton drop test: before drop (carton intact) + during drop + after drop (carton exterior) + after drop (interior product condition).
+- Rubbing test: test being performed (cloth on product surface) + cloth result after test.
+- Adhesive test: test being performed on date code area + result after removal. Must cover both Consumer Pack and Individual Pack if present.
+- Barcode scanning: screenshot of scanner app showing the result.
+- Sensory check: all samples emptied/poured out.
+- Content check: all 8 or 13 samples with contents visible.
+
+### Workmanship
+- Each defect type: at least 1 photo with QIMA sticker or arrow clearly indicating the defect.
+- If no defects: "No Defects Found" text visible in photo section.
+
+### Factory Review
+- Factory location/entrance (confirming address matches booking).
+- Inspection room (showing lighting conditions).
+- Weighing scale and measuring tools with calibration certificates visible.
+- Signed Factory Disclaimer, Draft Report, and COC (3 separate photos).
+
+FLAG IF: Any mandatory photo category is absent.
+FLAG IF: Adhesive test photos do not show the date code area.
+FLAG IF: Comparison photos do not include all four faces of Consumer and Individual Pack.
+FLAG IF: Signed QIMA documents photos are missing.
+
+---
+
+## SECTION 15 — REPORT WRITING RULES
+
+### Language
+All report content in English.
+Exception: Chinese date codes — record exactly as printed in Chinese.
+
+### Typos and Data Integrity
+Common issues to check:
+- Wrong unit (e.g. "kg" written instead of "g").
+- All 8 or 13 samples showing identical weight/dimension values — likely a copy-paste error.
+- Unreasonable decimal precision (e.g. 0.30000000000000004).
+- Label Claim column containing anything other than a data value (no comments, no units allowed in that column).
+- Unit column containing anything other than a unit.
+- N/A row present for a spec that should have been measured.
+- Same weight or volume value duplicated across two different tables for the same spec.
+
+### Deadlines
+- Inspector report submission: 9:00 PM local time on day of inspection.
+- Report Team validation and delivery to client: 2:00 PM local time the next day.
+- If delayed: inform KA and ITL with a valid reason before the deadline.
+- Multi-manday orders: submit one report per day so client can review daily.
+
+### QIMAone Synchronization
+If any revision is made directly in QIMAone after PDF generation: ensure that results AND important remarks are properly synced within the platform.
+
+### Attachments
+Mandatory file to attach: Measurement Table Excel (always use the latest downloaded version).
+The Excel filename must NOT contain Chinese characters — the file will not open for the report team.
+
+FLAG IF: Measurement Table Excel is not attached.
+FLAG IF: Excel filename contains Chinese characters.
+FLAG IF: Final PDF contains obvious typos or error pages.
+
+---
+
+## SECTION 16 — SAMPLE COLLECTION ON SITE
+
+Inspectors must seal samples on site in the following situations:
+
+| Situation | Action |
+|---|---|
+| No GSS on site | Seal 1 pc of a good bulk product |
+| GSS is expired | Seal 1 pc of a good bulk product |
+| Critical defect found | Seal ALL critical defective samples |
+| Same defect found in > 50% of sample size | Seal at least 3 pcs of defective samples |
+
+After inspection — repacking rules:
+- Defective products must be repacked in the SAME carton they came from.
+- All good products must be fully repacked.
+
+FLAG IF: Report mentions critical defects but no mention of sealing.
+
+---
+
+## SECTION 17 — ESCALATION TRIGGERS (MUST CONTACT BACK OFFICE CC KA DURING INSPECTION)
+
+The following situations require immediate back office contact during the inspection.
+If any of these appear in a report without evidence of contact, flag it.
+
+1. Any failed finding, beyond AQL, or critical defect — wrong product, test fail, quantity mismatch, GSS different from bulk.
+2. Factory address differs from booking address.
+3. Factory refused carton drop test (non-fragile product).
+4. Factory refused to follow standard or client's special test procedure.
+5. Factory did not provide inspection tools.
+6. Inspection was performed in IAPP instead of QIMAone.
+7. Sampling level of Individual Pack does not match the actual product on site.
+8. Individual Pack present on site but not in QIMAone, or in QIMAone but not on site.
+9. No date code AND no batch code found on any packaging.
+10. GSS not on site / not signed by DFI Retail Group QA Team / expired.
+11. Factory refused to open the GSS for comparison.
+12. No 3M 500 tape (or 3M 600P / 810) available for adhesive test.
+
+---
+
+## SECTION 18 — CONTACTS
+
+KA Leader: John Tang | john.tang@qima.com
+CS / Quality Team: Winnie Lu | support@qima.com
+Quality Team general inbox: support@qima.com
+Sales in charge (SIC): Vicky Zee | vicky.zee@qima.com
+
+Loop in Report Leaders & KA via email for follow-up if inspector does not respond promptly before end of shift, to avoid delays in report sending.
+
+---
+
+## SECTION 19 — COMPLETE REVIEW CHECKLIST
+
+Use as a final pass. Every item must be checked.
+
+COVER PAGE
+[ ] Supplier + Factory name: combined format, English, both fields filled
+[ ] Product name: real name, not SKU or barcode
+[ ] Cover photo: Consumer Pack, frontal, vertical, name readable
+[ ] PO Number: "N/A" if not found (no extra comment)
+[ ] Date code cover sentence added if all three codes are N/A
+[ ] Location: English only
+[ ] Unit: not "Other"
+[ ] Overall result matches findings
+
+RESULT & REMARKS
+[ ] Overall result correctly applies Pass / Pending / Fail / Missing logic
+[ ] Adhesive fail = Pending (not Fail)
+[ ] Minimum 2 mandatory remarks present
+[ ] Pending/Fail: reason explicitly stated
+[ ] Tolerance remark present for dimension and health product weight checks
+[ ] No Chinese characters in remarks
+[ ] Remark result matches overall result
+
+STANDARDS
+[ ] Sampling level matches DFI Sampling Plan
+[ ] AQL values correct for product type
+[ ] Checked and Max numbers correct
+[ ] Individual Pack table: present only if product has individual pack
+[ ] Colors, Labels, Artworks: "OK" if no finding (not "N/A")
+
+DATE CODE
+[ ] Recorded exactly as printed
+[ ] Format and position match GSS
+[ ] Comparison close-up photo present
+[ ] Multiple batches: each separated by keyword, 1 batch per line
+[ ] Chinese date codes: recorded in Chinese
+
+BARCODE
+[ ] Full barcode numbers filled for each packaging level
+
+GSS
+[ ] Only "GSS" term used
+[ ] All 4 validity criteria confirmed
+[ ] All comparison elements photographed (all faces, date code, labels, barcodes)
+[ ] Product inside also compared
+[ ] Re-sealed GSS photo present with signed sticker and date/order number
+
+MEASUREMENTS
+[ ] Only claimed specs measured
+[ ] Sample size: 8 or 13 per packaging level
+[ ] Pass/Fail logic correctly applied per spec type
+[ ] Tolerance range stated in remark for dimension and health product weight
+[ ] No identical values across all samples
+[ ] No duplicated spec across two tables
+[ ] Measurement Table Excel attached, no Chinese characters in filename
+[ ] Volume method appropriate for product type
+[ ] Empty bottle/filled product weighed separately
+
+TESTS
+[ ] Carton drop: result correctly classified (PASS/PENDING/FAIL)
+[ ] Carton drop: remark describes actual finding
+[ ] Carton drop: photos before/during/after including interior
+[ ] Adhesive: performed on all printed areas, both Consumer and Individual Pack
+[ ] Adhesive: photos show date code area
+[ ] Adhesive: exemption remark present for applicable products
+[ ] Adhesive fail = Pending (not Fail)
+[ ] Rubbing: performed and photos present
+[ ] Sensory/Content: all samples emptied, all photos uploaded
+[ ] Other applicable tests completed (bristle pull, function, back adhesive)
+
+WORKMANSHIP
+[ ] Minimum 2 AQL tables present
+[ ] Defects only from existing list
+[ ] Multiple defect remark template used correctly
+[ ] Defects outside workmanship stage: not in AQL, remark added, report Pending
+[ ] All defect photos have arrows or stickers
+[ ] "No Defects Found" present if no defects
+
+QUANTITY
+[ ] Production status meets 100% finished / 80% packed threshold
+[ ] Multiple batches: proportional sampling applied
+
+PHOTOS
+[ ] All mandatory photo categories present (Section 14)
+[ ] Adhesive test photos show date code area
+[ ] Comparison photos cover all four faces of Consumer and Individual Pack
+[ ] Re-sealed GSS photo present
+[ ] Signed QIMA documents photos present (3 docs)
+[ ] Calibration certificate photos present
+
+GENERAL
+[ ] No typos or error pages in final PDF
+[ ] Measurement Table Excel attached
+[ ] QIMAone results and remarks synced if revision was made
+
+---
+# END OF KNOWLEDGE BASE

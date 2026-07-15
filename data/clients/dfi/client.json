@@ -1,0 +1,28 @@
+{
+  "id": "dfi",
+  "name": "DFI H&B",
+  "gi_rules": "gi/rules.md",
+  "corrected_dir": "corrected",
+  "flawed_dir": "flawed",
+  "introduced_checkpoints": {
+    "dfi_flawed": {
+      "remarks.carton_drop_observation": "Carton drop FAIL without required observation remark"
+    },
+    "report_q2614313993_flawed": {
+      "2-9-1-2": "comment: DFI GI: use only the term 'GSS' in report and pictures; 'sample' is banned.",
+      "2-12-1-3": "photo_count: DFI GI: outer carton dimension and weight images are required."
+    },
+    "report_q2615301660_flawed": {
+      "2-9-1-2": "comment: DFI GI: use only the term 'GSS'; 'sample' is banned.",
+      "2-8-1-6": "comment: DFI GI: adhesive test remark must state the type of tape used."
+    },
+    "report_q2616195180_flawed": {
+      "2-9-1-2": "comment: DFI GI: use only the term 'GSS'; 'sample' is banned.",
+      "2-12-1-3": "photo_count: DFI GI: outer carton dimension and weight images are required."
+    }
+  },
+  "holdout_keys": [
+    "dfi_flawed"
+  ],
+  "flawed_manifest": "flawed/injection_manifest.json"
+}

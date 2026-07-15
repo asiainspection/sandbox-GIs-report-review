@@ -1,0 +1,1739 @@
+{
+  "meta": {
+    "source": "data/output/pipeline/checkpoints/hallmark_checkpoints.json",
+    "hand_specs": null,
+    "checkpoint_count": 96,
+    "source_hash": "84cf3f1693c5c674"
+  },
+  "specs": {
+    "1_1_1": {
+      "checkpoint_id": "1_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_1_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: PO states 15,000 EA; IRF states 15,200 EA; report records 15,200 EA → wrong, must use PO qty. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Produced quantity / Packed quantity (PO & Product details section) — The quantity recorded must match the Order PO QTY from the \"Purchase Order Change\" document, not the total order QTY. The IRF filled by the supplier is not a valid source.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_1_2": {
+      "checkpoint_id": "1_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: IRF states unit = CTN; report records produced quantity in PCS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Produced quantity / Packed quantity unit (PO & Product details section) — The unit (CTN or PCS) must match the unit stated in the IRF. Produced quantity and packed quantity must use the same unit consistently.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_1_3": {
+      "checkpoint_id": "1_1_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_1_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 500 PDQs × 12 units each; report uses lot size = 500. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Lot size used for sampling (Workmanship section) — For PDQ products, the lot size entered for sampling must be the retail unit quantity (PDQ count × units per PDQ), not the PDQ count itself.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_2_1": {
+      "checkpoint_id": "1_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: PO shows HMK9700; report records HMK9725. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "SAP Group Number field (Document Availability checklist) — The SAP Group # in the report must match the SAP Group # on the purchase order.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_2_2": {
+      "checkpoint_id": "1_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_2_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Report contains spec HMK9700 (AOQL 1.5%) and spec HMK9725 (AOQL 3.0%); PO references HMK9725 but report uses AOQL 1.5%. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspection type / AOQL (report header) — When multiple specifications appear in one report, the inspection type and AOQL must be derived from the spec whose SAP Group # matches the order, not from any other spec present.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_3_1": {
+      "checkpoint_id": "1_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_3_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: IRF reason field is blank; report selects \"CQS – Inspection audit selected lot\". Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "HMK Inspection Reason field (Document Availability checklist) — The value selected must match the reason stated in the supplier's IRF. See valid values below.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_4_1": {
+      "checkpoint_id": "1_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.high_attention_product_ha_field.result",
+          "expected": "NOT_APPLICABLE",
+          "ground": "json"
+        }
+      },
+      "unless": {
+        "op": "atom",
+        "id": "1_4_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: the order ships to USA Kansas City (KC) is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "High Attention Product (HA) field / HCLP field (Document Availability checklist) — If the order ships to USA Kansas City (KC), both HA and HCLP fields must be answered Yes or No per the product specification. If the order does NOT ship to KC, both fields must be N/A.",
+      "extract": [],
+      "source": "must_not_be_na",
+      "tier": "atoms"
+    },
+    "1_4_2": {
+      "checkpoint_id": "1_4_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "1_4_2_vision",
+        "question": "Does photo content satisfy this requirement? All photo fields throughout the report — For HCLP products, the report must contain no product photos. Every image field must show a blank image with the remark \"HCLP, no photo\". This applies to all sections including defect photos.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "All photo fields throughout the report — For HCLP products, the report must contain no product photos. Every image field must show a blank image with the remark \"HCLP, no photo\". This applies to all sections including defect photos.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "1_4_3": {
+      "checkpoint_id": "1_4_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_4_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: HA = Yes; no mention of PE communication anywhere in the report. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspector's remark / HA-specific checkpoint (Document Availability checklist) — For HA products, the report must include a statement confirming the inspector communicated with the back office / Hallmark PE regarding special requirements.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_5_1": {
+      "checkpoint_id": "1_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_5_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Production site = PT IGP; destination field = \"International\". Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Client/Destination field (Document Availability checklist) — For suppliers Lung Cheong (Indonesia), Starlite (Malaysia), PT IGP, and all Hallmark brand orders destined for the USA, destination must be \"KC HKBO\". For Costco, Walmart, Walgreens, QVC orders, the retailer name must be selected.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "1_6_1": {
+      "checkpoint_id": "1_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_6_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Report is a re-inspection after a previous FAIL; no re-inspection reason stated at the top. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Report header / Inspector's remark — For re-inspection reports, the reason for re-inspection must appear at the head of the report.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_1_1": {
+      "checkpoint_id": "2_1_1",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.sr_test_report_check_document_availability_checklist.result",
+          "expected": "PASS",
+          "ground": "json"
+        }
+      },
+      "then": {
+        "op": "equals",
+        "selector": "report.overall_result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "SR Test Report Check (Document Availability checklist) — SR checkpoint result must be \"Passed\". If not passed, the overall report result must be FAIL.",
+      "extract": [],
+      "source": "checkpoint_fail_implies_overall",
+      "tier": "deterministic"
+    },
+    "2_1_2": {
+      "checkpoint_id": "2_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product = toy; SR report dated 6 months ago → expired (must be ≤4 weeks). Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "SR Test Report Check — report date / validity (Document Availability checklist) — SR report validity: standard products = 1 year; Toys & Children products = 4 weeks; Food-contact products (group HMK9700) = per PO. Check the SR report issue date against the inspection date.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_1_3": {
+      "checkpoint_id": "2_1_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_1_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: SR report is format-level; no remark confirming format match in the report. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "2_1_3_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: the SR report covers product format level (not SKU level) is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "SR Test Report Check (Document Availability checklist) — If the SR report covers product format level (not SKU level), verify the format matches the inspected product and the report is within validity. This must be noted in the report remarks.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_1_4": {
+      "checkpoint_id": "2_1_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "count_at_least",
+        "selector": "checklist.sr_test_report_check_document_availability_checklist.photo_count",
+        "min": 1,
+        "ground": "json"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "2_1_4_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: SR report result shows a failure but the factory provides a Hallmark override email is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "SR Test Report Check (Document Availability checklist) — If SR report result shows a failure but the factory provides a Hallmark override email, the checkpoint is acceptable. The override email must be uploaded in the report.",
+      "extract": [],
+      "source": "photos_required",
+      "tier": "atoms"
+    },
+    "2_1_5": {
+      "checkpoint_id": "2_1_5",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_1_5_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: SRR shows 3 \"No\"; SR checkpoint is marked Failed because no SR report was provided. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "2_1_5_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: the SRR shows 3 \"No\" for the 3 applicable tests is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "SR Test Report Check (Document Availability checklist) — If the SRR shows 3 \"No\" for the 3 applicable tests, SR report is not required. The checkpoint must NOT be failed in this case; the report must document this.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_1_6": {
+      "checkpoint_id": "2_1_6",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_1_6_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Re-run order; SR report references a different PO; no material-change confirmation mentioned. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "SR Test Report Check (Document Availability checklist) — For re-run orders reusing an SR from a different PO, the report must confirm the supplier provided a material-change confirmation to the 3rd party lab. Exception: Toys, Children products, Food-contact = always need new SR per PO.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_1_7": {
+      "checkpoint_id": "2_1_7",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_1_7_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: SR report missing; checkpoint simply marked Failed with no further remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "2_1_7_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: SR report is missing is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "SR Test Report Check (Document Availability checklist) — If SR report is missing, the report must flag it and note that Andrew Chan (andrew.chan@hallmark.com) was notified.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_2_1": {
+      "checkpoint_id": "2_2_1",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.fr_test_report_check_document_availability_checklist.result",
+          "expected": "PASS",
+          "ground": "json"
+        }
+      },
+      "then": {
+        "op": "equals",
+        "selector": "report.overall_result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "FR Test Report Check (Document Availability checklist) — FR checkpoint must show \"Passed\". If not passed, overall result must be FAIL.",
+      "extract": [],
+      "source": "checkpoint_fail_implies_overall",
+      "tier": "deterministic"
+    },
+    "2_2_2": {
+      "checkpoint_id": "2_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_2_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: HA = Yes; FR report is 8 months old and references a prior PO → invalid for HA, must be per PO. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "FR Test Report Check — report date / validity (Document Availability checklist) — FR validity: Non-HA items = 1 year; HA items = 1 year but must be tested per PO. If FR is missing, the FR checkpoint must be failed.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_3_1": {
+      "checkpoint_id": "2_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_3_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Ship test not referenced; no mention in FR report appendix; Documents checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "2_3_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless there are changes in: supplier, production process, product or packaging material, packed quantity, or packing method",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Documents and Sample Availability checkpoint (Document Availability checklist) — Ship test report must be on file and referenced. It is valid indefinitely unless there are changes in: supplier, production process, product or packaging material, packed quantity, or packing method. From 2024 onwards it is included as an appendix in the FR report. If missing, the Documents checkpoint must be failed.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_4_1": {
+      "checkpoint_id": "2_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: VAS/DAS Check section left blank; result = N/A without justification. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "VAS/DAS Check section — The report must document a side-by-side comparison of production sample against the DAS. This section cannot be left blank or skipped. VAS is used for Keepsake (KPS) only. If a limit sample is in use, it must be referenced.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_5_1": {
+      "checkpoint_id": "2_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "2_5_1_vision",
+        "question": "Does photo content satisfy this requirement? VAS/DAS Check / Retail packaging sections (for HO orders) — For HO orders, the report must confirm cross-check of: colorway SKU, colorway UPC vs. production package, package type and retail price, product image vs. spec, unit price consistency across DAS/specs/commit sheet/retail package, and copyri",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "VAS/DAS Check / Retail packaging sections (for HO orders) — For HO orders, the report must confirm cross-check of: colorway SKU, colorway UPC vs. production package, package type and retail price, product image vs. spec, unit price consistency across DAS/specs/commit sheet/retail package, and copyright consistency.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "2_6_1": {
+      "checkpoint_id": "2_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_6_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: HA = Yes; PP report not referenced; workmanship remarks make no mention of PP defects. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Documents and Sample Availability / Workmanship section — For HA and HCLP products, the PP report must be referenced. Defects noted in the PP report must be specifically addressed during the workmanship check. Packaging details must be compared against the PP report.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_7_1": {
+      "checkpoint_id": "2_7_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_7_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Carton contains 3 SKUs; no packing list referenced; no assortment verification remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Workmanship / Retail packaging section — When a carton contains mixed SKUs, the packing list must be used to verify the assortment and carton range. Any discrepancy must be clearly remarked.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "2_8_1": {
+      "checkpoint_id": "2_8_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "checklist.inspector_s_remark.comment",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Inspector's remark / VAS/DAS Check section — For inspections at PT. Camino Industrial (Indonesia) on KPS items, the report must state that the PT. Camino Visual Standard was applied in addition to general Hallmark visual requirements.",
+      "extract": [],
+      "source": "remark_when_fail",
+      "tier": "deterministic"
+    },
+    "3_1_1": {
+      "checkpoint_id": "3_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_1_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product = 3D Keepsake; destination = KC HKBO; inspection type = AOQL 3.0% Single Sampling → wrong, must be AOQL 1.5%. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspection type / AOQL (report header) — The inspection type must match the product category and destination channel per the decision matrix below.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "3_2_1": {
+      "checkpoint_id": "3_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Lot = 8,000 pcs; AOQL 3.0% single sampling; sample size = 65 → wrong, must be 105. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "3_2_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless specs specify otherwise",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Sample size field (Workmanship section) — The sample size must match the correct sampling table for the chosen inspection type and lot size. Use the tables below. Lot size must not exceed 50,000 units per lot unless specs specify otherwise.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "3_2_2": {
+      "checkpoint_id": "3_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_2_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Double sampling AOQL 3.0%; 1st sample: 0 defects (→ accepted); report shows a 2nd sample was taken anyway. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "2nd sample section (Workmanship section) — A 2nd sample is only valid if the 1st sample defect count fell between the accept and reject numbers (neither accepted nor rejected in round 1). If a 2nd sample appears but the 1st sample result was already accept or reject, it is invalid.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "3_3_1": {
+      "checkpoint_id": "3_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_3_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Inspector found 0 defects; records C# = 0 (actual count) instead of the table threshold (e.g., 5). Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Acceptance point / C# field (Workmanship section) — The acceptance number field must contain the threshold from the sampling table, NOT the actual count of defects found.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "3_4_1": {
+      "checkpoint_id": "3_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product packed 12 retails per wholesale; inspector sampled 30 wholesale packs instead of 30 retail units. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Sampling unit / Inspector's remark (Workmanship section) — The sampling unit must always be the retail unit (Market Sale Unit), not the wholesale or shipper unit.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_1_1": {
+      "checkpoint_id": "4_1_1",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.critical_defects_count.result",
+          "expected": "PASS",
+          "ground": "json"
+        }
+      },
+      "then": {
+        "op": "equals",
+        "selector": "report.overall_result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "Critical defects count / Overall result (Workmanship section) — Acceptance number for critical defects is always 0. If any critical defect is found, overall result must be FAIL and escalation to PE must be noted.",
+      "extract": [],
+      "source": "checkpoint_fail_implies_overall",
+      "tier": "deterministic"
+    },
+    "4_1_2": {
+      "checkpoint_id": "4_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Sharp edge found on product; report classifies it as Critical defect without PE evaluation note. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Sharp point / sharp edge checkpoint (Workmanship or checklist section) — Sharp point/edge check must be recorded for ALL Hallmark products. All products are considered free of shape hazard by default. If a sharp point or edge is found, it must be reported and escalated to PE — it is not automatically classified as Critical, but PE must evaluate.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_2_1": {
+      "checkpoint_id": "4_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: C# = 5; functional defects = 4 (> C#/2 = 2.5); Function Test = Pass → wrong, must be Fail. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Functional defect count / Function Test result (Workmanship + Tests section) — Functional defect count must be recorded separately. Accept if ≤ C#/2. If > C#/2, Function Test must be failed and count remarked. Escalate to PE.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_3_1": {
+      "checkpoint_id": "4_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_3_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: AOQL 3.0% inspection; 2 Minor defects recorded in Minor field; not reclassified as Major. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Minor defects field / Major defects field (Workmanship section) — For AOQL inspections (all except plush), Minor defects must be reclassified as Major. There is no Minor defect tolerance for AOQL. Exception: Plush items use AOQL 1.5% Major / 4.0% Minor.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_3_2": {
+      "checkpoint_id": "4_3_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "count_at_most",
+        "selector": "checklist.defect_photos_photos_section.photo_count",
+        "max": 1,
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "Defect photos (Photos section) — Every Major defect must have 2 photos: 1 global view and 1 close-up.",
+      "extract": [],
+      "source": "photo_metadata",
+      "tier": "deterministic"
+    },
+    "4_3_3": {
+      "checkpoint_id": "4_3_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "4_3_3_vision",
+        "question": "Does photo content satisfy this requirement? Defect description / defect photos (Workmanship section) — For defects longer than 1 cm, the defect description must include a measurement (length/area) and the photo must show a ruler.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Defect description / defect photos (Workmanship section) — For defects longer than 1 cm, the defect description must include a measurement (length/area) and the photo must show a ruler.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "4_3_4": {
+      "checkpoint_id": "4_3_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_3_4_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 0 defects found; defect section left blank. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "4_3_4_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: no defect is found is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Workmanship summary / defect list — If no defect is found, the report must explicitly record \"no defect found\".",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_4_1": {
+      "checkpoint_id": "4_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Box of 6 cards; 3 cards have a minor print mark; inspector records 3 defects. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defect count (Workmanship section) — For box cards or set products, only 1 defect is counted per box or set, regardless of how many individual items inside are affected.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_4_2": {
+      "checkpoint_id": "4_4_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_4_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 2 mm print smudge on inner page; recorded as Minor defect → should not be recorded at all. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "4_4_2_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless they affect sellability",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Defect list (Workmanship section) — Minor print defects under 5 mm must not be reported unless they affect sellability. If they affect sellability, they must be classified as Major.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_4_3": {
+      "checkpoint_id": "4_4_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_4_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Kraft paper bag; surface dirt marks (no glue residue); recorded as Minor defects. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defect list (Workmanship section) — Dirt marks on kraft recycled paper material (without glue residue penetrating onto the bag surface) are acceptable and must not be recorded as defects.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_5_1": {
+      "checkpoint_id": "4_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_5_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Felt ornament; slight asymmetry in embroidered eye; recorded as Major defect. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Workmanship remarks / DAS comparison section — For felt ornaments and hand-crafted items, the following variations are acceptable and must NOT be recorded as defects: shape/width/thickness variation (if item remains recognizable), facial feature variation (if symmetrical and proportionate), design feature placement variation (if overall appearance is consistent), variation between units within a wholesale.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "4_6_1": {
+      "checkpoint_id": "4_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "4_6_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Handle bag; batch check used; no mention of any individual sample fully compared against DAS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Workmanship / DAS check section — For card items, boxed cards, and handle bags using the batch check method, at least 1 production sample must be fully compared against the DAS. Remaining samples are checked via batch method. The report must show this was done.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "5_1_1": {
+      "checkpoint_id": "5_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "5_1_1_vision",
+        "question": "Does photo content satisfy this requirement? Measurement section / product dimension checkpoint — Measurement data must be recorded for at least 1 retail sample. No AQL applies. If a noticeable difference exists, a failure remark and a measurement photo are required.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Measurement section / product dimension checkpoint — Measurement data must be recorded for at least 1 retail sample. No AQL applies. If a noticeable difference exists, a failure remark and a measurement photo are required.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "5_1_2": {
+      "checkpoint_id": "5_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "5_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Paper bag inspected; handle length not mentioned in measurements. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Measurement remarks (paper bag products) — For paper bags, handle length must be measured and remarked.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "5_1_3": {
+      "checkpoint_id": "5_1_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "5_1_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product has a detachable ribbon component; only overall product weight recorded. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Measurement remarks (products with components) — For products with components, component weight must be recorded in addition to product dimensions.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "5_2_1": {
+      "checkpoint_id": "5_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "5_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: PressSIGN result = 84%; no remark in report; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "VAS/DAS Check — color checkpoint — CMYK color result (PressSIGN report) must be ≥90%. If below 90%, the report must include a remark. If neither PressSIGN nor Delta E is available, the check relies on visual comparison and any doubt must be recorded as a failure.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "5_2_2": {
+      "checkpoint_id": "5_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "5_2_2_vision",
+        "question": "Does photo content satisfy this requirement? VAS/DAS Check — color checkpoint (solid colors) — For PMS / solid colors, Delta E (Delta E 2000) must be ≤2. If >2, the report must flag it and include photos of the color target Lab value and the Delta E reading.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "VAS/DAS Check — color checkpoint (solid colors) — For PMS / solid colors, Delta E (Delta E 2000) must be ≤2. If >2, the report must flag it and include photos of the color target Lab value and the Delta E reading.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "6_1_1": {
+      "checkpoint_id": "6_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_1_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 1 packaging defect found at 18 units; no 2nd sample conducted; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Packaging checklist (2D & 3D Packaging section) — Packaging check must cover 18 units (shippers / wholesale / retail). If 1–2 defects are found, a 2nd sample of 100 units is required (118 total). The report must reflect which stage was reached.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_2_1": {
+      "checkpoint_id": "6_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Standard HMK order; carton measured 60×55×90 cm → exceeds max; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Shipper Dimensions & Weight & Marks checkpoint — Actual shipper dimensions and weight must be within the applicable limits. If exceeded, the shipper check must be failed.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_3_1": {
+      "checkpoint_id": "6_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "6_3_1_vision",
+        "question": "Does photo content satisfy this requirement? Shipper Dimensions & Weight & Marks checkpoint / shipmark photos — Shipmark color must be BLACK. Both end panels must include: NET WEIGHT (kg), GROSS WEIGHT (kg), DIMENSIONS (cm), CARTON NUM, HALLMARK MARKETING COMPANY LLC, REUSE #, MADE IN. Font approx. 13 mm bold. Hallmark crown logo on side panel",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Shipper Dimensions & Weight & Marks checkpoint / shipmark photos — Shipmark color must be BLACK. Both end panels must include: NET WEIGHT (kg), GROSS WEIGHT (kg), DIMENSIONS (cm), CARTON NUM, HALLMARK MARKETING COMPANY LLC, REUSE #, MADE IN. Font approx. 13 mm bold. Hallmark crown logo on side panel 1; shipping address on side panel 2.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "6_3_2": {
+      "checkpoint_id": "6_3_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_3_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Inner dims = 20\"×16\"×12\" → range = 2907–3393; REUSE # = 2500 → out of range. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "REUSE # value on shipper end panel — REUSE # = 4-digit inner volume in cubic inches. Must fall within the range [(L−0.5)×(W−0.5)×(D−0.5)] to [(L+0.5)×(W+0.5)×(D+0.5)] using inner dimensions in inches.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_4_1": {
+      "checkpoint_id": "6_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Hallmark US order; corner label placed on top panel of carton. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Carton Labels & UPC Check checkpoint — Corner label required for all finished-product shipments to Hallmark US and Canada warehouses. Not required for: sales samples, component orders, international orders (excluding Canada). Label must be on the right bottom corner of the crown-logo side panel, 1\"–3\" from the bottom, wrapping around two adjacent panels, within ±15° of parallel with carton bottom.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_4_2": {
+      "checkpoint_id": "6_4_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_4_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Wholesale QTY field shows retail count (e.g., 120) instead of wholesale box count (e.g., 10). Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Carton Labels & UPC Check — label content — Mandatory label content: SAP Material Number (top), Material Number/SKU (11-char, no international suffix), material description (exact match to PO/spec), Wholesale QTY (wholesale boxes in shipper, max 4 digits, NOT retail count), Partial quantity (blank or 0), Destination, Date code (MMYY, must not post-date shipping month), Vendor ID (GS preferred), Made In (2-letter ISO), Canada Price (if applicable).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_4_3": {
+      "checkpoint_id": "6_4_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_4_3_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: SKU = 99TM2024; report shows scan result = \"99TM2024\" (no 4-3-4 formatting). Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Carton Labels & UPC Check — 4-3-4 format — SKU barcode scanning result must follow the 4-3-4 structure. Leading zeros to reach 4 digits in first and last parts; spaces after letter(s) to make middle part total 3 characters.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_4_4": {
+      "checkpoint_id": "6_4_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_4_4_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Barcode on corner label encodes wrong SKU; factory applies handwritten correction → not acceptable. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "6_4_4_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: corner label has incorrect non-barcode information (destination is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Carton Labels & UPC Check — label corrections — If corner label has incorrect non-barcode information (destination, date code, vendor ID, COO), an overlay label is acceptable. Barcode data errors require a full reprint; manual amendments to barcodes are not allowed.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_5_1": {
+      "checkpoint_id": "6_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_5_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Extra price barcode visible on retail box; not scanned; not mentioned in report. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "6_5_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: an extra barcode (price info barcode) is present on the retail box is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Carton Labels & UPC Check / Retail Labeling section — If an extra barcode (price info barcode) is present on the retail box, it must be scanned and recorded. Readable metadata → Pass; unreadable → Fail.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_6_1": {
+      "checkpoint_id": "6_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_6_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: PFC has only 1 orange label; corner label shows handwritten qty correction. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Partially Filled Carton checkpoint — Only 1 PFC per PO per shipment; must be the last carton number. PFC must have: 2 orange \"PARTIALLY FILLED CARTON\" labels on opposite corners, and a printed corner label showing the actual wholesale quantity (no manual amendments accepted). Actual packed quantity must match the corner label.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_7_1": {
+      "checkpoint_id": "6_7_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_7_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Label missing production date; label placed over sealing area. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Wholesale Packaging checkpoint — Required fields: USA SKU | Canada SKU | product description | retails per wholesale | production date (MMYY) | Made In | Vendor ID. Canada-only orders show only Canada SKU. Label must not be on the sealing area. For products going through Hallmark DC, updated wholesale labeling guidelines apply.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_7_2": {
+      "checkpoint_id": "6_7_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_7_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Film wholesale; no label; stock number on retail = 2 mm tall (below 3 mm) → label required but missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Wholesale Packaging checkpoint (film/polybag wholesale) — Wholesale label not required for film/polybag wholesale only if ALL 4 conditions are met: (1) stock number on retail ≥3 mm tall, (2) stock number visible through film, (3) retail count countable through film, (4) retail UPC visible and scannable through film.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_8_1": {
+      "checkpoint_id": "6_8_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_8_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: HCA order; wholesale bag is standard PE, not LDPE recycled; gross weight = 13 kg → both fail. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Wholesale Packaging checkpoint (HCA orders) — Each wholesale unit must be in a sealed LDPE ≥30% recycled bag (min. 40 micron / 1.5 mil) with visible stock number and scannable barcode. White wholesale label min. 3.25\"×1.125\" (83×29 mm), black on white, on end or side panel. 1FB inner carton: 420×170×205 mm ±0/−2 mm. Each shipper must contain only 1 stock number. Gross weight ≤12 kg (≤15 kg tag-on).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_9_1": {
+      "checkpoint_id": "6_9_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_9_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: PO specifies 12 retails per wholesale; actual pack = 10; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Retail Packaging checkpoint — Retail packaging must match spec, DAS/VAS, and PO on: quantity, packing components, packing sequence. Materials must be clean, undamaged, free from smears and odors. Standard pass remark: \"Conform to Specs, PO and approved ship test report.\"",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_10_1": {
+      "checkpoint_id": "6_10_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_10_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Retail polybag width = 6 inches; no suffocation warning on bag. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Polybag checkpoint — Minimum thickness >1 mil (0.0254 mm). If bag opening width (flat) ≥5 inches, suffocation warning mandatory in English + French + Spanish (not required for wholesale polybags). Warning repeats every 18 inches. \"WARNING\" in ALL CAPS, min. 4 mm height. Font size by bag perimeter: ≥60 in → 24 pt | 40–59 in → 18 pt | 25–39 in → 14 pt | <25 in → 10 pt.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_11_1": {
+      "checkpoint_id": "6_11_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "6_11_1_vision",
+        "question": "Does photo content satisfy this requirement? Shipper Dimensions & Weight & Marks / photo section — If a fragile label or marking is present on the shipper, the report must include a photo of it. Symbol standard: 75 mm tall, 31 mm from top flap score and 31 mm from corner score.",
+        "ground": "vision"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "6_11_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: a fragile label or marking is present on the shipper is not identified or mentioned in the report",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Shipper Dimensions & Weight & Marks / photo section — If a fragile label or marking is present on the shipper, the report must include a photo of it. Symbol standard: 75 mm tall, 31 mm from top flap score and 31 mm from corner score.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "6_12_1": {
+      "checkpoint_id": "6_12_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_12_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Ship test specifies 3-layer carton; inspector records 2-layer carton; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Shipper Packaging checkpoint — Packing method recorded in the report must conform to the ship test report, COP, and/or packaging specification.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_13_1": {
+      "checkpoint_id": "6_13_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_13_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Dayspring carton mark includes \"Case Count: 3 of 24\" line → must be removed. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Shipper Dimensions & Weight & Marks (Dayspring orders) — As of April 2025, \"Case Count: xx of xxx\" must NOT appear on the Dayspring carton mark. Dayspring corner label: 4\"×4\", top right corner of long carton side, 1 per carton. Must include: DaySpring item number (1\" font, scannable barcode), prime item number, carton quantity, merchandise description, date of manufacture. Item number = UPC code with first and last digits removed (10-digit result).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "6_14_1": {
+      "checkpoint_id": "6_14_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_14_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: End panel missing Vendor ID; Production Date in DD/MM/YYYY format instead of MMYY. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Shipper Dimensions & Weight & Marks (international non-Canada orders) — End panels must include: PO Number, Stock No., Description, Qty, Net weight (kg), Gross weight (kg), Dimensions (cm), Vendor ID, Production Date (MMYY), Made In, REUSE #. Font: 19 mm for PO# and SKU; 13 mm for other fields.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_1_1": {
+      "checkpoint_id": "7_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "7_1_1_vision",
+        "question": "Does photo content satisfy this requirement? VAS/DAS Check section — Report must document a side-by-side comparison of the production sample against the DAS. Result cannot be left blank.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "VAS/DAS Check section — Report must document a side-by-side comparison of the production sample against the DAS. Result cannot be left blank.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "7_2_1": {
+      "checkpoint_id": "7_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Spell Check = Yes; retail package contains \"BIRTHAY\" instead of \"BIRTHDAY\" — should have been caught. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Spell Check checkpoint — Spell check must be performed on logos, text, event numbers, and all characteristics on packaging, verified against DAS and spec. Checkpoint recorded as \"Yes\" (match) or flagged if discrepancy found.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_3_1": {
+      "checkpoint_id": "7_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_3_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Spec requires Hallmark crown logo on front panel; logo missing on production sample; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Retail Labeling, UPC & COO checkpoint / DAS comparison — The Hallmark crown logo must be present and correctly applied to retail packaging where required by spec.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_4_1": {
+      "checkpoint_id": "7_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Copyright year on retail package = 2023; spec and DAS show 2025 → discrepancy; checkpoint = Pass. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Warning Statement and License checkpoint — Copyright and licensing information on the retail product must match spec and DAS. Any discrepancy must be failed and remarked.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_5_1": {
+      "checkpoint_id": "7_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_5_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product has button cell battery; ships to US; retail packaging has no Reese's Law warning → must fail. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Reece's Law Check checkpoint — Applicable only to items with button cell batteries shipping to US/Canada. Both product and retail packaging must show compliant warning statements. Exception: heavily embossed/textured products — product marking not required. Not applicable to Keepsake 2024 products or toy products for children under 14 complying with applicable Toy Standard. Items without button cell batteries or non-US/Canada shipments → N/A.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_6_1": {
+      "checkpoint_id": "7_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_6_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 2D product with display board; PID Number checkpoint = N/A with no justification. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "PID Number checkpoint — PID number on display boards must be checked and recorded for 2D products. If no display board → N/A.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "7_7_1": {
+      "checkpoint_id": "7_7_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "7_7_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Sharp edge found on decorative product (not intended to be sharp); recorded as Minor defect; no PE escalation. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Workmanship remarks / sharp point checkpoint — Must be recorded for ALL Hallmark products. All products are free of shape hazard by default. If a sharp point or edge is found (including areas not designed to be sharp), report and escalate to PE.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "8_1_1": {
+      "checkpoint_id": "8_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_1_1_vision",
+        "question": "Does photo content satisfy this requirement? Additional Tests section / all test checkpoints — All applicable tests must appear in the report with their result. Any test listed in the \"Additional Tests\" section of the booking or spec must be documented with supporting photos. If a test fails, number of failed pieces must be stated in remarks. ",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Additional Tests section / all test checkpoints — All applicable tests must appear in the report with their result. Any test listed in the \"Additional Tests\" section of the booking or spec must be documented with supporting photos. If a test fails, number of failed pieces must be stated in remarks. If a test is not required, supporting evidence must be provided (reference to PP report, spec page, or email).",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_1_2": {
+      "checkpoint_id": "8_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "8_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Pull test performed but no remark clarifying whether samples came from visual pool or separate bulk draw. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Workmanship sample / abuse test remarks — Abuse test samples (pull test, glue joint test) must be drawn from bulk separately and noted as such — not from the visual inspection sample pool.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "8_2_1": {
+      "checkpoint_id": "8_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "8_2_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Only 1 function result recorded for the entire report; no distinction between function check and formal function test. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Visual inspection section + Function Test (Tests section) — A function check (1–2 cycles per sample) must appear in the visual inspection section. The formal function test (25 cycles per spec) must appear separately in the test section. These are two distinct checkpoints and cannot be merged. Sample size for FR KPS, Greeting Cards, Houseware formal function test = 1 unit.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "8_3_1": {
+      "checkpoint_id": "8_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_3_1_vision",
+        "question": "Does photo content satisfy this requirement? Carton Labels & UPC Check / Retail Labeling checkpoint — Every barcode on the carton and retail package must be scanned, with a photo in the report. Sample sizes: shipper carton = 1 carton (all barcodes on corner label); retail Greetings/Print Specialty/Gift/Ornament = 1 pc; retail International/Cra",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Carton Labels & UPC Check / Retail Labeling checkpoint — Every barcode on the carton and retail package must be scanned, with a photo in the report. Sample sizes: shipper carton = 1 carton (all barcodes on corner label); retail Greetings/Print Specialty/Gift/Ornament = 1 pc; retail International/Crayola/M&S = 10 pcs.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_4_1": {
+      "checkpoint_id": "8_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "8_4_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: 2D product with Do-it hook; no hanger test result recorded; checkpoint = N/A. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Do-it/Euro Hook/Hang Tab checkpoint (or Hanger Check) — Applies to 2D products with a hook or Do-it, and 3D Keepsakes with a hook. Test: 3× product weight held for 1 minute. Result must be recorded as Pass or Fail; if failed, pull-off force data must appear in remarks.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "8_5_1": {
+      "checkpoint_id": "8_5_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_5_1_vision",
+        "question": "Does photo content satisfy this requirement? Pull test / Additional Tests section — Result must be recorded. If failed, pull-off force data must appear in remarks. No photo required unless failed. If a DIY weight pull tester was used, the report must state this.",
+        "ground": "vision"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "8_5_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless failed",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Pull test / Additional Tests section — Result must be recorded. If failed, pull-off force data must appear in remarks. No photo required unless failed. If a DIY weight pull tester was used, the report must state this.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_6_1": {
+      "checkpoint_id": "8_6_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_6_1_vision",
+        "question": "Does photo content satisfy this requirement? Additional Tests section — Result must be recorded. No photo required unless failed. Not required for Gift Presentation & Package Expressions BU products, nor for fabric/plush items. For glass or ceramic décor not handled in the coated area: up to 25% coating removal is acceptable.",
+        "ground": "vision"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "8_6_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless failed",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Additional Tests section — Result must be recorded. No photo required unless failed. Not required for Gift Presentation & Package Expressions BU products, nor for fabric/plush items. For glass or ceramic décor not handled in the coated area: up to 25% coating removal is acceptable.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_7_1": {
+      "checkpoint_id": "8_7_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_7_1_vision",
+        "question": "Does photo content satisfy this requirement? Grammage of Paper and Paperboard checkpoint — Result must be recorded for 5 samples. Acceptable tolerance: ±5% vs. label claim. A photo and the actual measurement data must appear in the report.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Grammage of Paper and Paperboard checkpoint — Result must be recorded for 5 samples. Acceptable tolerance: ±5% vs. label claim. A photo and the actual measurement data must appear in the report.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_8_1": {
+      "checkpoint_id": "8_8_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "8_8_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: FR report requires glue joint test; no result recorded in report; checkpoint absent. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Additional Tests section — Result must be recorded per FR report instructions.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "8_9_1": {
+      "checkpoint_id": "8_9_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_9_1_vision",
+        "question": "Does photo content satisfy this requirement? Techno Function / Additional Tests section — Results for 5 samples must be recorded: working current <200 mA, standby current <10 µA, voltage per supplier batteries, dB 75–85 dB (Keepsake). \"Battery Powered Product Evaluation Report\" from factory must be referenced. A photo of the recorded test valu",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Techno Function / Additional Tests section — Results for 5 samples must be recorded: working current <200 mA, standby current <10 µA, voltage per supplier batteries, dB 75–85 dB (Keepsake). \"Battery Powered Product Evaluation Report\" from factory must be referenced. A photo of the recorded test values must be included.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_10_1": {
+      "checkpoint_id": "8_10_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "8_10_1_vision",
+        "question": "Does photo content satisfy this requirement? Envelope Seal Test checkpoint — Applicable to Hallmark UK, Hallmark UK Own Brand, Hallmark Australia, and M&S only. 10 envelope samples. Pass = fiber pull detected after 20 min. Fail = flap opens before 20 min, or no fiber pull after 20 min. 1 photo of tested sample showing tearing area required.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Envelope Seal Test checkpoint — Applicable to Hallmark UK, Hallmark UK Own Brand, Hallmark Australia, and M&S only. 10 envelope samples. Pass = fiber pull detected after 20 min. Fail = flap opens before 20 min, or no fiber pull after 20 min. 1 photo of tested sample showing tearing area required.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "8_11_1": {
+      "checkpoint_id": "8_11_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "8_11_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Product is ceramic; no carton drop test in report; not flagged as missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": {
+        "op": "atom",
+        "id": "8_11_1_excuse_0",
+        "question": "Does this never-flag condition apply (if yes, do not flag)? Condition: Exception condition is met: unless a new trigger applies)",
+        "role": "excuse",
+        "ground": "atom"
+      },
+      "requirement": "Additional Tests section — Carton drop test is mandatory when ANY of the following apply: (1) Hallmark engineering requested it in spec or email, (2) product is ceramic or glass, (3) any product dimension >16\", (4) item previously failed ship test even once, (5) any fragile note/icon/sign on packaging. If 1st lot passed, subsequent lots do not require it (unless a new trigger applies). Any breakage must be escalated to Hallmark responsible Engineer.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "9_1_1": {
+      "checkpoint_id": "9_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_1_1_vision",
+        "question": "Does photo content satisfy this requirement? All photos throughout the report — All photos must be in landscape orientation and have a description caption. Date format in reports must be DD-Month-YYYY (e.g., 17-July-2020).",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "All photos throughout the report — All photos must be in landscape orientation and have a description caption. Date format in reports must be DD-Month-YYYY (e.g., 17-July-2020).",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_1": {
+      "checkpoint_id": "9_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_2_1_vision",
+        "question": "Does photo content satisfy this requirement? Carton / Shipper photo section — Minimum 3 photos required: (1) 45° view showing corner label position and shipping mark, (2) close-up of corner label (both sides in one photo if possible), (3) photo allowing easy count of wholesale quantity (rows/columns/layers visible).",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Carton / Shipper photo section — Minimum 3 photos required: (1) 45° view showing corner label position and shipping mark, (2) close-up of corner label (both sides in one photo if possible), (3) photo allowing easy count of wholesale quantity (rows/columns/layers visible).",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_2": {
+      "checkpoint_id": "9_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_2_2_vision",
+        "question": "Does photo content satisfy this requirement? Wholesale package photo section — Minimum 2 photos: (1) side view showing wholesale label/marking, (2) view showing number of retails inside one wholesale.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Wholesale package photo section — Minimum 2 photos: (1) side view showing wholesale label/marking, (2) view showing number of retails inside one wholesale.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_3": {
+      "checkpoint_id": "9_2_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_2_3_vision",
+        "question": "Does photo content satisfy this requirement? Retail package photo section — Minimum 3 photos: front view, back view, close-up of retail labeling. If already present in DAS check section, no duplication needed.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Retail package photo section — Minimum 3 photos: front view, back view, close-up of retail labeling. If already present in DAS check section, no duplication needed.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_4": {
+      "checkpoint_id": "9_2_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_2_4_vision",
+        "question": "Does photo content satisfy this requirement? DAS check photo section — 8–10 photos required, DAS and production sample in the same photo: front/back/bottom of retail package, front/back of product, additional side views if applicable, 1 group photo showing DAS alongside 4–6 production units.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "DAS check photo section — 8–10 photos required, DAS and production sample in the same photo: front/back/bottom of retail package, front/back of product, additional side views if applicable, 1 group photo showing DAS alongside 4–6 production units.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_5": {
+      "checkpoint_id": "9_2_5",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "9_2_5_vision",
+        "question": "Does photo content satisfy this requirement? UPC scan photos — UPC scan on corner label = 4 photos. UPC scan on retail package = 1 photo. Each barcode must have a corresponding photo.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "UPC scan photos — UPC scan on corner label = 4 photos. UPC scan on retail package = 1 photo. Each barcode must have a corresponding photo.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "9_2_6": {
+      "checkpoint_id": "9_2_6",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "count_at_most",
+        "selector": "checklist.defect_photos_workmanship_section.photo_count",
+        "max": 1,
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "Defect photos (Workmanship section) — Every Major defect: 1 global view + 1 close-up. Defects >1 cm: ruler visible in photo; length/area in caption.",
+      "extract": [],
+      "source": "photo_metadata",
+      "tier": "deterministic"
+    },
+    "10_1_1": {
+      "checkpoint_id": "10_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "10_1_1_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Channel = M&S; report uses AOQL 3.0% → wrong, must use AQL Level II. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspection type / AOQL field (report header) — Verify the inspection type used matches the channel-specific requirement below.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "11_1_1": {
+      "checkpoint_id": "11_1_1",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.overall_result_report_header.result",
+          "expected": "PASS",
+          "ground": "json"
+        }
+      },
+      "then": {
+        "op": "equals",
+        "selector": "report.overall_result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "Overall result (report header) — Overall result must be PASS only if ALL conditions below are met. If any single condition fails, overall result must be FAIL.",
+      "extract": [],
+      "source": "checkpoint_fail_implies_overall",
+      "tier": "deterministic"
+    },
+    "11_1_2": {
+      "checkpoint_id": "11_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "11_1_2_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Overall result = Fail; no mention of PE escalation in any remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspector's remark / escalation note — PE escalation is required and must be noted in the report for: all FAIL results, functional defect count > C#/2, any finding of sharp point/edge/small part, carton drop test breakage.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    }
+  }
+}

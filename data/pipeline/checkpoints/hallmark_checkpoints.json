@@ -1,0 +1,3662 @@
+{
+  "meta": {
+    "name": "Hallmark Inspection Report Review – Rules Reference v2",
+    "source": "/Users/williambrun/Documents/test_GI_reports/data/GI/hallmark_inspection_review_rules_v2 1.md",
+    "generated_at": "2026-07-10T15:05:04"
+  },
+  "checkpoints": [
+    {
+      "id": "1_1_1",
+      "section": "general_report_setup",
+      "requirement": "Produced quantity / Packed quantity (PO & Product details section) — The quantity recorded must match the Order PO QTY from the \"Purchase Order Change\" document, not the total order QTY. The IRF filled by the supplier is not a valid source.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against the PO document and the IRF",
+      "focus_terms": [
+        "Produced quantity",
+        "Packed quantity (PO & Product details section)"
+      ],
+      "md_sections": [
+        "Produced quantity",
+        "Packed quantity (PO & Product details section)",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "PO states 15,000 EA; IRF states 15,200 EA; report records 15,200 EA → wrong, must use PO qty",
+        "Report does not satisfy: The quantity recorded must match the Order PO QTY from the \"Purchase Order Change\" document, not the total order QTY. The IRF filled by the supplier is not a valid source."
+      ],
+      "source_rule_id": "1.1.1",
+      "source_lines": {
+        "start": 26,
+        "end": 34
+      },
+      "context": "FULL REPORT — cross-check against the PO document and the IRF",
+      "examples": {
+        "pass": [
+          "PO states 15,000 EA; report records 15,000 EA"
+        ],
+        "fail": [
+          "PO states 15,000 EA; IRF states 15,200 EA; report records 15,200 EA → wrong, must use PO qty"
+        ]
+      }
+    },
+    {
+      "id": "1_1_2",
+      "section": "general_report_setup",
+      "requirement": "Produced quantity / Packed quantity unit (PO & Product details section) — The unit (CTN or PCS) must match the unit stated in the IRF. Produced quantity and packed quantity must use the same unit consistently.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check produced qty unit, packed qty unit, and IRF unit",
+      "focus_terms": [
+        "Produced quantity",
+        "Packed quantity unit (PO & Product details section)"
+      ],
+      "md_sections": [
+        "Produced quantity",
+        "Packed quantity unit (PO & Product details section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "IRF states unit = CTN; report records produced quantity in PCS",
+        "Report does not satisfy: The unit (CTN or PCS) must match the unit stated in the IRF. Produced quantity and packed quantity must use the same unit consistently."
+      ],
+      "source_rule_id": "1.1.2",
+      "source_lines": {
+        "start": 35,
+        "end": 43
+      },
+      "context": "SECTION — cross-check produced qty unit, packed qty unit, and IRF unit",
+      "examples": {
+        "pass": [
+          "IRF states unit = CTN; report records produced quantity and packed quantity both in CTN"
+        ],
+        "fail": [
+          "IRF states unit = CTN; report records produced quantity in PCS"
+        ]
+      }
+    },
+    {
+      "id": "1_1_3",
+      "section": "general_report_setup",
+      "requirement": "Lot size used for sampling (Workmanship section) — For PDQ products, the lot size entered for sampling must be the retail unit quantity (PDQ count × units per PDQ), not the PDQ count itself.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check lot size against PDQ count and units per PDQ stated in spec",
+      "focus_terms": [
+        "Lot size used for sampling (Workmanship section)"
+      ],
+      "md_sections": [
+        "Lot size used for sampling (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "500 PDQs × 12 units each; report uses lot size = 500",
+        "Report does not satisfy: For PDQ products, the lot size entered for sampling must be the retail unit quantity (PDQ count × units per PDQ), not the PDQ count itself."
+      ],
+      "source_rule_id": "1.1.3",
+      "source_lines": {
+        "start": 44,
+        "end": 52
+      },
+      "context": "SECTION — cross-check lot size against PDQ count and units per PDQ stated in spec",
+      "examples": {
+        "pass": [
+          "500 PDQs × 12 units each; report uses lot size = 6,000"
+        ],
+        "fail": [
+          "500 PDQs × 12 units each; report uses lot size = 500"
+        ]
+      }
+    },
+    {
+      "id": "1_2_1",
+      "section": "general_report_setup",
+      "requirement": "SAP Group Number field (Document Availability checklist) — The SAP Group # in the report must match the SAP Group # on the purchase order.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check report SAP Group # against PO document",
+      "focus_terms": [
+        "SAP Group Number field (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SAP Group Number field (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "PO shows HMK9700; report records HMK9725",
+        "Report does not satisfy: The SAP Group # in the report must match the SAP Group # on the purchase order."
+      ],
+      "source_rule_id": "1.2.1",
+      "source_lines": {
+        "start": 57,
+        "end": 65
+      },
+      "context": "FULL REPORT — cross-check report SAP Group # against PO document",
+      "examples": {
+        "pass": [
+          "PO shows HMK9725; report records HMK9725"
+        ],
+        "fail": [
+          "PO shows HMK9700; report records HMK9725"
+        ]
+      }
+    },
+    {
+      "id": "1_2_2",
+      "section": "general_report_setup",
+      "requirement": "Inspection type / AOQL (report header) — When multiple specifications appear in one report, the inspection type and AOQL must be derived from the spec whose SAP Group # matches the order, not from any other spec present.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check inspection type against the correct SAP Group # spec",
+      "focus_terms": [
+        "Inspection type",
+        "AOQL (report header)"
+      ],
+      "md_sections": [
+        "Inspection type",
+        "AOQL (report header)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Report contains spec HMK9700 (AOQL 1.5%) and spec HMK9725 (AOQL 3.0%); PO references HMK9725 but report uses AOQL 1.5%",
+        "Report does not satisfy: When multiple specifications appear in one report, the inspection type and AOQL must be derived from the spec whose SAP Group # matches the order, not from any other spec present."
+      ],
+      "source_rule_id": "1.2.2",
+      "source_lines": {
+        "start": 66,
+        "end": 74
+      },
+      "context": "FULL REPORT — cross-check inspection type against the correct SAP Group # spec",
+      "examples": {
+        "pass": [
+          "PO references HMK9725; report correctly uses AOQL 3.0%"
+        ],
+        "fail": [
+          "Report contains spec HMK9700 (AOQL 1.5%) and spec HMK9725 (AOQL 3.0%); PO references HMK9725 but report uses AOQL 1.5%"
+        ]
+      }
+    },
+    {
+      "id": "1_3_1",
+      "section": "general_report_setup",
+      "requirement": "HMK Inspection Reason field (Document Availability checklist) — The value selected must match the reason stated in the supplier's IRF. See valid values below.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against the IRF document",
+      "focus_terms": [
+        "HMK Inspection Reason field (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "HMK Inspection Reason field (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "IRF reason field is blank; report selects \"CQS – Inspection audit selected lot\""
+      ],
+      "source_rule_id": "1.3.1",
+      "source_lines": {
+        "start": 79,
+        "end": 97
+      },
+      "context": "FULL REPORT — cross-check against the IRF document",
+      "lookup_table": "| IRF reason field | Expected report value |\n|---|---|\n| Blank | Non-CQS or Non-SEP supplier |\n| CQS audit | CQS – Inspection audit selected lot |\n| High attention | CQS/SEP – High attention item |\n| New format | CQS/SEP – New format |\n| Engineer request | CQS/SEP – Hallmark engineer request (email/specs) |\n| Retailer request | CQS/SEP – Retailer/licensor request – Walmart / M&S / Costco / Australia / Walgreens |",
+      "examples": {
+        "pass": [
+          "IRF reason field is blank; report selects \"Non-CQS or Non-SEP supplier\""
+        ],
+        "fail": [
+          "IRF reason field is blank; report selects \"CQS – Inspection audit selected lot\""
+        ]
+      }
+    },
+    {
+      "id": "1_4_1",
+      "section": "general_report_setup",
+      "requirement": "High Attention Product (HA) field / HCLP field (Document Availability checklist) — If the order ships to USA Kansas City (KC), both HA and HCLP fields must be answered Yes or No per the product specification. If the order does NOT ship to KC, both fields must be N/A.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check destination (PO & Product details) against HA/HCLP field values",
+      "focus_terms": [
+        "High Attention Product (HA) field",
+        "HCLP field (Document Availability checklist)",
+        "destination (po & product details) against ha/hclp"
+      ],
+      "md_sections": [
+        "High Attention Product (HA) field",
+        "HCLP field (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Destination = KC HKBO; HA field = N/A",
+        "Report does not satisfy: If the order ships to USA Kansas City (KC), both HA and HCLP fields must be answered Yes or No per the product specification. If the order does NOT ship to KC, both fields must be N/A."
+      ],
+      "source_rule_id": "1.4.1",
+      "source_lines": {
+        "start": 102,
+        "end": 110
+      },
+      "context": "FULL REPORT — cross-check destination (PO & Product details) against HA/HCLP field values",
+      "never_flag_if": [
+        "the order ships to USA Kansas City (KC) is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "Destination = KC HKBO; HA field = No (per spec); HCLP field = No (per spec)"
+        ],
+        "fail": [
+          "Destination = KC HKBO; HA field = N/A"
+        ]
+      }
+    },
+    {
+      "id": "1_4_2",
+      "section": "general_report_setup",
+      "requirement": "All photo fields throughout the report — For HCLP products, the report must contain no product photos. Every image field must show a blank image with the remark \"HCLP, no photo\". This applies to all sections including defect photos.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "scan every photo field in the report",
+      "focus_terms": [
+        "All photo fields throughout the report"
+      ],
+      "md_sections": [
+        "All photo fields throughout the report",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "HCLP = Yes; report contains a photo of the retail product in the DAS check section",
+        "Report does not satisfy: For HCLP products, the report must contain no product photos. Every image field must show a blank image with the remark \"HCLP, no photo\". This applies to all sections including defect photos."
+      ],
+      "source_rule_id": "1.4.2",
+      "source_lines": {
+        "start": 111,
+        "end": 119
+      },
+      "context": "FULL REPORT — scan every photo field in the report",
+      "examples": {
+        "pass": [
+          "HCLP = Yes; all image fields show blank image captioned \"HCLP, no photo\""
+        ],
+        "fail": [
+          "HCLP = Yes; report contains a photo of the retail product in the DAS check section"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "1_4_3",
+      "section": "general_report_setup",
+      "requirement": "Inspector's remark / HA-specific checkpoint (Document Availability checklist) — For HA products, the report must include a statement confirming the inspector communicated with the back office / Hallmark PE regarding special requirements.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Inspector's remark",
+        "HA-specific checkpoint (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "Inspector's remark",
+        "HA-specific checkpoint (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "HA = Yes; no mention of PE communication anywhere in the report",
+        "Report does not satisfy: For HA products, the report must include a statement confirming the inspector communicated with the back office / Hallmark PE regarding special requirements."
+      ],
+      "source_rule_id": "1.4.3",
+      "source_lines": {
+        "start": 120,
+        "end": 128
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "HA = Yes; inspector remark states \"Communicated with Hallmark PE [name] re: HA special requirements on [date]\""
+        ],
+        "fail": [
+          "HA = Yes; no mention of PE communication anywhere in the report"
+        ]
+      }
+    },
+    {
+      "id": "1_5_1",
+      "section": "general_report_setup",
+      "requirement": "Client/Destination field (Document Availability checklist) — For suppliers Lung Cheong (Indonesia), Starlite (Malaysia), PT IGP, and all Hallmark brand orders destined for the USA, destination must be \"KC HKBO\". For Costco, Walmart, Walgreens, QVC orders, the retailer name must be selected.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against PO and production site name",
+      "focus_terms": [
+        "Client",
+        "Destination field (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "Destination field (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Production site = PT IGP; destination field = \"International\"",
+        "Report does not satisfy: For suppliers Lung Cheong (Indonesia), Starlite (Malaysia), PT IGP, and all Hallmark brand orders destined for the USA, destination must be \"KC HKBO\". For Costco, Walmart, Walgreens, QVC orders, the retailer name must be selected."
+      ],
+      "source_rule_id": "1.5.1",
+      "source_lines": {
+        "start": 133,
+        "end": 141
+      },
+      "context": "FULL REPORT — cross-check against PO and production site name",
+      "examples": {
+        "pass": [
+          "Production site = PT IGP; destination field = \"KC HKBO\""
+        ],
+        "fail": [
+          "Production site = PT IGP; destination field = \"International\""
+        ]
+      }
+    },
+    {
+      "id": "1_6_1",
+      "section": "general_report_setup",
+      "requirement": "Report header / Inspector's remark — For re-inspection reports, the reason for re-inspection must appear at the head of the report.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Report header",
+        "Inspector's remark"
+      ],
+      "md_sections": [
+        "Inspector's remark",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Report is a re-inspection after a previous FAIL; no re-inspection reason stated at the top",
+        "Report does not satisfy: For re-inspection reports, the reason for re-inspection must appear at the head of the report."
+      ],
+      "source_rule_id": "1.6.1",
+      "source_lines": {
+        "start": 146,
+        "end": 154
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Report header states \"Re-inspection – previous report [ref] failed on workmanship [date]\""
+        ],
+        "fail": [
+          "Report is a re-inspection after a previous FAIL; no re-inspection reason stated at the top"
+        ]
+      }
+    },
+    {
+      "id": "2_1_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — SR checkpoint result must be \"Passed\". If not passed, the overall report result must be FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "if SR = not passed, verify overall result is FAIL",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "SR checkpoint = Failed; overall result = Pass",
+        "Report does not satisfy: SR checkpoint result must be \"Passed\". If not passed, the overall report result must be FAIL."
+      ],
+      "source_rule_id": "2.1.1",
+      "source_lines": {
+        "start": 161,
+        "end": 169
+      },
+      "context": "FULL REPORT — if SR = not passed, verify overall result is FAIL",
+      "examples": {
+        "pass": [
+          "SR checkpoint = Failed; overall result = Fail"
+        ],
+        "fail": [
+          "SR checkpoint = Failed; overall result = Pass"
+        ]
+      }
+    },
+    {
+      "id": "2_1_2",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check — report date / validity (Document Availability checklist) — SR report validity: standard products = 1 year; Toys & Children products = 4 weeks; Food-contact products (group HMK9700) = per PO. Check the SR report issue date against the inspection date.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check SR issue date, product category, and SAP group",
+      "focus_terms": [
+        "SR Test Report Check",
+        "report date",
+        "validity (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check",
+        "validity (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Product = toy; SR report dated 6 months ago → expired (must be ≤4 weeks)",
+        "Report does not satisfy: SR report validity: standard products = 1 year; Toys & Children products = 4 weeks; Food-contact products (group HMK9700) = per PO. Check the SR report issue date against the inspection date."
+      ],
+      "source_rule_id": "2.1.2",
+      "source_lines": {
+        "start": 170,
+        "end": 178
+      },
+      "context": "SECTION — cross-check SR issue date, product category, and SAP group",
+      "examples": {
+        "pass": [
+          "Product = standard gift; SR report dated 8 months ago → valid (within 1 year)"
+        ],
+        "fail": [
+          "Product = toy; SR report dated 6 months ago → expired (must be ≤4 weeks)"
+        ]
+      }
+    },
+    {
+      "id": "2_1_3",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — If the SR report covers product format level (not SKU level), verify the format matches the inspected product and the report is within validity. This must be noted in the report remarks.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "SR report is format-level; no remark confirming format match in the report",
+        "Report does not satisfy: If the SR report covers product format level (not SKU level), verify the format matches the inspected product and the report is within validity. This must be noted in the report remarks."
+      ],
+      "source_rule_id": "2.1.3",
+      "source_lines": {
+        "start": 179,
+        "end": 187
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "the SR report covers product format level (not SKU level) is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "SR report is format-level; remark states \"SR report covers format XYZ, confirmed match with inspected SKU\""
+        ],
+        "fail": [
+          "SR report is format-level; no remark confirming format match in the report"
+        ]
+      }
+    },
+    {
+      "id": "2_1_4",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — If SR report result shows a failure but the factory provides a Hallmark override email, the checkpoint is acceptable. The override email must be uploaded in the report.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "SR fails; factory mentions an override email but it is not uploaded in the report",
+        "Report does not satisfy: If SR report result shows a failure but the factory provides a Hallmark override email, the checkpoint is acceptable. The override email must be uploaded in the report."
+      ],
+      "source_rule_id": "2.1.4",
+      "source_lines": {
+        "start": 188,
+        "end": 196
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "SR report result shows a failure but the factory provides a Hallmark override email is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "SR fails; override email from Hallmark uploaded as attachment in the report"
+        ],
+        "fail": [
+          "SR fails; factory mentions an override email but it is not uploaded in the report"
+        ]
+      }
+    },
+    {
+      "id": "2_1_5",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — If the SRR shows 3 \"No\" for the 3 applicable tests, SR report is not required. The checkpoint must NOT be failed in this case; the report must document this.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "SRR shows 3 \"No\"; SR checkpoint is marked Failed because no SR report was provided",
+        "Report does not satisfy: If the SRR shows 3 \"No\" for the 3 applicable tests, SR report is not required. The checkpoint must NOT be failed in this case; the report must document this."
+      ],
+      "source_rule_id": "2.1.5",
+      "source_lines": {
+        "start": 197,
+        "end": 205
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "the SRR shows 3 \"No\" for the 3 applicable tests is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "SRR shows 3 \"No\"; SR checkpoint is marked N/A or Pass with remark \"SRR 3x No, SR not required\""
+        ],
+        "fail": [
+          "SRR shows 3 \"No\"; SR checkpoint is marked Failed because no SR report was provided"
+        ]
+      }
+    },
+    {
+      "id": "2_1_6",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — For re-run orders reusing an SR from a different PO, the report must confirm the supplier provided a material-change confirmation to the 3rd party lab. Exception: Toys, Children products, Food-contact = always need new SR per PO.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check PO reference on SR report vs. current PO",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Re-run order; SR report references a different PO; no material-change confirmation mentioned",
+        "Report does not satisfy: For re-run orders reusing an SR from a different PO, the report must confirm the supplier provided a material-change confirmation to the 3rd party lab. Exception: Toys, Children products, Food-contact = always need new SR per PO."
+      ],
+      "source_rule_id": "2.1.6",
+      "source_lines": {
+        "start": 206,
+        "end": 214
+      },
+      "context": "FULL REPORT — cross-check PO reference on SR report vs. current PO",
+      "examples": {
+        "pass": [
+          "Re-run order; remark states \"Supplier provided material-change confirmation to Intertek on [date]\""
+        ],
+        "fail": [
+          "Re-run order; SR report references a different PO; no material-change confirmation mentioned"
+        ]
+      }
+    },
+    {
+      "id": "2_1_7",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "SR Test Report Check (Document Availability checklist) — If SR report is missing, the report must flag it and note that Andrew Chan (andrew.chan@hallmark.com) was notified.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "SR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "SR Test Report Check (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "SR report missing; checkpoint simply marked Failed with no further remark",
+        "Report does not satisfy: If SR report is missing, the report must flag it and note that Andrew Chan (andrew.chan@hallmark.com) was notified."
+      ],
+      "source_rule_id": "2.1.7",
+      "source_lines": {
+        "start": 215,
+        "end": 223
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "SR report is missing is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "SR report missing; remark states \"SR report not provided. Andrew Chan notified by email on [date]\""
+        ],
+        "fail": [
+          "SR report missing; checkpoint simply marked Failed with no further remark"
+        ]
+      }
+    },
+    {
+      "id": "2_2_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "FR Test Report Check (Document Availability checklist) — FR checkpoint must show \"Passed\". If not passed, overall result must be FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "if FR = not passed, verify overall result is FAIL",
+      "focus_terms": [
+        "FR Test Report Check (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "FR Test Report Check (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "FR checkpoint = Failed; overall result = Pass",
+        "Report does not satisfy: FR checkpoint must show \"Passed\". If not passed, overall result must be FAIL."
+      ],
+      "source_rule_id": "2.2.1",
+      "source_lines": {
+        "start": 228,
+        "end": 236
+      },
+      "context": "FULL REPORT — if FR = not passed, verify overall result is FAIL",
+      "examples": {
+        "pass": [
+          "FR checkpoint = Failed; overall result = Fail"
+        ],
+        "fail": [
+          "FR checkpoint = Failed; overall result = Pass"
+        ]
+      }
+    },
+    {
+      "id": "2_2_2",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "FR Test Report Check — report date / validity (Document Availability checklist) — FR validity: Non-HA items = 1 year; HA items = 1 year but must be tested per PO. If FR is missing, the FR checkpoint must be failed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check FR issue date, HA status, and current PO reference",
+      "focus_terms": [
+        "FR Test Report Check",
+        "report date",
+        "validity (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "FR Test Report Check",
+        "validity (Document Availability",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "HA = Yes; FR report is 8 months old and references a prior PO → invalid for HA, must be per PO",
+        "Report does not satisfy: FR validity: Non-HA items = 1 year; HA items = 1 year but must be tested per PO. If FR is missing, the FR checkpoint must be failed."
+      ],
+      "source_rule_id": "2.2.2",
+      "source_lines": {
+        "start": 237,
+        "end": 245
+      },
+      "context": "SECTION — cross-check FR issue date, HA status, and current PO reference",
+      "examples": {
+        "pass": [
+          "HA = Yes; FR report references the current PO and is dated within the same production lot"
+        ],
+        "fail": [
+          "HA = Yes; FR report is 8 months old and references a prior PO → invalid for HA, must be per PO"
+        ]
+      }
+    },
+    {
+      "id": "2_3_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Documents and Sample Availability checkpoint (Document Availability checklist) — Ship test report must be on file and referenced. It is valid indefinitely unless there are changes in: supplier, production process, product or packaging material, packed quantity, or packing method. From 2024 onwards it is included as an appendix in the FR report. If missing, the Documents checkpoint must be failed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check ship test reference against FR report (2024+)",
+      "focus_terms": [
+        "Documents and Sample Availability checkpoint (Document Availability checklist)"
+      ],
+      "md_sections": [
+        "Documents and Sample Availability checkpoint (Document Availability",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Ship test not referenced; no mention in FR report appendix; Documents checkpoint = Pass",
+        "Report does not satisfy: Ship test report must be on file and referenced. It is valid indefinitely unless there are changes in: supplier, production process, product or packaging material, packed quantity, or packing method. From 2024 onwards it is included as an appendix in the FR report. If missing, the Documents checkpoint must be failed."
+      ],
+      "source_rule_id": "2.3.1",
+      "source_lines": {
+        "start": 250,
+        "end": 258
+      },
+      "context": "SECTION — cross-check ship test reference against FR report (2024+)",
+      "never_flag_if": [
+        "Exception condition is met: unless there are changes in: supplier, production process, product or packaging material, packed quantity, or packing method"
+      ],
+      "examples": {
+        "pass": [
+          "FR report appendix includes ship test; Documents checkpoint = Pass with remark \"Ship test included in FR report appendix\""
+        ],
+        "fail": [
+          "Ship test not referenced; no mention in FR report appendix; Documents checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "2_4_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "VAS/DAS Check section — The report must document a side-by-side comparison of production sample against the DAS. This section cannot be left blank or skipped. VAS is used for Keepsake (KPS) only. If a limit sample is in use, it must be referenced.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "DAS Check section"
+      ],
+      "md_sections": [
+        "DAS Check section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "VAS/DAS Check section left blank; result = N/A without justification",
+        "Report does not satisfy: The report must document a side-by-side comparison of production sample against the DAS. This section cannot be left blank or skipped. VAS is used for Keepsake (KPS) only. If a limit sample is in use, it must be referenced."
+      ],
+      "source_rule_id": "2.4.1",
+      "source_lines": {
+        "start": 263,
+        "end": 271
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "VAS/DAS Check completed; remark states \"Production sample compared to DAS — color, construction, and labeling conform\""
+        ],
+        "fail": [
+          "VAS/DAS Check section left blank; result = N/A without justification"
+        ]
+      }
+    },
+    {
+      "id": "2_5_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "VAS/DAS Check / Retail packaging sections (for HO orders) — For HO orders, the report must confirm cross-check of: colorway SKU, colorway UPC vs. production package, package type and retail price, product image vs. spec, unit price consistency across DAS/specs/commit sheet/retail package, and copyright consistency.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "applicable only when BU = HO (Hallmark Ornaments)",
+      "focus_terms": [
+        "DAS Check",
+        "Retail packaging sections (for HO orders)"
+      ],
+      "md_sections": [
+        "DAS Check",
+        "Retail packaging sections (for HO orders)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "BU = HO; no mention of commit sheet cross-check anywhere in the report",
+        "Report does not satisfy: For HO orders, the report must confirm cross-check of: colorway SKU, colorway UPC vs. production package, package type and retail price, product image vs. spec, unit price consistency across DAS/specs/commit sheet/retail package, and copyright consistency."
+      ],
+      "source_rule_id": "2.5.1",
+      "source_lines": {
+        "start": 276,
+        "end": 284
+      },
+      "context": "SECTION — applicable only when BU = HO (Hallmark Ornaments)",
+      "examples": {
+        "pass": [
+          "BU = HO; remark states \"Commit sheet cross-checked: colorway SKU, UPC, retail price, copyright — all conform\""
+        ],
+        "fail": [
+          "BU = HO; no mention of commit sheet cross-check anywhere in the report"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "2_6_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Documents and Sample Availability / Workmanship section — For HA and HCLP products, the PP report must be referenced. Defects noted in the PP report must be specifically addressed during the workmanship check. Packaging details must be compared against the PP report.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check PP report reference against workmanship remarks",
+      "focus_terms": [
+        "Documents and Sample Availability",
+        "Workmanship section"
+      ],
+      "md_sections": [
+        "Documents and Sample Availability",
+        "Workmanship section",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "HA = Yes; PP report not referenced; workmanship remarks make no mention of PP defects",
+        "Report does not satisfy: For HA and HCLP products, the PP report must be referenced. Defects noted in the PP report must be specifically addressed during the workmanship check. Packaging details must be compared against the PP report."
+      ],
+      "source_rule_id": "2.6.1",
+      "source_lines": {
+        "start": 289,
+        "end": 297
+      },
+      "context": "SECTION — cross-check PP report reference against workmanship remarks",
+      "examples": {
+        "pass": [
+          "PP report referenced; workmanship remark states \"PP defects: [list] — confirmed resolved in current lot\""
+        ],
+        "fail": [
+          "HA = Yes; PP report not referenced; workmanship remarks make no mention of PP defects"
+        ]
+      }
+    },
+    {
+      "id": "2_7_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Workmanship / Retail packaging section — When a carton contains mixed SKUs, the packing list must be used to verify the assortment and carton range. Any discrepancy must be clearly remarked.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "applicable only when mixed-SKU cartons are present",
+      "focus_terms": [
+        "Workmanship",
+        "Retail packaging section"
+      ],
+      "md_sections": [
+        "Workmanship",
+        "Retail packaging section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Carton contains 3 SKUs; no packing list referenced; no assortment verification remark",
+        "Report does not satisfy: When a carton contains mixed SKUs, the packing list must be used to verify the assortment and carton range. Any discrepancy must be clearly remarked."
+      ],
+      "source_rule_id": "2.7.1",
+      "source_lines": {
+        "start": 302,
+        "end": 310
+      },
+      "context": "SECTION — applicable only when mixed-SKU cartons are present",
+      "examples": {
+        "pass": [
+          "Packing list referenced; remark states \"Mixed SKU carton verified against packing list — assortment and qty conform\""
+        ],
+        "fail": [
+          "Carton contains 3 SKUs; no packing list referenced; no assortment verification remark"
+        ]
+      }
+    },
+    {
+      "id": "2_8_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Inspector's remark / VAS/DAS Check section — For inspections at PT. Camino Industrial (Indonesia) on KPS items, the report must state that the PT. Camino Visual Standard was applied in addition to general Hallmark visual requirements.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable only when production site = PT. Camino Industrial",
+      "focus_terms": [
+        "Inspector's remark",
+        "DAS Check section"
+      ],
+      "md_sections": [
+        "Inspector's remark",
+        "DAS Check section",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Site = PT. Camino Industrial; BU = KPS; no mention of PT. Camino Visual Standard",
+        "Report does not satisfy: For inspections at PT. Camino Industrial (Indonesia) on KPS items, the report must state that the PT. Camino Visual Standard was applied in addition to general Hallmark visual requirements."
+      ],
+      "source_rule_id": "2.8.1",
+      "source_lines": {
+        "start": 315,
+        "end": 323
+      },
+      "context": "QUESTION — applicable only when production site = PT. Camino Industrial",
+      "examples": {
+        "pass": [
+          "Remark states \"PT. Camino Visual Standard applied alongside Hallmark general visual requirements\""
+        ],
+        "fail": [
+          "Site = PT. Camino Industrial; BU = KPS; no mention of PT. Camino Visual Standard"
+        ]
+      }
+    },
+    {
+      "id": "3_1_1",
+      "section": "inspection_type_sample_size",
+      "requirement": "Inspection type / AOQL (report header) — The inspection type must match the product category and destination channel per the decision matrix below.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check product category (name/description), destination (PO), and inspection type in header",
+      "focus_terms": [
+        "Inspection type",
+        "AOQL (report header)"
+      ],
+      "md_sections": [
+        "Inspection type",
+        "AOQL (report header)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Product = 3D Keepsake; destination = KC HKBO; inspection type = AOQL 3.0% Single Sampling → wrong, must be AOQL 1.5%"
+      ],
+      "source_rule_id": "3.1.1",
+      "source_lines": {
+        "start": 330,
+        "end": 359
+      },
+      "context": "FULL REPORT — cross-check product category (name/description), destination (PO), and inspection type in header",
+      "lookup_table": "| Product category | Destination | Expected inspection type |\n|---|---|---|\n| 3D – HMK Ornaments, Gifts (excl. Plush) | KC, UK, HCA, AU, NL, Nihon | AOQL 3.0% Single Sampling |\n| 3D – HMK Ornaments, Gifts (excl. Plush) | Dayspring, Mary & Martha | AOQL 3.0% Single Sampling (min. sample 85) |\n| 3D – HMK Ornaments, Gifts (excl. Plush) | Walmart FOB | AQL 1.5 / 4.0 Level I |\n| 3D – Gifts Plush | KC, UK, HCA, AU, NL, Dayspring, M&M | AOQL 1.5% & 4.0% Single Sampling |\n| 3D – Keepsake (KPS) | KC, UK, HCA, AU, NL, Nihon | AOQL 1.5% Single Sampling |\n| 3D – Keepsake (KPS) | Walmart FOB | AQL 1.5 / 4.0 Level I |\n| 3D – Hengfeng Ceramic | All | AOQL Single Sampling +2 levels vs. standard table |\n| 3D – Crayola | KC, UK, NL, AU, Nihon, Mexico, France | AQL 1.5 / 4.0 Level II |\n| 3D – Fixtures & Dealer Service | KC, UK, HCA, AU, NL, Nihon | AOQL 2.5% Single Sampling; fixed sample = 15 |\n| 2D – HA items | All | Single Sampling Plan |\n| 2D – Non-HA, individually packed | Standard HMK | Double Sampling Plan |\n| 2D – Non-HA, mixed-packed | Standard HMK | Single Sampling Plan |\n| 2D – Dayspring | All | QIMA/HMK: Double Sampling; other: Single Sampling |\n| 2D – Dayspring 3D items | All | Single Sampling (min. sample = 85) |\n| PDQ products | All | Single Sampling; lot size = retail units |",
+      "examples": {
+        "pass": [
+          "Product = 3D Keepsake; destination = KC HKBO; inspection type = AOQL 1.5% Single Sampling"
+        ],
+        "fail": [
+          "Product = 3D Keepsake; destination = KC HKBO; inspection type = AOQL 3.0% Single Sampling → wrong, must be AOQL 1.5%"
+        ]
+      }
+    },
+    {
+      "id": "3_2_1",
+      "section": "inspection_type_sample_size",
+      "requirement": "Sample size field (Workmanship section) — The sample size must match the correct sampling table for the chosen inspection type and lot size. Use the tables below. Lot size must not exceed 50,000 units per lot unless specs specify otherwise.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check lot size, inspection type, and sample size field",
+      "focus_terms": [
+        "Sample size field (Workmanship section)",
+        "lot size, inspection type, and sample size"
+      ],
+      "md_sections": [
+        "Sample size field (Workmanship section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Lot = 8,000 pcs; AOQL 3.0% single sampling; sample size = 65 → wrong, must be 105"
+      ],
+      "source_rule_id": "3.2.1",
+      "source_lines": {
+        "start": 364,
+        "end": 413
+      },
+      "context": "SECTION — cross-check lot size, inspection type, and sample size field",
+      "lookup_table": "| Lot size | Sample | Accept ≤ |\n|---|---|---|\n| 0–800 | 30 | 1 |\n| 801–3,000 | 65 | 3 |\n| 3,001–5,000 | 85 | 4 |\n| 5,001–10,000 | 105 | 5 |\n| 10,001–20,000 | 125 | 6 |\n| 20,001–50,000 | 170 | 8 |\n| 50,001+ | 215 | 10 |\n\n| Lot size | Sample | Accept ≤ |\n|---|---|---|\n| 0–2,000 | 55 | 1 |\n| 2,001–7,000 | 90 | 2 |\n| 7,001–10,000 | 130 | 3 |\n| 10,001–20,000 | 170 | 4 |\n| 20,001–50,000 | 295 | 7 |\n| 50,001+ | 340 | 8 |\n\n| Lot size | Sample | Major ≤ | Minor ≤ |\n|---|---|---|---|\n| 0–1,000 | 35 | 0 | 2 |\n| 1,001–4,000 | 65 | 1 | 4 |\n| 4,001–10,000 | 85 | 2 | 5 |\n| 10,001–20,000 | 135 | 3 | 8 |\n| 20,001–50,000 | 165 | 4 | 10 |\n| 50,001+ | 210 | 5 | 12 |",
+      "never_flag_if": [
+        "Exception condition is met: unless specs specify otherwise"
+      ],
+      "examples": {
+        "pass": [
+          "Lot = 8,000 pcs; AOQL 3.0% single sampling; sample size = 105; accept ≤ 5"
+        ],
+        "fail": [
+          "Lot = 8,000 pcs; AOQL 3.0% single sampling; sample size = 65 → wrong, must be 105"
+        ]
+      }
+    },
+    {
+      "id": "3_2_2",
+      "section": "inspection_type_sample_size",
+      "requirement": "2nd sample section (Workmanship section) — A 2nd sample is only valid if the 1st sample defect count fell between the accept and reject numbers (neither accepted nor rejected in round 1). If a 2nd sample appears but the 1st sample result was already accept or reject, it is invalid.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check 1st sample defect count against accept/reject thresholds before accepting 2nd sample result",
+      "focus_terms": [
+        "2nd sample section (Workmanship section)",
+        "1st sample defect count against accept/reject thresholds before accepting 2nd sample"
+      ],
+      "md_sections": [
+        "2nd sample section (Workmanship section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Double sampling AOQL 3.0%; 1st sample: 0 defects (→ accepted); report shows a 2nd sample was taken anyway",
+        "Report does not satisfy: A 2nd sample is only valid if the 1st sample defect count fell between the accept and reject numbers (neither accepted nor rejected in round 1). If a 2nd sample appears but the 1st sample result was already accept or reject, it is invalid."
+      ],
+      "source_rule_id": "3.2.2",
+      "source_lines": {
+        "start": 414,
+        "end": 422
+      },
+      "context": "SECTION — cross-check 1st sample defect count against accept/reject thresholds before accepting 2nd sample result",
+      "examples": {
+        "pass": [
+          "Double sampling AOQL 3.0%; 1st sample: 2 defects (between 0 and 5); 2nd sample correctly triggered"
+        ],
+        "fail": [
+          "Double sampling AOQL 3.0%; 1st sample: 0 defects (→ accepted); report shows a 2nd sample was taken anyway"
+        ]
+      }
+    },
+    {
+      "id": "3_3_1",
+      "section": "inspection_type_sample_size",
+      "requirement": "Acceptance point / C# field (Workmanship section) — The acceptance number field must contain the threshold from the sampling table, NOT the actual count of defects found.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Acceptance point",
+        "C# field (Workmanship section)"
+      ],
+      "md_sections": [
+        "Acceptance point",
+        "C# field (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Inspector found 0 defects; records C# = 0 (actual count) instead of the table threshold (e.g., 5)",
+        "Report does not satisfy: The acceptance number field must contain the threshold from the sampling table, NOT the actual count of defects found."
+      ],
+      "source_rule_id": "3.3.1",
+      "source_lines": {
+        "start": 427,
+        "end": 435
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Lot = 8,000; AOQL 3.0%; C# = 5 (from table), defects found = 0 recorded separately"
+        ],
+        "fail": [
+          "Inspector found 0 defects; records C# = 0 (actual count) instead of the table threshold (e.g., 5)"
+        ]
+      }
+    },
+    {
+      "id": "3_4_1",
+      "section": "inspection_type_sample_size",
+      "requirement": "Sampling unit / Inspector's remark (Workmanship section) — The sampling unit must always be the retail unit (Market Sale Unit), not the wholesale or shipper unit.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Sampling unit",
+        "Inspector's remark (Workmanship section)"
+      ],
+      "md_sections": [
+        "Sampling unit",
+        "Inspector's remark (Workmanship section)",
+        "Parties & Location",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Product packed 12 retails per wholesale; inspector sampled 30 wholesale packs instead of 30 retail units",
+        "Report does not satisfy: The sampling unit must always be the retail unit (Market Sale Unit), not the wholesale or shipper unit."
+      ],
+      "source_rule_id": "3.4.1",
+      "source_lines": {
+        "start": 440,
+        "end": 448
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Inspector sampled 30 individual retail units"
+        ],
+        "fail": [
+          "Product packed 12 retails per wholesale; inspector sampled 30 wholesale packs instead of 30 retail units"
+        ]
+      }
+    },
+    {
+      "id": "4_1_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Critical defects count / Overall result (Workmanship section) — Acceptance number for critical defects is always 0. If any critical defect is found, overall result must be FAIL and escalation to PE must be noted.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "if critical defect count > 0, verify overall result = FAIL and PE escalation noted",
+      "focus_terms": [
+        "Critical defects count",
+        "Overall result (Workmanship section)"
+      ],
+      "md_sections": [
+        "Critical defects count",
+        "Overall result (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Critical defects = 1; overall result = Pass",
+        "Report does not satisfy: Acceptance number for critical defects is always 0. If any critical defect is found, overall result must be FAIL and escalation to PE must be noted."
+      ],
+      "source_rule_id": "4.1.1",
+      "source_lines": {
+        "start": 455,
+        "end": 465
+      },
+      "context": "FULL REPORT — if critical defect count > 0, verify overall result = FAIL and PE escalation noted",
+      "examples": {
+        "pass": [
+          "Critical defects = 1; overall result = Fail; remark states \"Escalated to PE [name] on [date]\""
+        ],
+        "fail": [
+          "Critical defects = 1; overall result = Pass"
+        ]
+      }
+    },
+    {
+      "id": "4_1_2",
+      "section": "defect_classification_workmanship",
+      "requirement": "Sharp point / sharp edge checkpoint (Workmanship or checklist section) — Sharp point/edge check must be recorded for ALL Hallmark products. All products are considered free of shape hazard by default. If a sharp point or edge is found, it must be reported and escalated to PE — it is not automatically classified as Critical, but PE must evaluate.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Sharp point",
+        "sharp edge checkpoint (Workmanship or checklist section)"
+      ],
+      "md_sections": [
+        "Sharp point",
+        "sharp edge checkpoint (Workmanship or",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Sharp edge found on product; report classifies it as Critical defect without PE evaluation note",
+        "Report does not satisfy: Sharp point/edge check must be recorded for ALL Hallmark products. All products are considered free of shape hazard by default. If a sharp point or edge is found, it must be reported and escalated to PE — it is not automatically classified as Critical, but PE must evaluate."
+      ],
+      "source_rule_id": "4.1.2",
+      "source_lines": {
+        "start": 466,
+        "end": 474
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Sharp edge found; remark states \"Escalated to PE for evaluation — not pre-classified as critical\""
+        ],
+        "fail": [
+          "Sharp edge found on product; report classifies it as Critical defect without PE evaluation note"
+        ]
+      }
+    },
+    {
+      "id": "4_2_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Functional defect count / Function Test result (Workmanship + Tests section) — Functional defect count must be recorded separately. Accept if ≤ C#/2. If > C#/2, Function Test must be failed and count remarked. Escalate to PE.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check functional defect count against C# and Function Test result",
+      "focus_terms": [
+        "Functional defect count",
+        "Function Test result (Workmanship + Tests section)",
+        "functional defect count against c# and function test"
+      ],
+      "md_sections": [
+        "Functional defect count",
+        "Function Test result (Workmanship + Tests section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "C# = 5; functional defects = 4 (> C#/2 = 2.5); Function Test = Pass → wrong, must be Fail",
+        "Report does not satisfy: Functional defect count must be recorded separately. Accept if ≤ C#/2. If > C#/2, Function Test must be failed and count remarked. Escalate to PE."
+      ],
+      "source_rule_id": "4.2.1",
+      "source_lines": {
+        "start": 479,
+        "end": 487
+      },
+      "context": "SECTION — cross-check functional defect count against C# and Function Test result",
+      "examples": {
+        "pass": [
+          "C# = 5; functional defects = 1 (≤ 2.5); Function Test = Pass"
+        ],
+        "fail": [
+          "C# = 5; functional defects = 4 (> C#/2 = 2.5); Function Test = Pass → wrong, must be Fail"
+        ]
+      }
+    },
+    {
+      "id": "4_3_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Minor defects field / Major defects field (Workmanship section) — For AOQL inspections (all except plush), Minor defects must be reclassified as Major. There is no Minor defect tolerance for AOQL. Exception: Plush items use AOQL 1.5% Major / 4.0% Minor.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "applicable when inspection type = AOQL and product is not plush",
+      "focus_terms": [
+        "Minor defects field",
+        "Major defects field (Workmanship section)"
+      ],
+      "md_sections": [
+        "Minor defects field",
+        "Major defects field (Workmanship section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "AOQL 3.0% inspection; 2 Minor defects recorded in Minor field; not reclassified as Major",
+        "Report does not satisfy: For AOQL inspections (all except plush), Minor defects must be reclassified as Major. There is no Minor defect tolerance for AOQL. Exception: Plush items use AOQL 1.5% Major / 4.0% Minor."
+      ],
+      "source_rule_id": "4.3.1",
+      "source_lines": {
+        "start": 492,
+        "end": 500
+      },
+      "context": "SECTION — applicable when inspection type = AOQL and product is not plush",
+      "examples": {
+        "pass": [
+          "AOQL 3.0% inspection; Minor defects reclassified and counted in Major field"
+        ],
+        "fail": [
+          "AOQL 3.0% inspection; 2 Minor defects recorded in Minor field; not reclassified as Major"
+        ]
+      }
+    },
+    {
+      "id": "4_3_2",
+      "section": "defect_classification_workmanship",
+      "requirement": "Defect photos (Photos section) — Every Major defect must have 2 photos: 1 global view and 1 close-up.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check number of Major defects against number of defect photo pairs",
+      "focus_terms": [
+        "Defect photos (Photos section)"
+      ],
+      "md_sections": [
+        "Defect photos (Photos section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "2 Major defects found; only 1 photo total in the report",
+        "Report does not satisfy: Every Major defect must have 2 photos: 1 global view and 1 close-up."
+      ],
+      "source_rule_id": "4.3.2",
+      "source_lines": {
+        "start": 501,
+        "end": 509
+      },
+      "context": "SECTION — cross-check number of Major defects against number of defect photo pairs",
+      "examples": {
+        "pass": [
+          "2 Major defects; 4 photos: 2 global views + 2 close-ups, each with a caption"
+        ],
+        "fail": [
+          "2 Major defects found; only 1 photo total in the report"
+        ]
+      },
+      "photo_check": "metadata"
+    },
+    {
+      "id": "4_3_3",
+      "section": "defect_classification_workmanship",
+      "requirement": "Defect description / defect photos (Workmanship section) — For defects longer than 1 cm, the defect description must include a measurement (length/area) and the photo must show a ruler.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "check each Major defect description and its photo",
+      "focus_terms": [
+        "Defect description",
+        "defect photos (Workmanship section)"
+      ],
+      "md_sections": [
+        "Defect description",
+        "defect photos (Workmanship section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Scratch defect = 3 cm; no measurement in description; ruler not visible in photo",
+        "Report does not satisfy: For defects longer than 1 cm, the defect description must include a measurement (length/area) and the photo must show a ruler."
+      ],
+      "source_rule_id": "4.3.3",
+      "source_lines": {
+        "start": 510,
+        "end": 518
+      },
+      "context": "SECTION — check each Major defect description and its photo",
+      "examples": {
+        "pass": [
+          "Description: \"Scratch, 3.2 cm length\"; photo shows defect with ruler alongside"
+        ],
+        "fail": [
+          "Scratch defect = 3 cm; no measurement in description; ruler not visible in photo"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "4_3_4",
+      "section": "defect_classification_workmanship",
+      "requirement": "Workmanship summary / defect list — If no defect is found, the report must explicitly record \"no defect found\".",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Workmanship summary",
+        "defect list"
+      ],
+      "md_sections": [
+        "Workmanship summary",
+        "defect list",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "0 defects found; defect section left blank",
+        "Report does not satisfy: If no defect is found, the report must explicitly record \"no defect found\"."
+      ],
+      "source_rule_id": "4.3.4",
+      "source_lines": {
+        "start": 519,
+        "end": 527
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "no defect is found is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "0 defects found; remark states \"No defect found\""
+        ],
+        "fail": [
+          "0 defects found; defect section left blank"
+        ]
+      }
+    },
+    {
+      "id": "4_4_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Defect count (Workmanship section) — For box cards or set products, only 1 defect is counted per box or set, regardless of how many individual items inside are affected.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product = box card or set",
+      "focus_terms": [
+        "Defect count (Workmanship section)"
+      ],
+      "md_sections": [
+        "Defect count (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Box of 6 cards; 3 cards have a minor print mark; inspector records 3 defects",
+        "Report does not satisfy: For box cards or set products, only 1 defect is counted per box or set, regardless of how many individual items inside are affected."
+      ],
+      "source_rule_id": "4.4.1",
+      "source_lines": {
+        "start": 532,
+        "end": 540
+      },
+      "context": "QUESTION — applicable when product = box card or set",
+      "examples": {
+        "pass": [
+          "Box of 6 cards; 3 cards affected; inspector records 1 defect (1 box = 1 unit)"
+        ],
+        "fail": [
+          "Box of 6 cards; 3 cards have a minor print mark; inspector records 3 defects"
+        ]
+      }
+    },
+    {
+      "id": "4_4_2",
+      "section": "defect_classification_workmanship",
+      "requirement": "Defect list (Workmanship section) — Minor print defects under 5 mm must not be reported unless they affect sellability. If they affect sellability, they must be classified as Major.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Defect list (Workmanship section)"
+      ],
+      "md_sections": [
+        "Defect list (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "2 mm print smudge on inner page; recorded as Minor defect → should not be recorded at all",
+        "Report does not satisfy: Minor print defects under 5 mm must not be reported unless they affect sellability. If they affect sellability, they must be classified as Major."
+      ],
+      "source_rule_id": "4.4.2",
+      "source_lines": {
+        "start": 541,
+        "end": 549
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "Exception condition is met: unless they affect sellability"
+      ],
+      "examples": {
+        "pass": [
+          "2 mm print smudge on inner page; not recorded (below 5 mm, no impact on sellability)"
+        ],
+        "fail": [
+          "2 mm print smudge on inner page; recorded as Minor defect → should not be recorded at all"
+        ]
+      }
+    },
+    {
+      "id": "4_4_3",
+      "section": "defect_classification_workmanship",
+      "requirement": "Defect list (Workmanship section) — Dirt marks on kraft recycled paper material (without glue residue penetrating onto the bag surface) are acceptable and must not be recorded as defects.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product uses kraft recycled paper",
+      "focus_terms": [
+        "Defect list (Workmanship section)"
+      ],
+      "md_sections": [
+        "Defect list (Workmanship section)",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Kraft paper bag; surface dirt marks (no glue residue); recorded as Minor defects",
+        "Report does not satisfy: Dirt marks on kraft recycled paper material (without glue residue penetrating onto the bag surface) are acceptable and must not be recorded as defects."
+      ],
+      "source_rule_id": "4.4.3",
+      "source_lines": {
+        "start": 550,
+        "end": 558
+      },
+      "context": "QUESTION — applicable when product uses kraft recycled paper",
+      "examples": {
+        "pass": [
+          "Kraft paper bag; surface dirt marks noted but not recorded as defects per acceptance rule"
+        ],
+        "fail": [
+          "Kraft paper bag; surface dirt marks (no glue residue); recorded as Minor defects"
+        ]
+      }
+    },
+    {
+      "id": "4_5_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Workmanship remarks / DAS comparison section — For felt ornaments and hand-crafted items, the following variations are acceptable and must NOT be recorded as defects: shape/width/thickness variation (if item remains recognizable), facial feature variation (if symmetrical and proportionate), design feature placement variation (if overall appearance is consistent), variation between units within a wholesale.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product type = felt ornament or hand-crafted item",
+      "focus_terms": [
+        "Workmanship remarks",
+        "DAS comparison section"
+      ],
+      "md_sections": [
+        "Workmanship remarks",
+        "DAS comparison section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Felt ornament; slight asymmetry in embroidered eye; recorded as Major defect",
+        "Report does not satisfy: For felt ornaments and hand-crafted items, the following variations are acceptable and must NOT be recorded as defects: shape/width/thickness variation (if item remains recognizable), facial feature variation (if symmetrical and proportionate), design feature placement variation (if overall appearance is consistent), variation between units within a wholesale."
+      ],
+      "source_rule_id": "4.5.1",
+      "source_lines": {
+        "start": 563,
+        "end": 571
+      },
+      "context": "QUESTION — applicable when product type = felt ornament or hand-crafted item",
+      "examples": {
+        "pass": [
+          "Felt ornament; slight asymmetry noted; not recorded as defect — within acceptable variation for hand-crafted items"
+        ],
+        "fail": [
+          "Felt ornament; slight asymmetry in embroidered eye; recorded as Major defect"
+        ]
+      }
+    },
+    {
+      "id": "4_6_1",
+      "section": "defect_classification_workmanship",
+      "requirement": "Workmanship / DAS check section — For card items, boxed cards, and handle bags using the batch check method, at least 1 production sample must be fully compared against the DAS. Remaining samples are checked via batch method. The report must show this was done.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Workmanship",
+        "DAS check section"
+      ],
+      "md_sections": [
+        "Workmanship",
+        "DAS check section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Handle bag; batch check used; no mention of any individual sample fully compared against DAS",
+        "Report does not satisfy: For card items, boxed cards, and handle bags using the batch check method, at least 1 production sample must be fully compared against the DAS. Remaining samples are checked via batch method. The report must show this was done."
+      ],
+      "source_rule_id": "4.6.1",
+      "source_lines": {
+        "start": 576,
+        "end": 584
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "Remark states \"1 unit fully compared against DAS; remaining 29 units checked by batch method\""
+        ],
+        "fail": [
+          "Handle bag; batch check used; no mention of any individual sample fully compared against DAS"
+        ]
+      }
+    },
+    {
+      "id": "5_1_1",
+      "section": "measurements_color",
+      "requirement": "Measurement section / product dimension checkpoint — Measurement data must be recorded for at least 1 retail sample. No AQL applies. If a noticeable difference exists, a failure remark and a measurement photo are required.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Measurement section",
+        "product dimension checkpoint"
+      ],
+      "md_sections": [
+        "Measurement section",
+        "product dimension checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Measurement section left blank; no dimension data recorded",
+        "Report does not satisfy: Measurement data must be recorded for at least 1 retail sample. No AQL applies. If a noticeable difference exists, a failure remark and a measurement photo are required."
+      ],
+      "source_rule_id": "5.1.1",
+      "source_lines": {
+        "start": 591,
+        "end": 599
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "\"Product dimension: L 14.8 cm × W 9.4 cm × H 4.7 cm (spec: L 15 cm × W 9.5 cm × H 4.8 cm) — within tolerance\""
+        ],
+        "fail": [
+          "Measurement section left blank; no dimension data recorded"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "5_1_2",
+      "section": "measurements_color",
+      "requirement": "Measurement remarks (paper bag products) — For paper bags, handle length must be measured and remarked.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product = paper bag",
+      "focus_terms": [
+        "Measurement remarks (paper bag products)"
+      ],
+      "md_sections": [
+        "Measurement remarks (paper bag products)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections"
+      ],
+      "fail_if": [
+        "Paper bag inspected; handle length not mentioned in measurements",
+        "Report does not satisfy: For paper bags, handle length must be measured and remarked."
+      ],
+      "source_rule_id": "5.1.2",
+      "source_lines": {
+        "start": 600,
+        "end": 608
+      },
+      "context": "QUESTION — applicable when product = paper bag",
+      "examples": {
+        "pass": [
+          "\"Handle length: 28 cm (spec: 28 cm) — conforms\""
+        ],
+        "fail": [
+          "Paper bag inspected; handle length not mentioned in measurements"
+        ]
+      }
+    },
+    {
+      "id": "5_1_3",
+      "section": "measurements_color",
+      "requirement": "Measurement remarks (products with components) — For products with components, component weight must be recorded in addition to product dimensions.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product has components",
+      "focus_terms": [
+        "Measurement remarks (products with components)"
+      ],
+      "md_sections": [
+        "Measurement remarks (products with components)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections"
+      ],
+      "fail_if": [
+        "Product has a detachable ribbon component; only overall product weight recorded",
+        "Report does not satisfy: For products with components, component weight must be recorded in addition to product dimensions."
+      ],
+      "source_rule_id": "5.1.3",
+      "source_lines": {
+        "start": 609,
+        "end": 617
+      },
+      "context": "QUESTION — applicable when product has components",
+      "examples": {
+        "pass": [
+          "\"Product weight: 85 g; ribbon component weight: 12 g\""
+        ],
+        "fail": [
+          "Product has a detachable ribbon component; only overall product weight recorded"
+        ]
+      }
+    },
+    {
+      "id": "5_2_1",
+      "section": "measurements_color",
+      "requirement": "VAS/DAS Check — color checkpoint — CMYK color result (PressSIGN report) must be ≥90%. If below 90%, the report must include a remark. If neither PressSIGN nor Delta E is available, the check relies on visual comparison and any doubt must be recorded as a failure.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "DAS Check",
+        "color checkpoint"
+      ],
+      "md_sections": [
+        "DAS Check",
+        "color checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections"
+      ],
+      "fail_if": [
+        "PressSIGN result = 84%; no remark in report; checkpoint = Pass",
+        "Report does not satisfy: CMYK color result (PressSIGN report) must be ≥90%. If below 90%, the report must include a remark. If neither PressSIGN nor Delta E is available, the check relies on visual comparison and any doubt must be recorded as a failure."
+      ],
+      "source_rule_id": "5.2.1",
+      "source_lines": {
+        "start": 622,
+        "end": 630
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "PressSIGN result = 84%; remark added; checkpoint = Fail with client notification"
+        ],
+        "fail": [
+          "PressSIGN result = 84%; no remark in report; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "5_2_2",
+      "section": "measurements_color",
+      "requirement": "VAS/DAS Check — color checkpoint (solid colors) — For PMS / solid colors, Delta E (Delta E 2000) must be ≤2. If >2, the report must flag it and include photos of the color target Lab value and the Delta E reading.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "DAS Check",
+        "color checkpoint (solid colors)"
+      ],
+      "md_sections": [
+        "DAS Check",
+        "color checkpoint (solid colors)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Delta E = 2.8; no flag in report; no photos of Lab value or Delta E reading",
+        "Report does not satisfy: For PMS / solid colors, Delta E (Delta E 2000) must be ≤2. If >2, the report must flag it and include photos of the color target Lab value and the Delta E reading."
+      ],
+      "source_rule_id": "5.2.2",
+      "source_lines": {
+        "start": 631,
+        "end": 639
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Delta E = 2.8; checkpoint flagged as Fail; photos of Lab value and Delta E reading included"
+        ],
+        "fail": [
+          "Delta E = 2.8; no flag in report; no photos of Lab value or Delta E reading"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "6_1_1",
+      "section": "packaging_checks",
+      "requirement": "Packaging checklist (2D & 3D Packaging section) — Packaging check must cover 18 units (shippers / wholesale / retail). If 1–2 defects are found, a 2nd sample of 100 units is required (118 total). The report must reflect which stage was reached.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Packaging checklist (2D & 3D Packaging section)"
+      ],
+      "md_sections": [
+        "Packaging",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "1 packaging defect found at 18 units; no 2nd sample conducted; checkpoint = Pass",
+        "Report does not satisfy: Packaging check must cover 18 units (shippers / wholesale / retail). If 1–2 defects are found, a 2nd sample of 100 units is required (118 total). The report must reflect which stage was reached."
+      ],
+      "source_rule_id": "6.1.1",
+      "source_lines": {
+        "start": 646,
+        "end": 654
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "1 defect at 18 units; 2nd sample of 100 conducted; combined result recorded"
+        ],
+        "fail": [
+          "1 packaging defect found at 18 units; no 2nd sample conducted; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "6_2_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Dimensions & Weight & Marks checkpoint — Actual shipper dimensions and weight must be within the applicable limits. If exceeded, the shipper check must be failed.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Shipper Dimensions & Weight & Marks checkpoint"
+      ],
+      "md_sections": [
+        "Shipper Dimensions & Weight & Marks checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Standard HMK order; carton measured 60×55×90 cm → exceeds max; checkpoint = Pass"
+      ],
+      "source_rule_id": "6.2.1",
+      "source_lines": {
+        "start": 659,
+        "end": 675
+      },
+      "context": "QUESTION",
+      "lookup_table": "| Channel | Max dimensions (O.D.) | Max weight |\n|---|---|---|\n| Standard HMK | L22\"×W21\"×D32\" (min L12\"×W8\"×D5\") | 50 lbs (min 5 lbs) |\n| Walgreens FOB | L48\"×W40\"×H46\" | 50 lbs (no minimum) |\n| Dayspring | 24\"H×24\"W×14.5\"L | 30 lbs |\n| HCA (Australia) | Standard dimensions | 12 kg (15 kg for tag-on) |",
+      "examples": {
+        "pass": [
+          "Standard HMK order; carton measured 50×45×70 cm → within limits; checkpoint = Pass"
+        ],
+        "fail": [
+          "Standard HMK order; carton measured 60×55×90 cm → exceeds max; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "6_3_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Dimensions & Weight & Marks checkpoint / shipmark photos — Shipmark color must be BLACK. Both end panels must include: NET WEIGHT (kg), GROSS WEIGHT (kg), DIMENSIONS (cm), CARTON NUM, HALLMARK MARKETING COMPANY LLC, REUSE #, MADE IN. Font approx. 13 mm bold. Hallmark crown logo on side panel 1; shipping address on side panel 2.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Shipper Dimensions & Weight & Marks checkpoint",
+        "shipmark photos"
+      ],
+      "md_sections": [
+        "Shipper Dimensions & Weight & Marks checkpoint",
+        "shipmark photos",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "End panel missing REUSE # field; checkpoint = Pass",
+        "Report does not satisfy: Shipmark color must be BLACK. Both end panels must include: NET WEIGHT (kg), GROSS WEIGHT (kg), DIMENSIONS (cm), CARTON NUM, HALLMARK MARKETING COMPANY LLC, REUSE #, MADE IN. Font approx. 13 mm bold. Hallmark crown logo on side panel 1; shipping address on side panel 2."
+      ],
+      "source_rule_id": "6.3.1",
+      "source_lines": {
+        "start": 680,
+        "end": 688
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Both end panels show all required fields; shipmark is black; checkpoint = Pass"
+        ],
+        "fail": [
+          "End panel missing REUSE # field; checkpoint = Pass"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "6_3_2",
+      "section": "packaging_checks",
+      "requirement": "REUSE # value on shipper end panel — REUSE # = 4-digit inner volume in cubic inches. Must fall within the range [(L−0.5)×(W−0.5)×(D−0.5)] to [(L+0.5)×(W+0.5)×(D+0.5)] using inner dimensions in inches.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "REUSE # value on shipper end panel"
+      ],
+      "md_sections": [
+        "REUSE # value on shipper end panel"
+      ],
+      "fail_if": [
+        "Inner dims = 20\"×16\"×12\" → range = 2907–3393; REUSE # = 2500 → out of range",
+        "Report does not satisfy: REUSE # = 4-digit inner volume in cubic inches. Must fall within the range [(L−0.5)×(W−0.5)×(D−0.5)] to [(L+0.5)×(W+0.5)×(D+0.5)] using inner dimensions in inches."
+      ],
+      "source_rule_id": "6.3.2",
+      "source_lines": {
+        "start": 689,
+        "end": 697
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Inner dims = 20\"×16\"×12\" → REUSE # = 3072 → within range"
+        ],
+        "fail": [
+          "Inner dims = 20\"×16\"×12\" → range = 2907–3393; REUSE # = 2500 → out of range"
+        ]
+      }
+    },
+    {
+      "id": "6_4_1",
+      "section": "packaging_checks",
+      "requirement": "Carton Labels & UPC Check checkpoint — Corner label required for all finished-product shipments to Hallmark US and Canada warehouses. Not required for: sales samples, component orders, international orders (excluding Canada). Label must be on the right bottom corner of the crown-logo side panel, 1\"–3\" from the bottom, wrapping around two adjacent panels, within ±15° of parallel with carton bottom.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Carton Labels & UPC Check checkpoint"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Hallmark US order; corner label placed on top panel of carton",
+        "Report does not satisfy: Corner label required for all finished-product shipments to Hallmark US and Canada warehouses. Not required for: sales samples, component orders, international orders (excluding Canada). Label must be on the right bottom corner of the crown-logo side panel, 1\"–3\" from the bottom, wrapping around two adjacent panels, within ±15° of parallel with carton bottom."
+      ],
+      "source_rule_id": "6.4.1",
+      "source_lines": {
+        "start": 702,
+        "end": 710
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Corner label on right bottom corner of crown-logo side panel, 2\" from bottom, correctly wrapping"
+        ],
+        "fail": [
+          "Hallmark US order; corner label placed on top panel of carton"
+        ]
+      }
+    },
+    {
+      "id": "6_4_2",
+      "section": "packaging_checks",
+      "requirement": "Carton Labels & UPC Check — label content — Mandatory label content: SAP Material Number (top), Material Number/SKU (11-char, no international suffix), material description (exact match to PO/spec), Wholesale QTY (wholesale boxes in shipper, max 4 digits, NOT retail count), Partial quantity (blank or 0), Destination, Date code (MMYY, must not post-date shipping month), Vendor ID (GS preferred), Made In (2-letter ISO), Canada Price (if applicable).",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check each label field against PO and spec",
+      "focus_terms": [
+        "Carton Labels & UPC Check",
+        "label content",
+        "each label"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check",
+        "label content",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Wholesale QTY field shows retail count (e.g., 120) instead of wholesale box count (e.g., 10)",
+        "Report does not satisfy: Mandatory label content: SAP Material Number (top), Material Number/SKU (11-char, no international suffix), material description (exact match to PO/spec), Wholesale QTY (wholesale boxes in shipper, max 4 digits, NOT retail count), Partial quantity (blank or 0), Destination, Date code (MMYY, must not post-date shipping month), Vendor ID (GS preferred), Made In (2-letter ISO), Canada Price (if applicable)."
+      ],
+      "source_rule_id": "6.4.2",
+      "source_lines": {
+        "start": 711,
+        "end": 719
+      },
+      "context": "SECTION — cross-check each label field against PO and spec",
+      "examples": {
+        "pass": [
+          "Wholesale QTY = 10 (10 wholesale boxes in shipper); retail count not shown on corner label"
+        ],
+        "fail": [
+          "Wholesale QTY field shows retail count (e.g., 120) instead of wholesale box count (e.g., 10)"
+        ]
+      }
+    },
+    {
+      "id": "6_4_3",
+      "section": "packaging_checks",
+      "requirement": "Carton Labels & UPC Check — 4-3-4 format — SKU barcode scanning result must follow the 4-3-4 structure. Leading zeros to reach 4 digits in first and last parts; spaces after letter(s) to make middle part total 3 characters.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Carton Labels & UPC Check",
+        "4-3-4 format"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check",
+        "4-3-4 format",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "SKU = 99TM2024; report shows scan result = \"99TM2024\" (no 4-3-4 formatting)",
+        "Report does not satisfy: SKU barcode scanning result must follow the 4-3-4 structure. Leading zeros to reach 4 digits in first and last parts; spaces after letter(s) to make middle part total 3 characters."
+      ],
+      "source_rule_id": "6.4.3",
+      "source_lines": {
+        "start": 720,
+        "end": 728
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "SKU = 99TM2024 → scan result = \"0099TM 2024\""
+        ],
+        "fail": [
+          "SKU = 99TM2024; report shows scan result = \"99TM2024\" (no 4-3-4 formatting)"
+        ]
+      }
+    },
+    {
+      "id": "6_4_4",
+      "section": "packaging_checks",
+      "requirement": "Carton Labels & UPC Check — label corrections — If corner label has incorrect non-barcode information (destination, date code, vendor ID, COO), an overlay label is acceptable. Barcode data errors require a full reprint; manual amendments to barcodes are not allowed.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Carton Labels & UPC Check",
+        "label corrections"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check",
+        "label corrections",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Barcode on corner label encodes wrong SKU; factory applies handwritten correction → not acceptable",
+        "Report does not satisfy: If corner label has incorrect non-barcode information (destination, date code, vendor ID, COO), an overlay label is acceptable. Barcode data errors require a full reprint; manual amendments to barcodes are not allowed."
+      ],
+      "source_rule_id": "6.4.4",
+      "source_lines": {
+        "start": 729,
+        "end": 737
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "corner label has incorrect non-barcode information (destination is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "Barcode encodes wrong SKU; label reprinted; new label applied"
+        ],
+        "fail": [
+          "Barcode on corner label encodes wrong SKU; factory applies handwritten correction → not acceptable"
+        ]
+      }
+    },
+    {
+      "id": "6_5_1",
+      "section": "packaging_checks",
+      "requirement": "Carton Labels & UPC Check / Retail Labeling section — If an extra barcode (price info barcode) is present on the retail box, it must be scanned and recorded. Readable metadata → Pass; unreadable → Fail.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable only when extra barcode is present on retail box",
+      "focus_terms": [
+        "Carton Labels & UPC Check",
+        "Retail Labeling section"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check",
+        "Retail Labeling section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Extra price barcode visible on retail box; not scanned; not mentioned in report",
+        "Report does not satisfy: If an extra barcode (price info barcode) is present on the retail box, it must be scanned and recorded. Readable metadata → Pass; unreadable → Fail."
+      ],
+      "source_rule_id": "6.5.1",
+      "source_lines": {
+        "start": 742,
+        "end": 750
+      },
+      "context": "QUESTION — applicable only when extra barcode is present on retail box",
+      "never_flag_if": [
+        "an extra barcode (price info barcode) is present on the retail box is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "Extra barcode scanned; remark states \"Price barcode readable — Pass\""
+        ],
+        "fail": [
+          "Extra price barcode visible on retail box; not scanned; not mentioned in report"
+        ]
+      }
+    },
+    {
+      "id": "6_6_1",
+      "section": "packaging_checks",
+      "requirement": "Partially Filled Carton checkpoint — Only 1 PFC per PO per shipment; must be the last carton number. PFC must have: 2 orange \"PARTIALLY FILLED CARTON\" labels on opposite corners, and a printed corner label showing the actual wholesale quantity (no manual amendments accepted). Actual packed quantity must match the corner label.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable only when a PFC exists",
+      "focus_terms": [
+        "Partially Filled Carton checkpoint"
+      ],
+      "md_sections": [
+        "Partially Filled Carton checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "PFC has only 1 orange label; corner label shows handwritten qty correction",
+        "Report does not satisfy: Only 1 PFC per PO per shipment; must be the last carton number. PFC must have: 2 orange \"PARTIALLY FILLED CARTON\" labels on opposite corners, and a printed corner label showing the actual wholesale quantity (no manual amendments accepted). Actual packed quantity must match the corner label."
+      ],
+      "source_rule_id": "6.6.1",
+      "source_lines": {
+        "start": 755,
+        "end": 763
+      },
+      "context": "QUESTION — applicable only when a PFC exists",
+      "examples": {
+        "pass": [
+          "PFC is last carton; 2 orange labels on opposite corners; printed corner label matches actual qty"
+        ],
+        "fail": [
+          "PFC has only 1 orange label; corner label shows handwritten qty correction"
+        ]
+      }
+    },
+    {
+      "id": "6_7_1",
+      "section": "packaging_checks",
+      "requirement": "Wholesale Packaging checkpoint — Required fields: USA SKU | Canada SKU | product description | retails per wholesale | production date (MMYY) | Made In | Vendor ID. Canada-only orders show only Canada SKU. Label must not be on the sealing area. For products going through Hallmark DC, updated wholesale labeling guidelines apply.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Wholesale Packaging checkpoint"
+      ],
+      "md_sections": [
+        "Wholesale Packaging checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Label missing production date; label placed over sealing area",
+        "Report does not satisfy: Required fields: USA SKU | Canada SKU | product description | retails per wholesale | production date (MMYY) | Made In | Vendor ID. Canada-only orders show only Canada SKU. Label must not be on the sealing area. For products going through Hallmark DC, updated wholesale labeling guidelines apply."
+      ],
+      "source_rule_id": "6.7.1",
+      "source_lines": {
+        "start": 768,
+        "end": 776
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "All required fields present; label on side panel, away from seal"
+        ],
+        "fail": [
+          "Label missing production date; label placed over sealing area"
+        ]
+      }
+    },
+    {
+      "id": "6_7_2",
+      "section": "packaging_checks",
+      "requirement": "Wholesale Packaging checkpoint (film/polybag wholesale) — Wholesale label not required for film/polybag wholesale only if ALL 4 conditions are met: (1) stock number on retail ≥3 mm tall, (2) stock number visible through film, (3) retail count countable through film, (4) retail UPC visible and scannable through film.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when wholesale pack = film or polybag",
+      "focus_terms": [
+        "Wholesale Packaging checkpoint (film",
+        "polybag wholesale)"
+      ],
+      "md_sections": [
+        "Wholesale Packaging checkpoint (film",
+        "polybag wholesale)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Film wholesale; no label; stock number on retail = 2 mm tall (below 3 mm) → label required but missing",
+        "Report does not satisfy: Wholesale label not required for film/polybag wholesale only if ALL 4 conditions are met: (1) stock number on retail ≥3 mm tall, (2) stock number visible through film, (3) retail count countable through film, (4) retail UPC visible and scannable through film."
+      ],
+      "source_rule_id": "6.7.2",
+      "source_lines": {
+        "start": 777,
+        "end": 785
+      },
+      "context": "QUESTION — applicable when wholesale pack = film or polybag",
+      "examples": {
+        "pass": [
+          "Film wholesale; no label; all 4 conditions verified and noted in remark"
+        ],
+        "fail": [
+          "Film wholesale; no label; stock number on retail = 2 mm tall (below 3 mm) → label required but missing"
+        ]
+      }
+    },
+    {
+      "id": "6_8_1",
+      "section": "packaging_checks",
+      "requirement": "Wholesale Packaging checkpoint (HCA orders) — Each wholesale unit must be in a sealed LDPE ≥30% recycled bag (min. 40 micron / 1.5 mil) with visible stock number and scannable barcode. White wholesale label min. 3.25\"×1.125\" (83×29 mm), black on white, on end or side panel. 1FB inner carton: 420×170×205 mm ±0/−2 mm. Each shipper must contain only 1 stock number. Gross weight ≤12 kg (≤15 kg tag-on).",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when destination = HCA (Hallmark Australia)",
+      "focus_terms": [
+        "Wholesale Packaging checkpoint (HCA orders)"
+      ],
+      "md_sections": [
+        "Wholesale Packaging checkpoint (HCA orders)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "HCA order; wholesale bag is standard PE, not LDPE recycled; gross weight = 13 kg → both fail",
+        "Report does not satisfy: Each wholesale unit must be in a sealed LDPE ≥30% recycled bag (min. 40 micron / 1.5 mil) with visible stock number and scannable barcode. White wholesale label min. 3.25\"×1.125\" (83×29 mm), black on white, on end or side panel. 1FB inner carton: 420×170×205 mm ±0/−2 mm. Each shipper must contain only 1 stock number. Gross weight ≤12 kg (≤15 kg tag-on)."
+      ],
+      "source_rule_id": "6.8.1",
+      "source_lines": {
+        "start": 790,
+        "end": 798
+      },
+      "context": "QUESTION — applicable when destination = HCA (Hallmark Australia)",
+      "examples": {
+        "pass": [
+          "LDPE ≥30% recycled bag confirmed; gross weight = 11.5 kg → Pass"
+        ],
+        "fail": [
+          "HCA order; wholesale bag is standard PE, not LDPE recycled; gross weight = 13 kg → both fail"
+        ]
+      }
+    },
+    {
+      "id": "6_9_1",
+      "section": "packaging_checks",
+      "requirement": "Retail Packaging checkpoint — Retail packaging must match spec, DAS/VAS, and PO on: quantity, packing components, packing sequence. Materials must be clean, undamaged, free from smears and odors. Standard pass remark: \"Conform to Specs, PO and approved ship test report.\"",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check retail packaging against spec, DAS, and PO",
+      "focus_terms": [
+        "Retail Packaging checkpoint"
+      ],
+      "md_sections": [
+        "Retail Packaging checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "PO specifies 12 retails per wholesale; actual pack = 10; checkpoint = Pass",
+        "Report does not satisfy: Retail packaging must match spec, DAS/VAS, and PO on: quantity, packing components, packing sequence. Materials must be clean, undamaged, free from smears and odors. Standard pass remark: \"Conform to Specs, PO and approved ship test report.\""
+      ],
+      "source_rule_id": "6.9.1",
+      "source_lines": {
+        "start": 803,
+        "end": 811
+      },
+      "context": "SECTION — cross-check retail packaging against spec, DAS, and PO",
+      "examples": {
+        "pass": [
+          "Actual pack = 12 retails per wholesale; matches spec; checkpoint = Pass"
+        ],
+        "fail": [
+          "PO specifies 12 retails per wholesale; actual pack = 10; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "6_10_1",
+      "section": "packaging_checks",
+      "requirement": "Polybag checkpoint — Minimum thickness >1 mil (0.0254 mm). If bag opening width (flat) ≥5 inches, suffocation warning mandatory in English + French + Spanish (not required for wholesale polybags). Warning repeats every 18 inches. \"WARNING\" in ALL CAPS, min. 4 mm height. Font size by bag perimeter: ≥60 in → 24 pt | 40–59 in → 18 pt | 25–39 in → 14 pt | <25 in → 10 pt.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product is in retail polybag shipping to US or Canada",
+      "focus_terms": [
+        "Polybag checkpoint"
+      ],
+      "md_sections": [
+        "Polybag checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Retail polybag width = 6 inches; no suffocation warning on bag",
+        "Report does not satisfy: Minimum thickness >1 mil (0.0254 mm). If bag opening width (flat) ≥5 inches, suffocation warning mandatory in English + French + Spanish (not required for wholesale polybags). Warning repeats every 18 inches. \"WARNING\" in ALL CAPS, min. 4 mm height. Font size by bag perimeter: ≥60 in → 24 pt | 40–59 in → 18 pt | 25–39 in → 14 pt | <25 in → 10 pt."
+      ],
+      "source_rule_id": "6.10.1",
+      "source_lines": {
+        "start": 816,
+        "end": 824
+      },
+      "context": "QUESTION — applicable when product is in retail polybag shipping to US or Canada",
+      "examples": {
+        "pass": [
+          "Retail polybag width = 6 inches; suffocation warning present in EN/FR/ES; font meets size requirement"
+        ],
+        "fail": [
+          "Retail polybag width = 6 inches; no suffocation warning on bag"
+        ]
+      }
+    },
+    {
+      "id": "6_11_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Dimensions & Weight & Marks / photo section — If a fragile label or marking is present on the shipper, the report must include a photo of it. Symbol standard: 75 mm tall, 31 mm from top flap score and 31 mm from corner score.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when fragile label is present on shipper",
+      "focus_terms": [
+        "Shipper Dimensions & Weight & Marks",
+        "photo section"
+      ],
+      "md_sections": [
+        "Shipper Dimensions & Weight & Marks",
+        "photo section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Fragile icon on shipper carton; no photo of it in the report",
+        "Report does not satisfy: If a fragile label or marking is present on the shipper, the report must include a photo of it. Symbol standard: 75 mm tall, 31 mm from top flap score and 31 mm from corner score."
+      ],
+      "source_rule_id": "6.11.1",
+      "source_lines": {
+        "start": 829,
+        "end": 837
+      },
+      "context": "QUESTION — applicable when fragile label is present on shipper",
+      "never_flag_if": [
+        "a fragile label or marking is present on the shipper is not identified or mentioned in the report"
+      ],
+      "examples": {
+        "pass": [
+          "Fragile label photo included; caption references position and dimensions"
+        ],
+        "fail": [
+          "Fragile icon on shipper carton; no photo of it in the report"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "6_12_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Packaging checkpoint — Packing method recorded in the report must conform to the ship test report, COP, and/or packaging specification.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check packing method against ship test report reference",
+      "focus_terms": [
+        "Shipper Packaging checkpoint"
+      ],
+      "md_sections": [
+        "Shipper Packaging checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Ship test specifies 3-layer carton; inspector records 2-layer carton; checkpoint = Pass",
+        "Report does not satisfy: Packing method recorded in the report must conform to the ship test report, COP, and/or packaging specification."
+      ],
+      "source_rule_id": "6.12.1",
+      "source_lines": {
+        "start": 842,
+        "end": 850
+      },
+      "context": "FULL REPORT — cross-check packing method against ship test report reference",
+      "examples": {
+        "pass": [
+          "3-layer carton confirmed; matches ship test; checkpoint = Pass"
+        ],
+        "fail": [
+          "Ship test specifies 3-layer carton; inspector records 2-layer carton; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "6_13_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Dimensions & Weight & Marks (Dayspring orders) — As of April 2025, \"Case Count: xx of xxx\" must NOT appear on the Dayspring carton mark. Dayspring corner label: 4\"×4\", top right corner of long carton side, 1 per carton. Must include: DaySpring item number (1\" font, scannable barcode), prime item number, carton quantity, merchandise description, date of manufacture. Item number = UPC code with first and last digits removed (10-digit result).",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when channel = Dayspring",
+      "focus_terms": [
+        "Shipper Dimensions & Weight & Marks (Dayspring orders)"
+      ],
+      "md_sections": [
+        "Shipper Dimensions & Weight & Marks (Dayspring orders)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Dayspring carton mark includes \"Case Count: 3 of 24\" line → must be removed",
+        "Report does not satisfy: As of April 2025, \"Case Count: xx of xxx\" must NOT appear on the Dayspring carton mark. Dayspring corner label: 4\"×4\", top right corner of long carton side, 1 per carton. Must include: DaySpring item number (1\" font, scannable barcode), prime item number, carton quantity, merchandise description, date of manufacture. Item number = UPC code with first and last digits removed (10-digit result)."
+      ],
+      "source_rule_id": "6.13.1",
+      "source_lines": {
+        "start": 855,
+        "end": 863
+      },
+      "context": "QUESTION — applicable when channel = Dayspring",
+      "examples": {
+        "pass": [
+          "Dayspring carton mark contains all required fields; no \"Case Count\" line"
+        ],
+        "fail": [
+          "Dayspring carton mark includes \"Case Count: 3 of 24\" line → must be removed"
+        ]
+      }
+    },
+    {
+      "id": "6_14_1",
+      "section": "packaging_checks",
+      "requirement": "Shipper Dimensions & Weight & Marks (international non-Canada orders) — End panels must include: PO Number, Stock No., Description, Qty, Net weight (kg), Gross weight (kg), Dimensions (cm), Vendor ID, Production Date (MMYY), Made In, REUSE #. Font: 19 mm for PO# and SKU; 13 mm for other fields.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when destination = international (non-Canada)",
+      "focus_terms": [
+        "Shipper Dimensions & Weight & Marks (international non-Canada orders)"
+      ],
+      "md_sections": [
+        "Shipper Dimensions & Weight & Marks (international non-Canada orders)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "End panel missing Vendor ID; Production Date in DD/MM/YYYY format instead of MMYY",
+        "Report does not satisfy: End panels must include: PO Number, Stock No., Description, Qty, Net weight (kg), Gross weight (kg), Dimensions (cm), Vendor ID, Production Date (MMYY), Made In, REUSE #. Font: 19 mm for PO# and SKU; 13 mm for other fields."
+      ],
+      "source_rule_id": "6.14.1",
+      "source_lines": {
+        "start": 868,
+        "end": 876
+      },
+      "context": "QUESTION — applicable when destination = international (non-Canada)",
+      "examples": {
+        "pass": [
+          "All fields present; PO# in 19 mm font; other fields in 13 mm font; Production Date = 0526"
+        ],
+        "fail": [
+          "End panel missing Vendor ID; Production Date in DD/MM/YYYY format instead of MMYY"
+        ]
+      }
+    },
+    {
+      "id": "7_1_1",
+      "section": "product_visual_checks",
+      "requirement": "VAS/DAS Check section — Report must document a side-by-side comparison of the production sample against the DAS. Result cannot be left blank.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "DAS Check section"
+      ],
+      "md_sections": [
+        "DAS Check section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "VAS/DAS Check section shows result = Pass but no comparison remark or photos",
+        "Report does not satisfy: Report must document a side-by-side comparison of the production sample against the DAS. Result cannot be left blank."
+      ],
+      "source_rule_id": "7.1.1",
+      "source_lines": {
+        "start": 883,
+        "end": 891
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Remark states \"Production sample compared to DAS: color, construction, labeling — all conform\"; comparison photos included"
+        ],
+        "fail": [
+          "VAS/DAS Check section shows result = Pass but no comparison remark or photos"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "7_2_1",
+      "section": "product_visual_checks",
+      "requirement": "Spell Check checkpoint — Spell check must be performed on logos, text, event numbers, and all characteristics on packaging, verified against DAS and spec. Checkpoint recorded as \"Yes\" (match) or flagged if discrepancy found.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Spell Check checkpoint",
+        "must be performed on logos, text, event numbers, and all characteristics on packaging, verified against das and spec."
+      ],
+      "md_sections": [
+        "Spell Check checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Spell Check = Yes; retail package contains \"BIRTHAY\" instead of \"BIRTHDAY\" — should have been caught",
+        "Report does not satisfy: Spell check must be performed on logos, text, event numbers, and all characteristics on packaging, verified against DAS and spec. Checkpoint recorded as \"Yes\" (match) or flagged if discrepancy found."
+      ],
+      "source_rule_id": "7.2.1",
+      "source_lines": {
+        "start": 896,
+        "end": 904
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Spell Check performed; \"BIRTHDAY\" confirmed correct; checkpoint = Yes"
+        ],
+        "fail": [
+          "Spell Check = Yes; retail package contains \"BIRTHAY\" instead of \"BIRTHDAY\" — should have been caught"
+        ]
+      }
+    },
+    {
+      "id": "7_3_1",
+      "section": "product_visual_checks",
+      "requirement": "Retail Labeling, UPC & COO checkpoint / DAS comparison — The Hallmark crown logo must be present and correctly applied to retail packaging where required by spec.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check logo presence against spec requirement",
+      "focus_terms": [
+        "Retail Labeling, UPC & COO checkpoint",
+        "DAS comparison"
+      ],
+      "md_sections": [
+        "Retail Labeling, UPC & COO checkpoint",
+        "DAS comparison",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Spec requires Hallmark crown logo on front panel; logo missing on production sample; checkpoint = Pass",
+        "Report does not satisfy: The Hallmark crown logo must be present and correctly applied to retail packaging where required by spec."
+      ],
+      "source_rule_id": "7.3.1",
+      "source_lines": {
+        "start": 909,
+        "end": 917
+      },
+      "context": "SECTION — cross-check logo presence against spec requirement",
+      "examples": {
+        "pass": [
+          "Crown logo present and correctly positioned per spec; noted in DAS comparison remark"
+        ],
+        "fail": [
+          "Spec requires Hallmark crown logo on front panel; logo missing on production sample; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "7_4_1",
+      "section": "product_visual_checks",
+      "requirement": "Warning Statement and License checkpoint — Copyright and licensing information on the retail product must match spec and DAS. Any discrepancy must be failed and remarked.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check copyright text on product/package against spec and DAS",
+      "focus_terms": [
+        "Warning Statement and License checkpoint"
+      ],
+      "md_sections": [
+        "Warning Statement and License checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Copyright year on retail package = 2023; spec and DAS show 2025 → discrepancy; checkpoint = Pass",
+        "Report does not satisfy: Copyright and licensing information on the retail product must match spec and DAS. Any discrepancy must be failed and remarked."
+      ],
+      "source_rule_id": "7.4.1",
+      "source_lines": {
+        "start": 922,
+        "end": 930
+      },
+      "context": "SECTION — cross-check copyright text on product/package against spec and DAS",
+      "examples": {
+        "pass": [
+          "Copyright year matches spec and DAS; checkpoint = Pass"
+        ],
+        "fail": [
+          "Copyright year on retail package = 2023; spec and DAS show 2025 → discrepancy; checkpoint = Pass"
+        ]
+      }
+    },
+    {
+      "id": "7_5_1",
+      "section": "product_visual_checks",
+      "requirement": "Reece's Law Check checkpoint — Applicable only to items with button cell batteries shipping to US/Canada. Both product and retail packaging must show compliant warning statements. Exception: heavily embossed/textured products — product marking not required. Not applicable to Keepsake 2024 products or toy products for children under 14 complying with applicable Toy Standard. Items without button cell batteries or non-US/Canada shipments → N/A.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check battery type, destination, and warning statement presence",
+      "focus_terms": [
+        "Reece's Law Check checkpoint"
+      ],
+      "md_sections": [
+        "Reece's Law Check checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Product has button cell battery; ships to US; retail packaging has no Reese's Law warning → must fail",
+        "Report does not satisfy: Applicable only to items with button cell batteries shipping to US/Canada. Both product and retail packaging must show compliant warning statements. Exception: heavily embossed/textured products — product marking not required. Not applicable to Keepsake 2024 products or toy products for children under 14 complying with applicable Toy Standard. Items without button cell batteries or non-US/Canada shipments → N/A."
+      ],
+      "source_rule_id": "7.5.1",
+      "source_lines": {
+        "start": 935,
+        "end": 943
+      },
+      "context": "SECTION — cross-check battery type, destination, and warning statement presence",
+      "examples": {
+        "pass": [
+          "Product has button cell battery; ships to US; warning on both product and packaging; checkpoint = Pass"
+        ],
+        "fail": [
+          "Product has button cell battery; ships to US; retail packaging has no Reese's Law warning → must fail"
+        ]
+      }
+    },
+    {
+      "id": "7_6_1",
+      "section": "product_visual_checks",
+      "requirement": "PID Number checkpoint — PID number on display boards must be checked and recorded for 2D products. If no display board → N/A.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product = 2D and display board is present",
+      "focus_terms": [
+        "PID Number checkpoint"
+      ],
+      "md_sections": [
+        "PID Number checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "2D product with display board; PID Number checkpoint = N/A with no justification",
+        "Report does not satisfy: PID number on display boards must be checked and recorded for 2D products. If no display board → N/A."
+      ],
+      "source_rule_id": "7.6.1",
+      "source_lines": {
+        "start": 948,
+        "end": 956
+      },
+      "context": "QUESTION — applicable when product = 2D and display board is present",
+      "examples": {
+        "pass": [
+          "PID number verified against spec; checkpoint = Pass; or \"No display board — N/A\""
+        ],
+        "fail": [
+          "2D product with display board; PID Number checkpoint = N/A with no justification"
+        ]
+      }
+    },
+    {
+      "id": "7_7_1",
+      "section": "product_visual_checks",
+      "requirement": "Workmanship remarks / sharp point checkpoint — Must be recorded for ALL Hallmark products. All products are free of shape hazard by default. If a sharp point or edge is found (including areas not designed to be sharp), report and escalate to PE.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Workmanship remarks",
+        "sharp point checkpoint"
+      ],
+      "md_sections": [
+        "Workmanship remarks",
+        "sharp point checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Sharp edge found on decorative product (not intended to be sharp); recorded as Minor defect; no PE escalation",
+        "Report does not satisfy: Must be recorded for ALL Hallmark products. All products are free of shape hazard by default. If a sharp point or edge is found (including areas not designed to be sharp), report and escalate to PE."
+      ],
+      "source_rule_id": "7.7.1",
+      "source_lines": {
+        "start": 961,
+        "end": 969
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Sharp edge found; remark states \"Escalated to PE [name] on [date] for evaluation\""
+        ],
+        "fail": [
+          "Sharp edge found on decorative product (not intended to be sharp); recorded as Minor defect; no PE escalation"
+        ]
+      }
+    },
+    {
+      "id": "8_1_1",
+      "section": "test_results",
+      "requirement": "Additional Tests section / all test checkpoints — All applicable tests must appear in the report with their result. Any test listed in the \"Additional Tests\" section of the booking or spec must be documented with supporting photos. If a test fails, number of failed pieces must be stated in remarks. If a test is not required, supporting evidence must be provided (reference to PP report, spec page, or email).",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "scan all test checkpoints; flag any applicable test missing from the report",
+      "focus_terms": [
+        "Additional Tests section",
+        "all test checkpoints",
+        "report with their result. any test listed in the \"additional tests\""
+      ],
+      "md_sections": [
+        "Additional Tests section",
+        "all test checkpoints",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Spec requires a Shake Test; no Shake Test section or result anywhere in the report",
+        "Report does not satisfy: All applicable tests must appear in the report with their result. Any test listed in the \"Additional Tests\" section of the booking or spec must be documented with supporting photos. If a test fails, number of failed pieces must be stated in remarks. If a test is not required, supporting evidence must be provided (reference to PP report, spec page, or email)."
+      ],
+      "source_rule_id": "8.1.1",
+      "source_lines": {
+        "start": 976,
+        "end": 984
+      },
+      "context": "FULL REPORT — scan all test checkpoints; flag any applicable test missing from the report",
+      "examples": {
+        "pass": [
+          "Shake Test documented in Additional Tests section with result and 1 photo"
+        ],
+        "fail": [
+          "Spec requires a Shake Test; no Shake Test section or result anywhere in the report"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_1_2",
+      "section": "test_results",
+      "requirement": "Workmanship sample / abuse test remarks — Abuse test samples (pull test, glue joint test) must be drawn from bulk separately and noted as such — not from the visual inspection sample pool.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Workmanship sample",
+        "abuse test remarks"
+      ],
+      "md_sections": [
+        "Workmanship sample",
+        "abuse test remarks",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Pull test performed but no remark clarifying whether samples came from visual pool or separate bulk draw",
+        "Report does not satisfy: Abuse test samples (pull test, glue joint test) must be drawn from bulk separately and noted as such — not from the visual inspection sample pool."
+      ],
+      "source_rule_id": "8.1.2",
+      "source_lines": {
+        "start": 985,
+        "end": 993
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "Remark states \"Pull test samples drawn separately from bulk, not from visual inspection sample\""
+        ],
+        "fail": [
+          "Pull test performed but no remark clarifying whether samples came from visual pool or separate bulk draw"
+        ]
+      }
+    },
+    {
+      "id": "8_2_1",
+      "section": "test_results",
+      "requirement": "Visual inspection section + Function Test (Tests section) — A function check (1–2 cycles per sample) must appear in the visual inspection section. The formal function test (25 cycles per spec) must appear separately in the test section. These are two distinct checkpoints and cannot be merged. Sample size for FR KPS, Greeting Cards, Houseware formal function test = 1 unit.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify both checkpoints are present and distinct",
+      "focus_terms": [
+        "Visual inspection section + Function Test (Tests section)",
+        "(1–2 cycles per sample) must appear in the visual inspection",
+        "visual inspection"
+      ],
+      "md_sections": [
+        "Visual inspection section + Function Test (Tests section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Only 1 function result recorded for the entire report; no distinction between function check and formal function test",
+        "Report does not satisfy: A function check (1–2 cycles per sample) must appear in the visual inspection section. The formal function test (25 cycles per spec) must appear separately in the test section. These are two distinct checkpoints and cannot be merged. Sample size for FR KPS, Greeting Cards, Houseware formal function test = 1 unit."
+      ],
+      "source_rule_id": "8.2.1",
+      "source_lines": {
+        "start": 998,
+        "end": 1006
+      },
+      "context": "SECTION — verify both checkpoints are present and distinct",
+      "examples": {
+        "pass": [
+          "Visual section: \"Function check — 1 cycle per sample — Pass\"; Test section: \"Function test — 25 cycles — 1 unit — Pass\""
+        ],
+        "fail": [
+          "Only 1 function result recorded for the entire report; no distinction between function check and formal function test"
+        ]
+      }
+    },
+    {
+      "id": "8_3_1",
+      "section": "test_results",
+      "requirement": "Carton Labels & UPC Check / Retail Labeling checkpoint — Every barcode on the carton and retail package must be scanned, with a photo in the report. Sample sizes: shipper carton = 1 carton (all barcodes on corner label); retail Greetings/Print Specialty/Gift/Ornament = 1 pc; retail International/Crayola/M&S = 10 pcs.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check sample size, scan results, and grade against channel and product type",
+      "focus_terms": [
+        "Carton Labels & UPC Check",
+        "Retail Labeling checkpoint",
+        "sample size, scan"
+      ],
+      "md_sections": [
+        "Carton Labels & UPC Check",
+        "Retail Labeling checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "M&S order; only 1 retail unit scanned instead of 10"
+      ],
+      "source_rule_id": "8.3.1",
+      "source_lines": {
+        "start": 1011,
+        "end": 1030
+      },
+      "context": "SECTION — cross-check sample size, scan results, and grade against channel and product type",
+      "lookup_table": "| Metric | Pass | Acceptable | Fail |\n|---|---|---|---|\n| 1st scan rate | ≥90% | 75–89% | <75% |\n| Decodability | A (>0.62) | C (≥0.25) | D (<0.25) |\n| Magnification | 100% | >80% | <80% |\n| Quiet zone | 1/4\" | 1/8\" | QZ/SS warn |",
+      "examples": {
+        "pass": [
+          "M&S order; 10 retail units scanned; all grades ≥C; checkpoint = Pass"
+        ],
+        "fail": [
+          "M&S order; only 1 retail unit scanned instead of 10"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_4_1",
+      "section": "test_results",
+      "requirement": "Do-it/Euro Hook/Hang Tab checkpoint (or Hanger Check) — Applies to 2D products with a hook or Do-it, and 3D Keepsakes with a hook. Test: 3× product weight held for 1 minute. Result must be recorded as Pass or Fail; if failed, pull-off force data must appear in remarks.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product has a hook, Do-it, or hanger",
+      "focus_terms": [
+        "Do-it",
+        "Euro Hook",
+        "Hang Tab checkpoint (or Hanger Check)"
+      ],
+      "md_sections": [
+        "Euro Hook",
+        "Hang Tab checkpoint (or Hanger Check)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "2D product with Do-it hook; no hanger test result recorded; checkpoint = N/A",
+        "Report does not satisfy: Applies to 2D products with a hook or Do-it, and 3D Keepsakes with a hook. Test: 3× product weight held for 1 minute. Result must be recorded as Pass or Fail; if failed, pull-off force data must appear in remarks."
+      ],
+      "source_rule_id": "8.4.1",
+      "source_lines": {
+        "start": 1035,
+        "end": 1043
+      },
+      "context": "QUESTION — applicable when product has a hook, Do-it, or hanger",
+      "examples": {
+        "pass": [
+          "Do-it hook tested at 3× product weight for 1 min; result = Pass; recorded in report"
+        ],
+        "fail": [
+          "2D product with Do-it hook; no hanger test result recorded; checkpoint = N/A"
+        ]
+      }
+    },
+    {
+      "id": "8_5_1",
+      "section": "test_results",
+      "requirement": "Pull test / Additional Tests section — Result must be recorded. If failed, pull-off force data must appear in remarks. No photo required unless failed. If a DIY weight pull tester was used, the report must state this.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Pull test",
+        "Additional Tests section"
+      ],
+      "md_sections": [
+        "Pull test",
+        "Additional Tests section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Pull test failed; no pull-off force data in remarks; no photo",
+        "Report does not satisfy: Result must be recorded. If failed, pull-off force data must appear in remarks. No photo required unless failed. If a DIY weight pull tester was used, the report must state this."
+      ],
+      "source_rule_id": "8.5.1",
+      "source_lines": {
+        "start": 1048,
+        "end": 1056
+      },
+      "context": "QUESTION",
+      "never_flag_if": [
+        "Exception condition is met: unless failed"
+      ],
+      "examples": {
+        "pass": [
+          "Pull test failed; remark states \"Pull-off force: 1.2 N (spec: ≥3 N)\"; close-up photo of failure point included"
+        ],
+        "fail": [
+          "Pull test failed; no pull-off force data in remarks; no photo"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_6_1",
+      "section": "test_results",
+      "requirement": "Additional Tests section — Result must be recorded. No photo required unless failed. Not required for Gift Presentation & Package Expressions BU products, nor for fabric/plush items. For glass or ceramic décor not handled in the coated area: up to 25% coating removal is acceptable.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "not applicable for Gift Presentation & Package Expressions or fabric/plush",
+      "focus_terms": [
+        "Additional Tests section"
+      ],
+      "md_sections": [
+        "Additional Tests section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Ceramic décor; coating removal = 20% in non-handled area; checkpoint = Fail → should be Pass (≤25% acceptable)",
+        "Report does not satisfy: Result must be recorded. No photo required unless failed. Not required for Gift Presentation & Package Expressions BU products, nor for fabric/plush items. For glass or ceramic décor not handled in the coated area: up to 25% coating removal is acceptable."
+      ],
+      "source_rule_id": "8.6.1",
+      "source_lines": {
+        "start": 1061,
+        "end": 1069
+      },
+      "context": "QUESTION — not applicable for Gift Presentation & Package Expressions or fabric/plush",
+      "never_flag_if": [
+        "Exception condition is met: unless failed"
+      ],
+      "examples": {
+        "pass": [
+          "Ceramic décor; coating removal = 20% in non-handled area; checkpoint = Pass with remark \"20% removal, within 25% tolerance for non-handled area\""
+        ],
+        "fail": [
+          "Ceramic décor; coating removal = 20% in non-handled area; checkpoint = Fail → should be Pass (≤25% acceptable)"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_7_1",
+      "section": "test_results",
+      "requirement": "Grammage of Paper and Paperboard checkpoint — Result must be recorded for 5 samples. Acceptable tolerance: ±5% vs. label claim. A photo and the actual measurement data must appear in the report.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Grammage of Paper and Paperboard checkpoint"
+      ],
+      "md_sections": [
+        "Grammage of Paper and Paperboard checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Only 3 samples measured; no photo; measurements listed in remark but no data in structured field",
+        "Report does not satisfy: Result must be recorded for 5 samples. Acceptable tolerance: ±5% vs. label claim. A photo and the actual measurement data must appear in the report."
+      ],
+      "source_rule_id": "8.7.1",
+      "source_lines": {
+        "start": 1074,
+        "end": 1082
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "5 samples measured: 347, 352, 355, 349, 351 GSM; standard = 350 GSM; all within ±5%; photo included"
+        ],
+        "fail": [
+          "Only 3 samples measured; no photo; measurements listed in remark but no data in structured field"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_8_1",
+      "section": "test_results",
+      "requirement": "Additional Tests section — Result must be recorded per FR report instructions.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Additional Tests section"
+      ],
+      "md_sections": [
+        "Additional Tests section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "FR report requires glue joint test; no result recorded in report; checkpoint absent",
+        "Report does not satisfy: Result must be recorded per FR report instructions."
+      ],
+      "source_rule_id": "8.8.1",
+      "source_lines": {
+        "start": 1087,
+        "end": 1095
+      },
+      "context": "QUESTION",
+      "examples": {
+        "pass": [
+          "Glue joint test recorded in Additional Tests; result = Pass; per FR report instruction"
+        ],
+        "fail": [
+          "FR report requires glue joint test; no result recorded in report; checkpoint absent"
+        ]
+      }
+    },
+    {
+      "id": "8_9_1",
+      "section": "test_results",
+      "requirement": "Techno Function / Additional Tests section — Results for 5 samples must be recorded: working current <200 mA, standby current <10 µA, voltage per supplier batteries, dB 75–85 dB (Keepsake). \"Battery Powered Product Evaluation Report\" from factory must be referenced. A photo of the recorded test values must be included.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when product is electrical/has sound or light function",
+      "focus_terms": [
+        "Techno Function",
+        "Additional Tests section"
+      ],
+      "md_sections": [
+        "Techno Function",
+        "Additional Tests section",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Electrical ornament; FHSA test results not recorded; no photo of test values",
+        "Report does not satisfy: Results for 5 samples must be recorded: working current <200 mA, standby current <10 µA, voltage per supplier batteries, dB 75–85 dB (Keepsake). \"Battery Powered Product Evaluation Report\" from factory must be referenced. A photo of the recorded test values must be included."
+      ],
+      "source_rule_id": "8.9.1",
+      "source_lines": {
+        "start": 1100,
+        "end": 1108
+      },
+      "context": "QUESTION — applicable when product is electrical/has sound or light function",
+      "examples": {
+        "pass": [
+          "5 samples tested; working current avg 45 mA; standby 2 µA; dB avg 78 dB; photo of meter readings included"
+        ],
+        "fail": [
+          "Electrical ornament; FHSA test results not recorded; no photo of test values"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_10_1",
+      "section": "test_results",
+      "requirement": "Envelope Seal Test checkpoint — Applicable to Hallmark UK, Hallmark UK Own Brand, Hallmark Australia, and M&S only. 10 envelope samples. Pass = fiber pull detected after 20 min. Fail = flap opens before 20 min, or no fiber pull after 20 min. 1 photo of tested sample showing tearing area required.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "applicable when channel = HMK UK, HMK UK Own Brand, HCA, or M&S",
+      "focus_terms": [
+        "Envelope Seal Test checkpoint"
+      ],
+      "md_sections": [
+        "Envelope Seal Test checkpoint",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "M&S order; envelope seal test conducted on only 5 samples; no photo of tearing",
+        "Report does not satisfy: Applicable to Hallmark UK, Hallmark UK Own Brand, Hallmark Australia, and M&S only. 10 envelope samples. Pass = fiber pull detected after 20 min. Fail = flap opens before 20 min, or no fiber pull after 20 min. 1 photo of tested sample showing tearing area required."
+      ],
+      "source_rule_id": "8.10.1",
+      "source_lines": {
+        "start": 1113,
+        "end": 1121
+      },
+      "context": "QUESTION — applicable when channel = HMK UK, HMK UK Own Brand, HCA, or M&S",
+      "examples": {
+        "pass": [
+          "M&S order; 10 samples tested; fiber pull detected on all 10; photo of tearing area included; checkpoint = Pass"
+        ],
+        "fail": [
+          "M&S order; envelope seal test conducted on only 5 samples; no photo of tearing"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "8_11_1",
+      "section": "test_results",
+      "requirement": "Additional Tests section — Carton drop test is mandatory when ANY of the following apply: (1) Hallmark engineering requested it in spec or email, (2) product is ceramic or glass, (3) any product dimension >16\", (4) item previously failed ship test even once, (5) any fragile note/icon/sign on packaging. If 1st lot passed, subsequent lots do not require it (unless a new trigger applies). Any breakage must be escalated to Hallmark responsible Engineer.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check product type, spec/email requests, packaging, and prior ship test history",
+      "focus_terms": [
+        "Additional Tests section"
+      ],
+      "md_sections": [
+        "Additional Tests section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields"
+      ],
+      "fail_if": [
+        "Product is ceramic; no carton drop test in report; not flagged as missing",
+        "Report does not satisfy: Carton drop test is mandatory when ANY of the following apply: (1) Hallmark engineering requested it in spec or email, (2) product is ceramic or glass, (3) any product dimension >16\", (4) item previously failed ship test even once, (5) any fragile note/icon/sign on packaging. If 1st lot passed, subsequent lots do not require it (unless a new trigger applies). Any breakage must be escalated to Hallmark responsible Engineer."
+      ],
+      "source_rule_id": "8.11.1",
+      "source_lines": {
+        "start": 1126,
+        "end": 1134
+      },
+      "context": "FULL REPORT — cross-check product type, spec/email requests, packaging, and prior ship test history",
+      "never_flag_if": [
+        "Exception condition is met: unless a new trigger applies)"
+      ],
+      "examples": {
+        "pass": [
+          "Product is ceramic; carton drop test documented in Additional Tests; result = Pass; no breakage"
+        ],
+        "fail": [
+          "Product is ceramic; no carton drop test in report; not flagged as missing"
+        ]
+      }
+    },
+    {
+      "id": "9_1_1",
+      "section": "report_photos",
+      "requirement": "All photos throughout the report — All photos must be in landscape orientation and have a description caption. Date format in reports must be DD-Month-YYYY (e.g., 17-July-2020).",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "scan all photos for orientation, captions, and date format",
+      "focus_terms": [
+        "All photos throughout the report"
+      ],
+      "md_sections": [
+        "All photos throughout the report",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "3 photos in portrait orientation; 2 photos have no caption; date shown as \"2026/05/11\"",
+        "Report does not satisfy: All photos must be in landscape orientation and have a description caption. Date format in reports must be DD-Month-YYYY (e.g., 17-July-2020)."
+      ],
+      "source_rule_id": "9.1.1",
+      "source_lines": {
+        "start": 1141,
+        "end": 1149
+      },
+      "context": "FULL REPORT — scan all photos for orientation, captions, and date format",
+      "examples": {
+        "pass": [
+          "All photos landscape; all captioned; date = \"11-May-2026\""
+        ],
+        "fail": [
+          "3 photos in portrait orientation; 2 photos have no caption; date shown as \"2026/05/11\""
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_1",
+      "section": "report_photos",
+      "requirement": "Carton / Shipper photo section — Minimum 3 photos required: (1) 45° view showing corner label position and shipping mark, (2) close-up of corner label (both sides in one photo if possible), (3) photo allowing easy count of wholesale quantity (rows/columns/layers visible).",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Carton",
+        "Shipper photo section"
+      ],
+      "md_sections": [
+        "Shipper photo section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Only 1 carton photo; corner label not visible; no quantity count photo",
+        "Report does not satisfy: Minimum 3 photos required: (1) 45° view showing corner label position and shipping mark, (2) close-up of corner label (both sides in one photo if possible), (3) photo allowing easy count of wholesale quantity (rows/columns/layers visible)."
+      ],
+      "source_rule_id": "9.2.1",
+      "source_lines": {
+        "start": 1154,
+        "end": 1162
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "3 carton photos meeting all 3 requirements above"
+        ],
+        "fail": [
+          "Only 1 carton photo; corner label not visible; no quantity count photo"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_2",
+      "section": "report_photos",
+      "requirement": "Wholesale package photo section — Minimum 2 photos: (1) side view showing wholesale label/marking, (2) view showing number of retails inside one wholesale.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Wholesale package photo section"
+      ],
+      "md_sections": [
+        "Wholesale package photo section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "1 wholesale photo showing only the outside; retails inside not shown",
+        "Report does not satisfy: Minimum 2 photos: (1) side view showing wholesale label/marking, (2) view showing number of retails inside one wholesale."
+      ],
+      "source_rule_id": "9.2.2",
+      "source_lines": {
+        "start": 1163,
+        "end": 1171
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "2 photos: wholesale label visible; open wholesale showing 12 retail units inside"
+        ],
+        "fail": [
+          "1 wholesale photo showing only the outside; retails inside not shown"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_3",
+      "section": "report_photos",
+      "requirement": "Retail package photo section — Minimum 3 photos: front view, back view, close-up of retail labeling. If already present in DAS check section, no duplication needed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "Retail package photo section"
+      ],
+      "md_sections": [
+        "Retail package photo section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Only front view present; no back view; no label close-up",
+        "Report does not satisfy: Minimum 3 photos: front view, back view, close-up of retail labeling. If already present in DAS check section, no duplication needed."
+      ],
+      "source_rule_id": "9.2.3",
+      "source_lines": {
+        "start": 1172,
+        "end": 1180
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "Front, back, and label close-up photos present; or noted as already covered in DAS section"
+        ],
+        "fail": [
+          "Only front view present; no back view; no label close-up"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_4",
+      "section": "report_photos",
+      "requirement": "DAS check photo section — 8–10 photos required, DAS and production sample in the same photo: front/back/bottom of retail package, front/back of product, additional side views if applicable, 1 group photo showing DAS alongside 4–6 production units.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "DAS check photo section"
+      ],
+      "md_sections": [
+        "DAS check photo section",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "DAS photos show only the production sample; DAS not visible in any photo",
+        "Report does not satisfy: 8–10 photos required, DAS and production sample in the same photo: front/back/bottom of retail package, front/back of product, additional side views if applicable, 1 group photo showing DAS alongside 4–6 production units."
+      ],
+      "source_rule_id": "9.2.4",
+      "source_lines": {
+        "start": 1181,
+        "end": 1189
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "Each photo shows DAS and production sample side by side; group photo with 5 production units + DAS included"
+        ],
+        "fail": [
+          "DAS photos show only the production sample; DAS not visible in any photo"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_5",
+      "section": "report_photos",
+      "requirement": "UPC scan photos — UPC scan on corner label = 4 photos. UPC scan on retail package = 1 photo. Each barcode must have a corresponding photo.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "focus_terms": [
+        "UPC scan photos"
+      ],
+      "md_sections": [
+        "UPC scan photos",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Corner label has 2 barcodes; only 2 scan photos provided instead of 4",
+        "Report does not satisfy: UPC scan on corner label = 4 photos. UPC scan on retail package = 1 photo. Each barcode must have a corresponding photo."
+      ],
+      "source_rule_id": "9.2.5",
+      "source_lines": {
+        "start": 1190,
+        "end": 1198
+      },
+      "context": "SECTION",
+      "examples": {
+        "pass": [
+          "4 scan photos for corner label barcodes + 1 for retail package barcode"
+        ],
+        "fail": [
+          "Corner label has 2 barcodes; only 2 scan photos provided instead of 4"
+        ]
+      },
+      "photo_check": "content"
+    },
+    {
+      "id": "9_2_6",
+      "section": "report_photos",
+      "requirement": "Defect photos (Workmanship section) — Every Major defect: 1 global view + 1 close-up. Defects >1 cm: ruler visible in photo; length/area in caption.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check number of Major defects against defect photo count",
+      "focus_terms": [
+        "Defect photos (Workmanship section)"
+      ],
+      "md_sections": [
+        "Defect photos (Workmanship section)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "1 Major defect; only 1 photo (close-up only); no global view",
+        "Report does not satisfy: Every Major defect: 1 global view + 1 close-up. Defects >1 cm: ruler visible in photo; length/area in caption."
+      ],
+      "source_rule_id": "9.2.6",
+      "source_lines": {
+        "start": 1199,
+        "end": 1207
+      },
+      "context": "SECTION — cross-check number of Major defects against defect photo count",
+      "examples": {
+        "pass": [
+          "1 Major defect; 2 photos: global view of product + close-up of defect area with ruler"
+        ],
+        "fail": [
+          "1 Major defect; only 1 photo (close-up only); no global view"
+        ]
+      },
+      "photo_check": "metadata"
+    },
+    {
+      "id": "10_1_1",
+      "section": "channel_specific_aql_aoql_summary",
+      "requirement": "Inspection type / AOQL field (report header) — Verify the inspection type used matches the channel-specific requirement below.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check destination/channel against inspection type and AQL values in report header",
+      "focus_terms": [
+        "Inspection type",
+        "AOQL field (report header)"
+      ],
+      "md_sections": [
+        "Inspection type",
+        "AOQL field (report header)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Channel = M&S; report uses AOQL 3.0% → wrong, must use AQL Level II"
+      ],
+      "source_rule_id": "10.1.1",
+      "source_lines": {
+        "start": 1212,
+        "end": 1233
+      },
+      "context": "FULL REPORT — cross-check destination/channel against inspection type and AQL values in report header",
+      "lookup_table": "| Channel | Standard | Critical | Major | Minor | Total |\n|---|---|---|---|---|---|\n| Marks & Spencer | AQL Level II | 0 | 1.5 | 4.0 | 4.0 |\n| Crayola | AQL Level II | 0 | Functional 0.4 / Visual 1.5 | 4.0 | — |\n| Dayspring | AOQL 3.0% | — | — | — | — |\n| Nihon JP orders | AOQL 1.5% | — | — | — | — |\n| Nihon non-JP orders | AOQL 3.0% | — | — | — | — |\n| 2D Walmart FOB | AQL Level I | 0 | 1.5 | 4.0 | — |\n| Cracker Component | AQL Level II | 0 | 1.0 | 2.5 | — |\n| Cracker (assembled) | AQL Level II | 0 | 1.5 | 4.0 | 4.0 |\n| UK / HCA / Netherlands | AOQL 3.0% | — | — | — | — |",
+      "examples": {
+        "pass": [
+          "Channel = M&S; report uses AQL Level II with Critical 0 / Major 1.5 / Minor 4.0"
+        ],
+        "fail": [
+          "Channel = M&S; report uses AOQL 3.0% → wrong, must use AQL Level II"
+        ]
+      }
+    },
+    {
+      "id": "11_1_1",
+      "section": "pass_fail_decision_logic",
+      "requirement": "Overall result (report header) — Overall result must be PASS only if ALL conditions below are met. If any single condition fails, overall result must be FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check overall result against all conditions above",
+      "focus_terms": [
+        "Overall result (report header)",
+        "overall"
+      ],
+      "md_sections": [
+        "Overall result (report header)",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "FR checkpoint = Failed; overall result = Pass → inconsistent",
+        "Report does not satisfy: Overall result must be PASS only if ALL conditions below are met. If any single condition fails, overall result must be FAIL."
+      ],
+      "source_rule_id": "11.1.1",
+      "source_lines": {
+        "start": 1238,
+        "end": 1263
+      },
+      "context": "FULL REPORT — cross-check overall result against all conditions above",
+      "examples": {
+        "pass": [
+          "FR checkpoint = Failed; overall result = Fail"
+        ],
+        "fail": [
+          "FR checkpoint = Failed; overall result = Pass → inconsistent"
+        ]
+      }
+    },
+    {
+      "id": "11_1_2",
+      "section": "pass_fail_decision_logic",
+      "requirement": "Inspector's remark / escalation note — PE escalation is required and must be noted in the report for: all FAIL results, functional defect count > C#/2, any finding of sharp point/edge/small part, carton drop test breakage.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "",
+      "focus_terms": [
+        "Inspector's remark",
+        "escalation note"
+      ],
+      "md_sections": [
+        "Inspector's remark",
+        "escalation note",
+        "Parties & Location",
+        "Executive Summary",
+        "Products & Quantities",
+        "Additional Fields",
+        "AQL & Sampling",
+        "Checklist Sections",
+        "Attention Items (read first)"
+      ],
+      "fail_if": [
+        "Overall result = Fail; no mention of PE escalation in any remark",
+        "Report does not satisfy: PE escalation is required and must be noted in the report for: all FAIL results, functional defect count > C#/2, any finding of sharp point/edge/small part, carton drop test breakage."
+      ],
+      "source_rule_id": "11.1.2",
+      "source_lines": {
+        "start": 1264,
+        "end": 1269
+      },
+      "context": "FULL REPORT",
+      "examples": {
+        "pass": [
+          "Overall result = Fail; remark states \"Escalated to PE [name] on [date]\""
+        ],
+        "fail": [
+          "Overall result = Fail; no mention of PE escalation in any remark"
+        ]
+      }
+    }
+  ]
+}

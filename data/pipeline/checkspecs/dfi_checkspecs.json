@@ -1,0 +1,2248 @@
+{
+  "meta": {
+    "source": "data/output/pipeline/checkpoints/dfi_checkpoints.json",
+    "hand_specs": null,
+    "checkpoint_count": 101,
+    "source_hash": "9d1f237452441c05"
+  },
+  "specs": {
+    "preliminary.product_matches_booking": {
+      "checkpoint_id": "preliminary.product_matches_booking",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "preliminary.product_matches_booking_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Product in report does not match booked product. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "preliminary.product_matches_booking_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: SKU or reference order mismatch with booking. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Product inspected must match what was booked.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "preliminary.qimaone_platform": {
+      "checkpoint_id": "preliminary.qimaone_platform",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "preliminary.qimaone_platform_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Evidence suggests inspection was performed in IAPP instead of QIMAone. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Inspection must be performed in QIMAone, never IAPP.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.supplier_factory_name": {
+      "checkpoint_id": "cover.supplier_factory_name",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "cover.supplier_factory_name_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Chinese characters in supplier or factory name. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.supplier_factory_name_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Only one of supplier or factory name is filled. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.supplier_factory_name_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Format is not combined Supplier (Factory). Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Supplier and Factory names must be in English, combined format: Supplier Name (Factory Name). Both fields filled.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.product_name_not_sku": {
+      "checkpoint_id": "cover.product_name_not_sku",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "cover.product_name_not_sku_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Product name is mostly digits or barcode. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.product_name_not_sku_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Product name equals SKU. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.product_name_not_sku_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Booking name looks like barcode while QSP product name exists in Additional Fields. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Product name must be the real product name, not SKU or barcode string.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.cover_photo": {
+      "checkpoint_id": "cover.cover_photo",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "cover.cover_photo_vision",
+        "question": "Does photo content satisfy this requirement? Cover photo must show Consumer Pack, frontal angle, vertical orientation, full product name readable.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Cover photo must show Consumer Pack, frontal angle, vertical orientation, full product name readable.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "cover.po_number": {
+      "checkpoint_id": "cover.po_number",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "cover.po_number_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: PO field blank. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.po_number_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: PO field contains comment instead of N/A when PO not found. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "If no PO on site, field must be N/A with no additional comment.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.date_code_all_na_replacement": {
+      "checkpoint_id": "cover.date_code_all_na_replacement",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "cover.date_code_all_na_replacement_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: All three cover date fields show N/A but replacement sentence is absent. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "If MFG, EXP, and Batch are all N/A on cover, replace with: Refer to the individual batch/date code in the date code check section",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.location_english": {
+      "checkpoint_id": "cover.location_english",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "cover.location_english_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Chinese characters in location field. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Location must be written entirely in English.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.unit_not_other": {
+      "checkpoint_id": "cover.unit_not_other",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "cover.unit_not_other_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Unit field shows Other. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Unit must not display Other. Use actual unit from booking (typically Boxes or Packs).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "cover.result_matches_body": {
+      "checkpoint_id": "cover.result_matches_body",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "cover.result_matches_body_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Overall result contradicts checklist findings or defects. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "cover.result_matches_body_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Result is Pending or Failed but Important Remarks do not explain why. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Cover/overall result must match findings in report body.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.overall_logic": {
+      "checkpoint_id": "result.overall_logic",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "result.overall_logic_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: PASS assigned but failures, beyond AQL, or inconsistencies exist. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.overall_logic_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: PENDING triggers present but result is PASS or FAIL. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.overall_logic_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: FAIL triggers present but result is PASS or PENDING. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Overall result must follow DFI Pass/Pending/Fail/Missing logic.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.adhesive_fail_is_pending": {
+      "checkpoint_id": "result.adhesive_fail_is_pending",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "not",
+        "item": {
+          "op": "equals",
+          "selector": "checklist.adhesive_test_fail_printing_unreadable_must_yield_pending_never_fail.result",
+          "expected": "PASS",
+          "ground": "json"
+        }
+      },
+      "then": {
+        "op": "equals",
+        "selector": "report.overall_result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "unless": null,
+      "requirement": "Adhesive test fail (printing unreadable) must yield Pending, never Fail.",
+      "extract": [],
+      "source": "checkpoint_fail_implies_overall",
+      "tier": "deterministic"
+    },
+    "result.pass_quantity_threshold": {
+      "checkpoint_id": "result.pass_quantity_threshold",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "result.pass_quantity_threshold_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Produced quantity below ordered but result is PASS. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.pass_quantity_threshold_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Packed quantity below ordered but result is PASS. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.pass_quantity_threshold_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Quantity table says 100% packed but products.packedQuantity is lower. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "For PASS: finished quantity >= ordered AND packed quantity >= ordered.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.pending_quantity_threshold": {
+      "checkpoint_id": "result.pending_quantity_threshold",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.pending_quantity_threshold_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Below 100% finished or 80% packed but result is PASS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Quantity on site < 100% finished OR < 80% packed should trigger Pending.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.pending_gss_issues": {
+      "checkpoint_id": "result.pending_gss_issues",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "result.pending_gss_issues_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS absent or unavailable but result is PASS. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.pending_gss_issues_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS expired but result is PASS. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "result.pending_gss_issues_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS inconsistent with bulk product but result is PASS. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "No GSS, expired GSS, or GSS inconsistent with bulk should trigger Pending.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.pending_adhesive_unreadable": {
+      "checkpoint_id": "result.pending_adhesive_unreadable",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.pending_adhesive_unreadable_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Adhesive unreadable but result is PASS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Adhesive test failed with unreadable printing should trigger Pending.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.pending_factory_refusal": {
+      "checkpoint_id": "result.pending_factory_refusal",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.pending_factory_refusal_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Factory refusal or missing tools noted but result is PASS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Factory refused drop test, did not provide tools, or test could not be completed → Pending.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.fail_measurement_out_of_spec": {
+      "checkpoint_id": "result.fail_measurement_out_of_spec",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.fail_measurement_out_of_spec_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Measurement failure evident but result is PASS or PENDING. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Measurement below spec or outside tolerance → Fail.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.fail_beyond_aql": {
+      "checkpoint_id": "result.fail_beyond_aql",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.fail_beyond_aql_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Defects exceed AQL limits but result is PASS. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defects beyond AQL acceptance → Fail.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "result.fail_test_except_adhesive": {
+      "checkpoint_id": "result.fail_test_except_adhesive",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "result.fail_test_except_adhesive_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Non-adhesive test failed but result is PASS or PENDING. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Any onsite test failed except adhesive → Fail.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.mandatory_result_statement": {
+      "checkpoint_id": "remarks.mandatory_result_statement",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.mandatory_result_statement_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Mandatory result statement missing or vague. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Remark required: The inspection result is [Passed/Pending/Failed] due to [reason].",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.defects_presented_to_factory": {
+      "checkpoint_id": "remarks.defects_presented_to_factory",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.defects_presented_to_factory_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Defects or failures found but factory presentation not mentioned. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Remark required: All defective items and failure findings are presented to the factory.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.tolerance_health_product": {
+      "checkpoint_id": "remarks.tolerance_health_product",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.tolerance_health_product_applies_product_type",
+        "question": "Does this report match the condition 'product_type' = 'health_supplement' for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "For health product weight checks: remark must state tolerance range regardless of pass/fail.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "remarks.tolerance_dimension": {
+      "checkpoint_id": "remarks.tolerance_dimension",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.tolerance_dimension_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Dimension measurement with tolerance but range not stated in remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "For dimension checks with tolerance: remark must state tolerance range.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.adhesive_date_code_waiver": {
+      "checkpoint_id": "remarks.adhesive_date_code_waiver",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.adhesive_date_code_waiver_applies_adhesive_date_code_exemption",
+        "question": "Does this report match the condition 'adhesive_date_code_exemption' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "If adhesive test waived on date code area (Appendix A products): required waiver remark.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "remarks.carton_drop_observation": {
+      "checkpoint_id": "remarks.carton_drop_observation",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "equals",
+        "selector": "checklist.carton_drop_test.result",
+        "expected": "FAIL",
+        "ground": "json"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Carton drop test with findings must describe exactly what was observed using required formats.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "deterministic"
+    },
+    "remarks.defect_outside_workmanship": {
+      "checkpoint_id": "remarks.defect_outside_workmanship",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.defect_outside_workmanship_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Defect found during quantity/dimension check but no separate remark with section name. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defect found outside workmanship stage must be described separately in remarks.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.multiple_batches": {
+      "checkpoint_id": "remarks.multiple_batches",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.multiple_batches_applies_multiple_batches",
+        "question": "Does this report match the condition 'multiple_batches' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Multiple batches: all batch codes found must be mentioned in remarks.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "remarks.no_calibration_noted": {
+      "checkpoint_id": "remarks.no_calibration_noted",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.no_calibration_noted_applies_no_calibration_record",
+        "question": "Does this report match the condition 'no_calibration_record' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "If no calibration record for tools, note explicitly without impacting result.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "remarks.factory_internal_calibration": {
+      "checkpoint_id": "remarks.factory_internal_calibration",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.factory_internal_calibration_applies_factory_internal_calibration",
+        "question": "Does this report match the condition 'factory_internal_calibration' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Factory internal calibration accepted must be remarked.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "remarks.no_chinese": {
+      "checkpoint_id": "remarks.no_chinese",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.no_chinese_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Chinese characters in remarks. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "No Chinese characters in remarks (except Chinese date codes recorded exactly as printed elsewhere).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.not_vague": {
+      "checkpoint_id": "remarks.not_vague",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.not_vague_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Vague statements like some issues found without specifics. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Remarks must be specific, not vague.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.match_overall_result": {
+      "checkpoint_id": "remarks.match_overall_result",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "remarks.match_overall_result_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Remark says passed but overall is Failed/Pending or vice versa. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Result stated in remark must match overall inspection result.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "remarks.pending_fail_reason": {
+      "checkpoint_id": "remarks.pending_fail_reason",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "remarks.pending_fail_reason_applies_result_in",
+        "question": "Does this report match the condition 'result_in' = ['PENDING', 'FAILED', 'FAIL'] for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Pending or Failed reports must state reason explicitly.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "standards.sampling_level_match": {
+      "checkpoint_id": "standards.sampling_level_match",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "standards.sampling_level_match_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Sampling level in report does not match DFI Sampling Plan. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Sampling levels must match DFI Sampling Plan Excel.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "standards.aql_values_product_type": {
+      "checkpoint_id": "standards.aql_values_product_type",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "standards.aql_values_product_type_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: AQL CRI/MAJ/MIN values do not match product type rules. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "AQL values must match product type: general Not Allowed/1.5/4.0; earplug same; mask percentage-based from plan.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "standards.aql_checked_max": {
+      "checkpoint_id": "standards.aql_checked_max",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "standards.aql_checked_max_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Checked number does not match sampling plan. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "standards.aql_checked_max_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Max acceptance numbers incorrect for sample size. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Checked must match sample size; Max acceptance: size 8→0/0/0, 13→0/0/1, 32→0/1/3.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "standards.individual_pack_aql_table": {
+      "checkpoint_id": "standards.individual_pack_aql_table",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "standards.individual_pack_aql_table_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Individual Pack AQL table present but product has no individual pack. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "standards.individual_pack_aql_table_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Individual Pack AQL table absent but product has individual pack. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Individual Pack AQL table present only if product has individual packaging.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "standards.colors_labels_not_na": {
+      "checkpoint_id": "standards.colors_labels_not_na",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "standards.colors_labels_not_na_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: N/A in colors/labels/artworks without corresponding finding. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Colors, Labels, Artworks: if no finding, must be OK not auto N/A.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "date_code.recorded_as_printed": {
+      "checkpoint_id": "date_code.recorded_as_printed",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "date_code.recorded_as_printed_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Date code reformatted or does not match printed format. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Record date codes exactly as printed: format, separators, casing.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "date_code.mfg_exp_lot_present": {
+      "checkpoint_id": "date_code.mfg_exp_lot_present",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "date_code.mfg_exp_lot_present_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: All three absent without N/A where applicable. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "date_code.mfg_exp_lot_present_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: No date code and no batch on any packaging. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "At least one of MFG Date, EXP Date, or Lot#/Batch# must be present per product.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "date_code.gss_format_position": {
+      "checkpoint_id": "date_code.gss_format_position",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "date_code.gss_format_position_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS has MFG+Lot but product only Lot# or format/position differs. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "date_code.gss_format_position_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Format or printing position differs between GSS and product. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Date code format and printing position must match GSS. Values may differ.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "date_code.comparison_photo": {
+      "checkpoint_id": "date_code.comparison_photo",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "date_code.comparison_photo_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Date code GSS vs product comparison photo absent or insufficient photos. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Mandatory close-up comparison photo of date code area GSS vs actual product.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "date_code.multiple_batches_separated": {
+      "checkpoint_id": "date_code.multiple_batches_separated",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "date_code.multiple_batches_separated_applies_multiple_batches",
+        "question": "Does this report match the condition 'multiple_batches' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "atom",
+        "id": "date_code.multiple_batches_separated_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Multiple batches not clearly separated. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Multiple batches: each separated clearly, recommended one batch per line.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "date_code.chinese_recorded_exactly": {
+      "checkpoint_id": "date_code.chinese_recorded_exactly",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "date_code.chinese_recorded_exactly_applies_chinese_date_code",
+        "question": "Does this report match the condition 'chinese_date_code' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "atom",
+        "id": "date_code.chinese_recorded_exactly_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Chinese date code translated or reformatted instead of recorded as printed. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Chinese date codes must be recorded in Chinese exactly as printed.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "date_code.barcode_fields_filled": {
+      "checkpoint_id": "date_code.barcode_fields_filled",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "date_code.barcode_fields_filled_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Barcode fields left blank instead of filled or N/A. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Full barcode for Individual Pack, Consumer Pack, Outer Carton. N/A if no individual pack.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.terminology_only_gss": {
+      "checkpoint_id": "gss.terminology_only_gss",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "gss.terminology_only_gss_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Alternative terms to GSS used anywhere in report text. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Only GSS term allowed. Never Approved Sample, Golden Sample, etc.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.validity_four_criteria": {
+      "checkpoint_id": "gss.validity_four_criteria",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "gss.validity_four_criteria_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS not physically on site. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "gss.validity_four_criteria_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS is copy/photo not real product. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "gss.validity_four_criteria_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: GSS missing DFI QA signed label. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "GSS valid only if: on site, real product, DFI QA signed label, within EXP timeframe.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.absent_pending": {
+      "checkpoint_id": "gss.absent_pending",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "gss.absent_pending_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: GSS absent but result is PASS without pending/remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "If GSS absent: pending report with clear remark.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.expired_pending": {
+      "checkpoint_id": "gss.expired_pending",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "gss.expired_pending_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: GSS expired but not pending or missing remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "If GSS expired: inform back office, seal 1 good bulk pc, pending with remark.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.comparison_elements": {
+      "checkpoint_id": "gss.comparison_elements",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "gss.comparison_elements_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Missing comparison photos for required elements. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "gss.comparison_elements_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Product inside not compared. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "gss.comparison_elements_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Date code format or position differs between GSS and product. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Compare all faces, date code, composition, volume/quantity, markings, barcodes, manual, inside product.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "gss.resealed_requirements": {
+      "checkpoint_id": "gss.resealed_requirements",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "gss.resealed_requirements_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Re-sealed GSS photo absent. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "gss.resealed_requirements_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: QIMA sticker unsigned or missing date/order number. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Re-sealed GSS: polybag, QIMA sticker signed with date and order number, photo mandatory.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.claimed_specs_only": {
+      "checkpoint_id": "measurements.claimed_specs_only",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "measurements.claimed_specs_only_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Specs measured that are not claimed. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "measurements.claimed_specs_only_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Claimed specs not measured. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Only measure specs claimed on product name, label, or packaging.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.health_product_weight": {
+      "checkpoint_id": "measurements.health_product_weight",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "measurements.health_product_weight_applies_product_type",
+        "question": "Does this report match the condition 'product_type' = 'health_supplement' for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "measurements.health_product_weight_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Total net weight not measured for health product. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "measurements.health_product_weight_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Serving weight on label but not measured. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Health products (NIP): measure total net weight and individual serving weight if stated on label.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "measurements.sample_size_8_or_13": {
+      "checkpoint_id": "measurements.sample_size_8_or_13",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.sample_size_8_or_13_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Wrong sample size per packaging level. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Sample size 8 or 13 per packaging level from DFI Sampling Plan.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.pass_fail_logic": {
+      "checkpoint_id": "measurements.pass_fail_logic",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.pass_fail_logic_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Pass/Fail contradicts tolerance logic. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Volume/quantity/general weight: no tolerance, actual must be >= claim. Health weight and dimension: tolerance required.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.tolerance_in_remark": {
+      "checkpoint_id": "measurements.tolerance_in_remark",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.tolerance_in_remark_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Tolerance range missing in remark for applicable checks. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Tolerance range must be stated in remark for dimension and health product weight.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.identical_sample_values": {
+      "checkpoint_id": "measurements.identical_sample_values",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.identical_sample_values_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: All samples show identical weight or dimension values. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "All 8 or 13 samples must not show exactly identical values (copy-paste error).",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.excel_attached": {
+      "checkpoint_id": "measurements.excel_attached",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "measurements.excel_attached_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Measurement Table Excel not attached. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "measurements.excel_attached_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Excel filename contains Chinese characters. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Measurement Table Excel must be attached, filename without Chinese characters.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.empty_bottle_separate": {
+      "checkpoint_id": "measurements.empty_bottle_separate",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.empty_bottle_separate_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Empty and filled weights not recorded separately. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Empty bottle/sachet and filled product weighed separately, not tare method.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.no_tolerance_pending": {
+      "checkpoint_id": "measurements.no_tolerance_pending",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.no_tolerance_pending_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: No tolerance available but result PASS without pending/remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "If factory/client cannot provide tolerance: pending with remark, upload data anyway.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "measurements.duplicate_spec_across_tables": {
+      "checkpoint_id": "measurements.duplicate_spec_across_tables",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "measurements.duplicate_spec_across_tables_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Same spec value duplicated inconsistently across tables. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Same weight/volume must not be duplicated across two tables for same spec.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.carton_drop_mandatory": {
+      "checkpoint_id": "tests.carton_drop_mandatory",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.carton_drop_mandatory_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Drop test missing without valid exception. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Carton drop test mandatory for all products except defined fragile/scale exceptions.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.carton_drop_result_logic": {
+      "checkpoint_id": "tests.carton_drop_result_logic",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "tests.carton_drop_result_logic_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Drop result does not match described outcome. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "tests.carton_drop_result_logic_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: No remark describing what was observed. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "tests.carton_drop_result_logic_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Drop test photos missing. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Drop test PASS/PENDING/FAIL per ISTA 1A logic and damage description.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.adhesive_scope": {
+      "checkpoint_id": "tests.adhesive_scope",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "tests.adhesive_scope_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Adhesive not performed on all required areas. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "tests.adhesive_scope_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Photos do not show test on date code area. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "tests.adhesive_scope_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: No 3M tape noted when required. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Adhesive test on all printed areas, Consumer and Individual Pack if present. 3M 500/600P/810.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.adhesive_fail_pending_not_fail": {
+      "checkpoint_id": "tests.adhesive_fail_pending_not_fail",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.adhesive_fail_pending_not_fail_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Adhesive fail classified as overall Fail. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Adhesive unreadable = Pending not Fail.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.adhesive_exemption_remark": {
+      "checkpoint_id": "tests.adhesive_exemption_remark",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "tests.adhesive_exemption_remark_applies_adhesive_date_code_exemption",
+        "question": "Does this report match the condition 'adhesive_date_code_exemption' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "selector": "report.global_remark",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Appendix A products: date code adhesive may be waived with required remark only.",
+      "extract": [],
+      "source": "remark_global",
+      "tier": "atoms"
+    },
+    "tests.rubbing_performed": {
+      "checkpoint_id": "tests.rubbing_performed",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.rubbing_performed_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Rubbing test not performed or photos missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Rubbing test on all printings, dry and wet cloth, photos required.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.barcode_scanning": {
+      "checkpoint_id": "tests.barcode_scanning",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.barcode_scanning_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Barcode scanning not done or numbers not recorded. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Scan all barcodes on Consumer, Individual, Outer Carton. Record full numbers.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.sensory_all_emptied": {
+      "checkpoint_id": "tests.sensory_all_emptied",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.sensory_all_emptied_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Not all sensory samples emptied or photos missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Sensory: all destructive samples fully poured/emptied with photos.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.content_all_emptied": {
+      "checkpoint_id": "tests.content_all_emptied",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.content_all_emptied_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Not all content samples emptied or photos missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Content check: all 8 or 13 samples emptied with all support photos.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.bristle_pull": {
+      "checkpoint_id": "tests.bristle_pull",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "tests.bristle_pull_applies_product_type",
+        "question": "Does this report match the condition 'product_type' = 'brush' for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "atom",
+        "id": "tests.bristle_pull_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Bristle pull missing for brush product. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Brush products: bristle pull test per supplier rules.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "tests.function_test": {
+      "checkpoint_id": "tests.function_test",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "tests.function_test_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Function test incomplete. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Function test all capacities per spec/manual.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "tests.back_adhesive_pantyliner": {
+      "checkpoint_id": "tests.back_adhesive_pantyliner",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "tests.back_adhesive_pantyliner_applies_product_type",
+            "question": "Does this report match the condition 'product_type' = 'pantyliner' for this rule to apply?",
+            "role": "required_true",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "tests.back_adhesive_pantyliner_applies_supplier",
+            "question": "Does this report match the condition 'supplier' = 'Carmelton' for this rule to apply?",
+            "role": "required_true",
+            "ground": "atom"
+          }
+        ]
+      },
+      "then": {
+        "op": "atom",
+        "id": "tests.back_adhesive_pantyliner_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Back adhesive out of range or missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Pantyliner from Carmelton: back adhesive 500-800 mN per GB/T 8939-2018.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "workmanship.minimum_two_aql_tables": {
+      "checkpoint_id": "workmanship.minimum_two_aql_tables",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "workmanship.minimum_two_aql_tables_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Fewer than 2 AQL tables present. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Minimum 2 AQL tables in Workmanship check. Consumer, Individual, Destructive separate.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "workmanship.defects_from_list_only": {
+      "checkpoint_id": "workmanship.defects_from_list_only",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "workmanship.defects_from_list_only_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Unlisted defect recorded in AQL table. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "workmanship.defects_from_list_only_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Custom defect category created. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Only defects from existing QIMAone list. Unlisted → photos, remark, Pending, not in AQL.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "workmanship.multiple_defect_remark": {
+      "checkpoint_id": "workmanship.multiple_defect_remark",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "workmanship.multiple_defect_remark_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Multiple defects without required remark template. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Multiple defects on one sample: count most serious in AQL, full remark in defect comment and Important Remarks.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "workmanship.defect_outside_stage": {
+      "checkpoint_id": "workmanship.defect_outside_stage",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "workmanship.defect_outside_stage_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Outside-stage defect in AQL table or missing remark/Pending. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defect outside workmanship: not in AQL, remark added, Pending, seal consumer pack.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "workmanship.defect_photo_required": {
+      "checkpoint_id": "workmanship.defect_photo_required",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "workmanship.defect_photo_required_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Defect recorded without supporting photo. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "workmanship.defect_photo_required_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Defect photo without arrow/sticker. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Every defect needs photo with QIMA sticker or arrow.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "workmanship.no_defects_found_text": {
+      "checkpoint_id": "workmanship.no_defects_found_text",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "workmanship.no_defects_found_text_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: No defects recorded but No Defects Found text absent. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "If no defects: No Defects Found in defect pictures section.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "quantity.finished_packed_threshold": {
+      "checkpoint_id": "quantity.finished_packed_threshold",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "quantity.finished_packed_threshold_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Below threshold but PASS without remark. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "quantity.finished_packed_threshold_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Remark claims 100% packed but packedQuantity below ordered. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Required 100% finished and 80% packed. Below → Pending + remark.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "quantity.multiple_batches_proportional": {
+      "checkpoint_id": "quantity.multiple_batches_proportional",
+      "severity": "BLOCKING",
+      "when": {
+        "op": "atom",
+        "id": "quantity.multiple_batches_proportional_applies_multiple_batches",
+        "question": "Does this report match the condition 'multiple_batches' = True for this rule to apply?",
+        "role": "required_true",
+        "ground": "atom"
+      },
+      "then": {
+        "op": "atom",
+        "id": "quantity.multiple_batches_proportional_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Multiple batches but proportional sampling not applied or noted. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Multiple batches sampled proportionally by quantity.",
+      "extract": [],
+      "source": "applies_when",
+      "tier": "atoms"
+    },
+    "quantity.destructive_separate_packs": {
+      "checkpoint_id": "quantity.destructive_separate_packs",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "quantity.destructive_separate_packs_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Destructive samples not from separate consumer packs. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Destructive samples from separate consumer packs.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "shipping.carton_mark_photos": {
+      "checkpoint_id": "shipping.carton_mark_photos",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "shipping.carton_mark_photos_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Shipping mark photos missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Shipping mark: front and side photos. Inner mark if exists.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "shipping.carton_dimensions_weight": {
+      "checkpoint_id": "shipping.carton_dimensions_weight",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "shipping.carton_dimensions_weight_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Carton dimension/weight table incomplete. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "shipping.carton_dimensions_weight_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Missing photo per dimension controlled. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "One carton per style: printed vs actual size and weight recorded.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "shipping.carton_mark_diff_remark_only": {
+      "checkpoint_id": "shipping.carton_mark_diff_remark_only",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "shipping.carton_mark_diff_remark_only_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Large gap vs printed spec with no remark. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Carton dim/weight diff from shipping mark alone does NOT trigger Pending/Fail but should be remarked if significant.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "factory.location_matches_booking": {
+      "checkpoint_id": "factory.location_matches_booking",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "factory.location_matches_booking_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Factory location differs from booking. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "factory.location_matches_booking_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: No factory entrance photos. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Factory location must match booking with entrance/gate photos.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "factory.calibration_certificates": {
+      "checkpoint_id": "factory.calibration_certificates",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "factory.calibration_certificates_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Calibration certificates absent or expired. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Tools calibrated, certificates photographed, valid 1 year.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "factory.qima_documents_signed": {
+      "checkpoint_id": "factory.qima_documents_signed",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "factory.qima_documents_signed_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Signed QIMA documents photos missing. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Factory Disclaimer, Draft Report, COC signed by inspector and factory, photos mandatory.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "factory.cooperation_poor": {
+      "checkpoint_id": "factory.cooperation_poor",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "factory.cooperation_poor_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Factory cooperation rated Poor. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Flag if factory cooperation/cleanliness rated Poor.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "photos.mandatory_categories": {
+      "checkpoint_id": "photos.mandatory_categories",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "photos.mandatory_categories_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Any mandatory photo category absent. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "All mandatory photo categories from Section 14 must be present.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "photos.adhesive_date_code_area": {
+      "checkpoint_id": "photos.adhesive_date_code_area",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "vision",
+        "id": "photos.adhesive_date_code_area_vision",
+        "question": "Does photo content satisfy this requirement? Adhesive test photos must show date code area.",
+        "ground": "vision"
+      },
+      "unless": null,
+      "requirement": "Adhesive test photos must show date code area.",
+      "extract": [],
+      "source": "photo_content",
+      "tier": "vision"
+    },
+    "photos.gss_four_faces": {
+      "checkpoint_id": "photos.gss_four_faces",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "photos.gss_four_faces_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Comparison photos missing faces for Consumer or Individual Pack. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "GSS comparison: all four faces Consumer and Individual Pack if present.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "photos.measurement_per_sample": {
+      "checkpoint_id": "photos.measurement_per_sample",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "photos.measurement_per_sample_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Insufficient measurement photos for sample size. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Measurements: photo per sample (8 or 13), empty bottle + each filled weight.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "photos.carton_drop_set": {
+      "checkpoint_id": "photos.carton_drop_set",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "photos.carton_drop_set_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Drop test photo set incomplete. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Drop test: before, during, after exterior, after interior.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "report.language_english": {
+      "checkpoint_id": "report.language_english",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "report.language_english_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Non-English content outside allowed Chinese date codes. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "All report content in English except Chinese date codes recorded as printed.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "report.data_integrity_typos": {
+      "checkpoint_id": "report.data_integrity_typos",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "report.data_integrity_typos_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Wrong unit e.g. kg instead of g. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "report.data_integrity_typos_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Unreasonable decimal precision. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "report.data_integrity_typos_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: N/A row for spec that should be measured. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Check wrong units, copy-paste identical values, bad decimals, N/A for measured specs.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "report.measurement_excel_mandatory": {
+      "checkpoint_id": "report.measurement_excel_mandatory",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "report.measurement_excel_mandatory_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Measurement Table Excel not attached. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Measurement Table Excel mandatory attachment.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "sample_collection.sealing_rules": {
+      "checkpoint_id": "sample_collection.sealing_rules",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "sample_collection.sealing_rules_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Critical defects mentioned but no sealing noted. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "sample_collection.sealing_rules_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: No GSS or expired GSS but sealing not mentioned. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Seal samples per rules: no GSS, expired GSS, critical defects, >50% same defect.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "sample_collection.repacking": {
+      "checkpoint_id": "sample_collection.repacking",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "sample_collection.repacking_fail_0",
+        "question": "Does the report evidence clearly show this failing condition? Condition: Repacking rules not followed or not mentioned when relevant. Answer true only with clear contradicting evidence.",
+        "role": "violation",
+        "ground": "atom"
+      },
+      "unless": null,
+      "requirement": "Defectives repacked in same carton; all good products fully repacked.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    },
+    "escalation.back_office_contact": {
+      "checkpoint_id": "escalation.back_office_contact",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "escalation.back_office_contact_fail_0",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Failed finding or beyond AQL without evidence of escalation. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "escalation.back_office_contact_fail_1",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Factory address differs from booking. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          },
+          {
+            "op": "atom",
+            "id": "escalation.back_office_contact_fail_2",
+            "question": "Does the report evidence clearly show this failing condition? Condition: Factory refused drop test non-fragile. Answer true only with clear contradicting evidence.",
+            "role": "violation",
+            "ground": "atom"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Section 17 triggers require back office contact CC KA during inspection.",
+      "extract": [],
+      "source": "fail_if_atoms",
+      "tier": "atoms"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "pdf": "/Users/williambrun/Downloads/Q2614146161_0.pdf",
+  "json": "data/reports/ribkoff/corrected_reports/Q2614146161.json",
+  "cover": {
+    "pdf": {
+      "overall_result": "PASS",
+      "ordered_quantity": 506,
+      "real_produced_quantity": 519,
+      "expected_produced_quantity": 506,
+      "real_packed_quantity": 519,
+      "expected_packed_quantity": 404,
+      "found_major": 4,
+      "found_minor": 0,
+      "workmanship_result": "PASS"
+    },
+    "parser": {
+      "overall_result": "PASS",
+      "ordered_quantity": 506,
+      "real_produced_quantity": 519,
+      "expected_produced_quantity": 506,
+      "real_packed_quantity": 519,
+      "expected_packed_quantity": 404,
+      "found_major": 4.0,
+      "found_minor": 0.0,
+      "workmanship_result": "PASS"
+    },
+    "mismatches": [
+      {
+        "field": "po_reference",
+        "pdf": "08968,09",
+        "parser": "088968,099969,093432"
+      }
+    ],
+    "match": false
+  },
+  "checklist": {
+    "items_total": 45,
+    "items_found_in_pdf_text": 40,
+    "mismatches": [
+      {
+        "item": "Random carton selection",
+        "field": "photo_count",
+        "pdf": 1,
+        "parser": 0
+      },
+      {
+        "item": "Cartons before selection",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Cartons before selection",
+        "field": "photo_count",
+        "pdf": 1,
+        "parser": 2
+      },
+      {
+        "item": "Cartons after selection",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Cartons after selection",
+        "field": "photo_count",
+        "pdf": 1,
+        "parser": 2
+      },
+      {
+        "item": "Selected cartons",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NO_RESULT"
+      },
+      {
+        "item": "Inner Packing & Unit Packing",
+        "field": "photo_count",
+        "pdf": 3,
+        "parser": 19
+      },
+      {
+        "item": "Match packing info",
+        "field": "photo_count",
+        "pdf": 3,
+        "parser": 6
+      },
+      {
+        "item": "Carton drop test",
+        "field": "photo_count",
+        "pdf": 3,
+        "parser": 0
+      },
+      {
+        "item": "Shake test info",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Elastic waistband stretched length",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Metal / needle detection check",
+        "field": "result",
+        "pdf": "N/A",
+        "parser": "NOT_APPLICABLE"
+      }
+    ],
+    "mismatch_count": 12
+  },
+  "parse_warnings": [],
+  "production_ready_cover": false
+}

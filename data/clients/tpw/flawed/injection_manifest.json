@@ -1,0 +1,71 @@
+{
+  "Q2611142925_flawed": {
+    "source": "corrected/Q2611142925.json",
+    "injected": [
+      {
+        "element_id": "2-7-1-2",
+        "checkpoint": "Step 3: Shock Rotational Edge Drop Test",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Carton drop (ISTA) result must reflect the finding: comment describes damage, so PASS is inconsistent.",
+        "report_team_claim": "carton drop test result must match the ISTA finding."
+      },
+      {
+        "element_id": "2-7-1-4",
+        "checkpoint": "Step 5a: Shock Concentrated Impact Test",
+        "field": "photo_count",
+        "old": 6,
+        "new": 2,
+        "gi_rationale": "TPW ISTA 3A requires a full drop set; too few drop photos fails the layout requirement.",
+        "report_team_claim": "ISTA 3A mandates at least 17 drops; only a few photos attached."
+      }
+    ]
+  },
+  "Q2614472847_2_flawed": {
+    "source": "corrected/Q2614472847_2.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-8",
+        "checkpoint": "Match packing info",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Result must reflect findings: comment says PO number missing, so Match packing info cannot be PASS.",
+        "report_team_claim": "PO number missing on carton but packing marked pass."
+      },
+      {
+        "element_id": "2-6-1-6",
+        "checkpoint": "Outer Packing & Shipping Marks: Front & Side",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Result must reflect findings: comment reports missing barcode sticker, so PASS is inconsistent.",
+        "report_team_claim": "missing barcode sticker on cartons but marked pass."
+      }
+    ]
+  },
+  "Q2614472847_4_flawed": {
+    "source": "corrected/Q2614472847_4.json",
+    "injected": [
+      {
+        "element_id": "2-6-1-8",
+        "checkpoint": "Match packing info",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Result must reflect findings: comment says wrong PO number, so Match packing info cannot be PASS.",
+        "report_team_claim": "wrong PO number on carton but packing marked pass."
+      },
+      {
+        "element_id": "2-6-1-6",
+        "checkpoint": "Outer Packing & Shipping Marks: Front & Side",
+        "field": "result",
+        "old": "FAIL",
+        "new": "PASS",
+        "gi_rationale": "Result must reflect findings: comment reports packing not conform to spec.",
+        "report_team_claim": "packing way not conform to spec but marked pass."
+      }
+    ]
+  }
+}

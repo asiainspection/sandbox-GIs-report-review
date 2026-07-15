@@ -1,0 +1,23 @@
+{
+  "id": "new_era",
+  "name": "New Era Cap",
+  "gi_rules": "gi/rules.md",
+  "corrected_dir": "corrected",
+  "flawed_dir": "flawed",
+  "introduced_checkpoints": {
+    "report_q2616262288_flawed": {
+      "2-6-1-1": "comment: New Era GI: quantity section must FAIL when packed is 60-80%; PASS at 67.32% is a violation.",
+      "2-12-1-2": "result: New Era GI: Fabric Weight Test must be N/A for this scope; marking PASS is wrong."
+    },
+    "report_q2616171227_flawed": {
+      "2-13-1-2": "result: New Era GI: Fabric Weight Test must be N/A for this scope; marking PASS is wrong.",
+      "2-8-1-4": "photo_count: New Era GI: selected carton photos are mandatory."
+    },
+    "report_q2616292623_flawed": {
+      "2-6-1-1": "comment: New Era GI: quantity section must FAIL when packed is 60-80%.",
+      "2-11-2-9": "result: New Era GI: Fabric weight test must be N/A for this scope; marking PASS is wrong."
+    }
+  },
+  "holdout_keys": [],
+  "flawed_manifest": "flawed/injection_manifest.json"
+}

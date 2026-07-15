@@ -1,0 +1,56 @@
+{
+  "id": "ribkoff",
+  "name": "Joseph Ribkoff",
+  "gi_rules": "gi/rules.md",
+  "hand_specs": "gi/hand_specs.json",
+  "corrected_dir": "corrected",
+  "flawed_dir": "flawed",
+  "introduced_checkpoints": {
+    "report_q2614146161_flawed": {
+      "3_1_6": "injected by _inj_carton_drop_photos",
+      "5_2_2": "injected by _inj_stitch_no_number",
+      "3_2_3": "injected by _inj_logo_na",
+      "5_2_1": "injected by _inj_shading_extra_photo",
+      "3_1_7": "injected by _inj_measuring_photos",
+      "5_1_1": "injected by _inj_wrong_measurement_file"
+    },
+    "report_q2614430689_flawed": {
+      "3_1_6": "injected by _inj_carton_drop_photos",
+      "5_2_2": "injected by _inj_stitch_no_number",
+      "3_1_7": "injected by _inj_measuring_photos",
+      "5_1_1": "injected by _inj_wrong_measurement_file",
+      "1_3_2": "injected by _inj_clear_global_remark",
+      "1_2_1": "injected blank global remark (PO / qty explanation missing)"
+    },
+    "report_q2613916538_jun29_flawed": {
+      "3_1_6": "injected by _inj_carton_drop_photos",
+      "5_2_2": "injected by _inj_stitch_no_number",
+      "3_2_3": "injected by _inj_logo_na"
+    },
+    "report_q2614154465_jun29_flawed": {
+      "3_2_3": "injected by _inj_logo_na",
+      "5_2_1": "injected by _inj_shading_extra_photo",
+      "3_1_7": "injected by _inj_measuring_photos"
+    },
+    "report_q2614157738_271904_flawed": {
+      "5_2_1": "injected by _inj_shading_extra_photo",
+      "3_1_7": "injected by _inj_measuring_photos",
+      "5_1_1": "injected by _inj_wrong_measurement_file"
+    },
+    "report_q2614430288_flawed": {
+      "3_1_7": "injected by _inj_measuring_photos",
+      "5_1_1": "injected by _inj_wrong_measurement_file",
+      "1_3_2": "injected by _inj_clear_global_remark"
+    },
+    "report_q2614489409_flawed": {
+      "1_3_2": "injected by _inj_clear_global_remark",
+      "3_1_6": "injected by _inj_carton_drop_photos",
+      "5_2_2": "injected by _inj_stitch_no_number"
+    }
+  },
+  "holdout_keys": [
+    "report_q2614146161_flawed",
+    "report_q2614430689_flawed"
+  ],
+  "eval_corrected": ["Q2614146161", "Q2614430689"]
+}

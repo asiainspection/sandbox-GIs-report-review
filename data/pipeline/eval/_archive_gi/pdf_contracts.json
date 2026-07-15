@@ -1,0 +1,41 @@
+{
+  "description": "Expected cover-page facts from PDF (validation when JSON is available).",
+  "reports": {
+    "Q2614146161": {
+      "pdf": "Q2614146161_0.pdf",
+      "inspection_reference": "2008608",
+      "overall_result": "PASS",
+      "ordered_quantity": 506,
+      "real_produced_quantity": 519,
+      "expected_produced_quantity": 506,
+      "real_packed_quantity": 519,
+      "expected_packed_quantity": 404,
+      "workmanship_result": "PASS",
+      "found_major": 4,
+      "max_defects_major": 5,
+      "aql_level_major": "2.5"
+    },
+    "Q2611721218": {
+      "pdf": "Q2611721218.pdf",
+      "inspection_reference": "2011530",
+      "overall_result": "FAIL",
+      "note": "JSON not yet in repo — PDF-only contract for future validation"
+    },
+    "Q2612918144": {
+      "pdf": "Q2612918144.pdf",
+      "json": "data/reports/Q2612918144.json",
+      "inspection_reference": "2011494",
+      "overall_result": "PASS",
+      "ordered_quantity": 20000,
+      "real_produced_quantity": 20000,
+      "expected_produced_quantity": 20000,
+      "real_packed_quantity": 16000,
+      "expected_packed_quantity": 16000,
+      "workmanship_result": "PASS",
+      "found_major": 8,
+      "found_minor": 16,
+      "found_critical": 0,
+      "validated_against_pdf": true
+    }
+  }
+}
