@@ -28,11 +28,6 @@ def main() -> None:
         type=Path,
         default=ROOT / "data/pipeline/checkpoints/ribkoff_checkpoints.json",
     )
-    parser.add_argument(
-        "--specs",
-        type=Path,
-        default=ROOT / "data/clients/ribkoff/gi/hand_specs.json",
-    )
     parser.add_argument("--judge-model", type=str, default=None)
     parser.add_argument("--extract-model", type=str, default=None)
     parser.add_argument("--max-workers", type=int, default=8)
@@ -43,7 +38,6 @@ def main() -> None:
     run = run_production_review(
         args.report_json,
         args.checkpoints,
-        specs_path=args.specs,
         project_root=ROOT,
         max_workers=args.max_workers,
         judge_model=args.judge_model,

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from cascade import DEFAULT_CONFIDENCE_THRESHOLD, run_cascade
-from checkspec import load_hand_specs, resolve_specs
+from checkspec import resolve_specs
 from atom_cache import (
     apply_cache_to_items,
     load_atom_cache,
@@ -19,8 +19,6 @@ from atom_cache import (
 from fact_extractor import (
     AtomAnswer,
     ExtractItem,
-    apply_extracted_facts,
-    build_extract_items,
     run_extract_batches,
 )
 from fact_index import build_fact_index
@@ -35,7 +33,7 @@ from gi_review import (
     strict_blocking_enabled,
 )
 from google import genai
-from ir_checks import build_checkpoint_context
+from fact_schema import resolve_selector
 from obligation_eval import evaluate_obligation_symbolic, leaves_for_extraction, when_applies_json_only
 from photo_store import ensure_report_photos, photos_for_checkpoint
 from report_to_ir import build_ir, render_context
@@ -69,6 +67,21 @@ def _result_from_symbolic(
     )
 
 
+def _context_from_where(
+    spec: dict[str, Any],
+    facts: dict[str, Any],
+    semantic,
+    checkpoint: dict[str, Any],
+) -> str:
+    lines = [str(checkpoint.get("requirement") or "")]
+    block = checkpoint.get("check_block") or {}
+    for sel in block.get("where") or []:
+        val = resolve_selector(str(sel), facts, semantic)
+        preview = str(val)[:400] if val is not None else "(missing)"
+        lines.append(f"{sel}: {preview}")
+    return "\n".join(lines)[:6000]
+
+
 def _build_obligation_extract_items(
     specs: dict[str, dict[str, Any]],
     checkpoints_by_id: dict[str, dict[str, Any]],
@@ -82,8 +95,10 @@ def _build_obligation_extract_items(
     seen: set[str] = set()
     for cp_id, spec in specs.items():
         cp = checkpoints_by_id[cp_id]
-        # Ungated fail_if→atom is deferred at eval — skip LLM grounding.
-        if str(spec.get("source") or "") == "fail_if_atoms" and not spec.get("when"):
+        if str(spec.get("status_class") or "") == "advisory" or str(spec.get("source") or "") in (
+            "advisory",
+            "missing_block",
+        ):
             continue
         applies = when_applies_json_only(spec, facts, semantic=semantic)
         if applies is False:
@@ -102,7 +117,7 @@ def _build_obligation_extract_items(
                     field=f"{ground}.{lid}",
                     question=str(leaf.get("question") or ""),
                     value_type="boolean",
-                    context=build_checkpoint_context(cp, ir)[:6000],
+                    context=_context_from_where(spec, facts, semantic, cp),
                 )
             )
     return items
@@ -120,7 +135,10 @@ def _build_vision_items(
     seen: set[str] = set()
     for cp_id, spec in specs.items():
         cp = checkpoints_by_id[cp_id]
-        if str(spec.get("source") or "") == "fail_if_atoms" and not spec.get("when"):
+        if str(spec.get("status_class") or "") == "advisory" or str(spec.get("source") or "") in (
+            "advisory",
+            "missing_block",
+        ):
             continue
         applies = when_applies_json_only(spec, facts, semantic=semantic)
         if applies is False:
@@ -139,7 +157,7 @@ def _build_vision_items(
                     checkpoint_id=cp_id,
                     question=str(leaf.get("question") or ""),
                     image_paths=paths,
-                    context=build_checkpoint_context(cp, ir)[:1500],
+                    context=_context_from_where(spec, facts, semantic, cp)[:1500],
                 )
             )
     return items
@@ -197,19 +215,11 @@ def run_policy_review(
     _pipeline_log("2/6 compile", f"checkpoints={Path(checkpoints_path).name}")
     checkpoints = load_checkpoints(checkpoints_path)
     checkpoints_by_id = {cp["id"]: cp for cp in checkpoints}
-    hand_specs_path = specs_path
-    hand_specs = (
-        load_hand_specs(hand_specs_path)
-        if hand_specs_path is not None and Path(hand_specs_path).exists()
-        else {}
-    )
     cache = checkspec_cache or _cache_path_for_checkpoints(checkpoints_path, root)
     specs = resolve_specs(
         checkpoints,
-        hand_specs=hand_specs,
         cache_path=cache if cache.exists() else None,
         checkpoints_path=checkpoints_path,
-        hand_specs_path=hand_specs_path if hand_specs_path is not None and Path(hand_specs_path).exists() else None,
     )
     tier_counts: dict[str, int] = {}
     for sp in specs.values():
@@ -225,27 +235,6 @@ def run_policy_review(
     extract_usage = UsageStats()
     atom_answers: dict[str, AtomAnswer] = {}
 
-    # Extract fields needed by hand operator specs (e.g. 1_2_1 remark atoms)
-    _pipeline_log("3/6 ground_hand", f"hand_specs={len(hand_specs)}")
-    if hand_specs:
-        op_checkpoints = [checkpoints_by_id[cid] for cid in hand_specs if cid in checkpoints_by_id]
-        op_items = build_extract_items(
-            op_checkpoints,
-            hand_specs,
-            ir,
-            working_facts,
-            force_extract=False,
-            context_facts=facts,
-        )
-        _pipeline_log("3/6 ground_hand", f"extract_items={len(op_items)}")
-        if op_items:
-            batch = run_extract_batches(client, extractor, op_items, checkpoints_by_id)
-            extract_usage.add_usage(batch.usage)
-            working_facts = apply_extracted_facts(working_facts, batch.values)
-            for item_id, answer in batch.answers.items():
-                atom_answers[item_id] = answer
-
-    # Atom leaves from obligation specs (gated by WHEN) — text only
     atom_items = _build_obligation_extract_items(
         specs, checkpoints_by_id, ir, working_facts, semantic, ground="atom"
     )
@@ -357,7 +346,7 @@ def run_policy_review(
                     "This rule requires judging photo content; text/metadata extraction cannot "
                     "verify it (vision photos unavailable)."
                 ),
-                evidence=build_checkpoint_context(cp, ir)[:400],
+                evidence=_context_from_where(spec, working_facts, semantic, cp)[:400],
                 source="obligation:vision_deferred",
             )
         elif tier == "vision" and sym.match != MATCH_UNABLE:

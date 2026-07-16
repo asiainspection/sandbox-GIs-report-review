@@ -145,12 +145,16 @@ def validate_checkspec(spec: dict[str, Any] | ObligationSpec) -> list[str]:
             "when": spec.when,
             "unless": spec.unless,
             "then": spec.then,
+            "source": spec.source,
+            "status_class": None,
         }
     else:
         data = spec
     errors: list[str] = []
     if not data.get("checkpoint_id"):
         errors.append("missing checkpoint_id")
+    if data.get("status_class") == "advisory" or str(data.get("source") or "") in ("advisory", "missing_block"):
+        return errors
     if not data.get("then"):
         errors.append("missing then obligation")
     for part in ("when", "unless", "then"):

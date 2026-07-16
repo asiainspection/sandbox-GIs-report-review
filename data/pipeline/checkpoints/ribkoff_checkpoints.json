@@ -1,8 +1,10 @@
 {
   "meta": {
     "name": "Joseph Ribkoff Inspection Report Review – Rules Reference",
-    "source": "/Users/williambrun/Documents/test_GI_reports/data/GI/V2_Joseph_Ribkoff_Inspection_Rules_Reference.md",
-    "generated_at": "2026-07-13T18:16:53"
+    "source": "data/clients/ribkoff/gi/rules.md",
+    "generated_at": "2026-07-16T07:27:18Z",
+    "check_blocks": 56,
+    "checkpoint_count": 56
   },
   "checkpoints": [
     {
@@ -12,37 +14,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the address field only",
-      "focus_terms": [
-        "Inspection site address",
-        "report header",
-        "Factory Review checklist",
-        "address"
-      ],
-      "md_sections": [
-        "Inspection site address",
-        "Factory Review",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Address shown as \"广东省汕头市科技东路11号\" with no postal code",
-        "Report does not satisfy: Verify the full factory address is written in English and includes street, building, floor, city, province/state, country, and postal code. Address must not contain Chinese characters."
-      ],
       "source_rule_id": "1.1.1",
       "source_lines": {
         "start": 195,
-        "end": 204
+        "end": 212
       },
       "context": "QUESTION — check the address field only",
-      "examples": {
-        "pass": [
-          "\"Floor 5, LongSheng Building, No.11, Keji East Rd., H&N Development, Shantou, GuangDong, China. Zip code: 515041\""
-        ],
-        "fail": [
-          "Address shown as \"广东省汕头市科技东路11号\" with no postal code"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -52,38 +34,17 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check factory address against booking details",
-      "focus_terms": [
-        "Is the factory",
-        "workshop location same as booked?",
-        "Factory Review checklist",
-        "booking. if they differ, a clear remark must be added to the inspector's remark / other remarks"
-      ],
-      "md_sections": [
-        "Is the factory",
-        "workshop location same as booked?",
-        "Factory Review",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Inspector marks \"Yes\" with no remark, but the on-site address differs from the booked address",
-        "Report does not satisfy: Confirm the on-site factory address matches the address recorded in the booking. If they differ, a clear remark must be added to the Inspector's Remark / Other Remarks section."
-      ],
       "source_rule_id": "1.1.2",
       "source_lines": {
-        "start": 205,
-        "end": 214
+        "start": 213,
+        "end": 230
       },
       "context": "FULL REPORT — cross-check factory address against booking details",
-      "examples": {
-        "pass": [
-          "Inspector marks \"No\" and adds: \"Factory located at [actual address]; booking recorded [booked address]\""
-        ],
-        "fail": [
-          "Inspector marks \"Yes\" with no remark, but the on-site address differs from the booked address"
-        ]
+      "check_block": {
+        "data_source": "PO_booking",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -93,40 +54,19 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check defect list in remarks against defect details in the Workmanship section",
-      "focus_terms": [
-        "Inspector's Remark",
-        "report header summary",
-        "defect list in remarks against defect details in the workmanship",
-        "workmanship",
-        "bulk, this must be clearly explained at the beginning of this"
-      ],
-      "md_sections": [
-        "Inspector's Remark",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Remarks section states only \"3 defects found\" with no PO breakdown and no percentage",
-        "Report does not satisfy: Verify that a complete list of all defects found is provided, broken down by PO number, with a structured format: \"PO xxx: X pcs defect found / Total: X% defect found.\" If large quantities of defective units are found in the bulk, this must be clearly explained at the beginning of this section."
-      ],
       "source_rule_id": "1.2.1",
       "source_lines": {
-        "start": 219,
-        "end": 228
+        "start": 235,
+        "end": 252
       },
       "context": "FULL REPORT — cross-check defect list in remarks against defect details in the Workmanship section",
-      "examples": {
-        "pass": [
-          "\"PO 081901: 3 defects found (1 MAJ Untrimmed Thread Ends, 2 MIN Untrimmed thread ends <1/4\"). Total: 6.00% defect found (3/50)\""
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.global_remark"
         ],
-        "fail": [
-          "Remarks section states only \"3 defects found\" with no PO breakdown and no percentage"
-        ]
+        "when": null,
+        "check": "extract(\"Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.\")"
       }
     },
     {
@@ -136,37 +76,20 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the quantity fields in the Available Quantity Check section",
-      "focus_terms": [
-        "Available Quantity Check",
-        "Quantity & Packaging checklist",
-        "quantity",
-        "available quantity check"
-      ],
-      "md_sections": [
-        "Available Quantity Check",
-        "Quantity & Packaging",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "PSI inspection proceeded with packed quantity at 65% without any remark or Quality notification"
-      ],
       "source_rule_id": "1.3.1",
       "source_lines": {
-        "start": 233,
-        "end": 248
+        "start": 257,
+        "end": 280
       },
       "context": "QUESTION — check the quantity fields in the Available Quantity Check section",
-      "lookup_table": "| Service | Finished % required | Packed % required | Action if met | Action if not met |\n|---|---|---|---|---|\n| PSI | 100% | ≥ 80% | Proceed inspection | Packed < 80%: inform Quality; issue missing inspection report |\n| DUPRO | > 20% | > 20% | Proceed inspection | Inform Quality; issue missing inspection report |",
-      "examples": {
-        "pass": [
-          "PSI with 516 pcs packed (103%) out of 500 ordered — threshold met, inspection proceeds"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "product._first.real_packed_quantity",
+          "product._first.ordered_quantity"
         ],
-        "fail": [
-          "PSI inspection proceeded with packed quantity at 65% without any remark or Quality notification"
-        ]
+        "when": null,
+        "check": "ratio_at_least(0.8)"
       }
     },
     {
@@ -176,35 +99,19 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check ordered quantity against produced and packed quantities",
-      "focus_terms": [
-        "Available Quantity Details table",
-        "Quantity & Packaging checklist"
-      ],
-      "md_sections": [
-        "Available Quantity Details table",
-        "Quantity & Packaging",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "516 pcs on site vs. 500 pcs booked, with no mention of the 16-unit overage anywhere in the report",
-        "Report does not satisfy: Verify that any discrepancy between the booking quantity and the on-site quantity (shortage or overage) is clearly noted in the report with an explanation."
-      ],
       "source_rule_id": "1.3.2",
       "source_lines": {
-        "start": 249,
-        "end": 258
+        "start": 281,
+        "end": 298
       },
       "context": "FULL REPORT — cross-check ordered quantity against produced and packed quantities",
-      "examples": {
-        "pass": [
-          "\"Total 516 pcs / 103% packed in cartons. Overage of 16 pcs vs. booking of 500 pcs.\""
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.global_remark"
         ],
-        "fail": [
-          "516 pcs on site vs. 500 pcs booked, with no mention of the 16-unit overage anywhere in the report"
-        ]
+        "when": "product._first.real_packed_quantity != product._first.ordered_quantity",
+        "check": "extract(\"Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.\")"
       }
     },
     {
@@ -214,36 +121,19 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check all \"No\" responses throughout the report against the Summary Review section",
-      "focus_terms": [
-        "Summary review",
-        "end of report",
-        "all \"no\" responses throughout the report against the summary review",
-        "inspection details fields, a corresponding explanation must be present in the summary review"
-      ],
-      "md_sections": [
-        "Summary review",
-        "end of report",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Tools calibration answered \"No\" with no corresponding explanation in the Summary Review",
-        "Report does not satisfy: For any \"No\" response recorded anywhere in the Inspection Details fields, a corresponding explanation must be present in the Summary Review section."
-      ],
       "source_rule_id": "1.4.1",
       "source_lines": {
-        "start": 263,
-        "end": 274
+        "start": 303,
+        "end": 322
       },
       "context": "FULL REPORT — cross-check all \"No\" responses throughout the report against the Summary Review section",
-      "examples": {
-        "pass": [
-          "Summary Review states: \"Tools calibration: No — no calibration label on the weight scale provided by factory\""
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.global_remark"
         ],
-        "fail": [
-          "Tools calibration answered \"No\" with no corresponding explanation in the Summary Review"
-        ]
+        "when": null,
+        "check": "extract(\"For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.\")"
       }
     },
     {
@@ -253,35 +143,17 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check booking style number and PO number against care label, hangtag, and carton markings",
-      "focus_terms": [
-        "PO ref and SKU",
-        "report header, care label, hangtag, carton marking"
-      ],
-      "md_sections": [
-        "PO ref and SKU",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Booking references style 261938; measurement chart and report header show 261838",
-        "Report does not satisfy: Confirm that the style number and PO number on the on-site product identification (care label header, barcode hangtag, shipping carton) exactly match the booking information. If they do not match, the service must be treated as failed, a missed inspection report issued, and the reason clearly stated."
-      ],
       "source_rule_id": "2.1.1",
       "source_lines": {
-        "start": 281,
-        "end": 290
+        "start": 329,
+        "end": 346
       },
       "context": "FULL REPORT — cross-check booking style number and PO number against care label, hangtag, and carton markings",
-      "examples": {
-        "pass": [
-          "Booking style 261740 matches the SKU on the care label header, the barcode hangtag, and the carton marking"
-        ],
-        "fail": [
-          "Booking references style 261938; measurement chart and report header show 261838"
-        ]
+      "check_block": {
+        "data_source": "PO_booking",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -291,41 +163,17 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check booking color information against on-site labels and hangtags",
-      "focus_terms": [
-        "Color code",
-        "description",
-        "General Information and product identification labels"
-      ],
-      "md_sections": [
-        "Color code",
-        "description",
-        "General Information and product identification labels",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Booking states \"Midnight Blue\"; on-site product shows \"Navy\" with no remark",
-        "Report does not satisfy: If the color code or description on site does not match the booking, proceed with the inspection. Record the actual color(s) and quantity breakdown in the report with a remark identifying the discrepancy."
-      ],
       "source_rule_id": "2.1.2",
       "source_lines": {
-        "start": 291,
-        "end": 300
+        "start": 347,
+        "end": 364
       },
       "context": "FULL REPORT — cross-check booking color information against on-site labels and hangtags",
-      "never_flag_if": [
-        "the color code or description on site does not match the booking is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Inspector proceeds and notes: \"Color description on site is Navy 2166; booking reference is Midnight Blue. Quantities: [breakdown].\""
-        ],
-        "fail": [
-          "Booking states \"Midnight Blue\"; on-site product shows \"Navy\" with no remark"
-        ]
+      "check_block": {
+        "data_source": "PO_booking",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -335,36 +183,19 @@
       "severity": "BLOCKING",
       "scope_type": "SECTION",
       "scope_detail": "cross-check lot number across hangtag and carton within the Specifications section",
-      "focus_terms": [
-        "Lot number",
-        "hangtag vs. carton marking",
-        "lot number across hangtag and carton within the specifications",
-        "specifications"
-      ],
-      "md_sections": [
-        "Lot number",
-        "hangtag vs. carton marking",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Hangtag shows Lot 081901; carton marking shows Lot 082001 — no remark provided",
-        "Report does not satisfy: Verify that the lot number on the hangtag matches the lot number on the shipping carton. If they do not match, mark this as Failed and add a remark."
-      ],
       "source_rule_id": "2.1.3",
       "source_lines": {
-        "start": 301,
-        "end": 310
+        "start": 365,
+        "end": 382
       },
       "context": "SECTION — cross-check lot number across hangtag and carton within the Specifications section",
-      "examples": {
-        "pass": [
-          "Hangtag and carton both show Lot 081901; result recorded as conforming"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.global_remark"
         ],
-        "fail": [
-          "Hangtag shows Lot 081901; carton marking shows Lot 082001 — no remark provided"
-        ]
+        "when": null,
+        "check": "extract(\"Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.\")"
       }
     },
     {
@@ -374,40 +205,20 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the signed documents field and verify photos are present",
-      "focus_terms": [
-        "Are the QIMA documents signed?",
-        "Factory Review checklist",
-        "signed documents"
-      ],
-      "md_sections": [
-        "Are the QIMA documents signed?",
-        "Factory Review",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "All 3 documents are listed as signed but no photos of the signed documents are uploaded",
-        "Report does not satisfy: Confirm that the Factory Disclaimer, Draft Report, and COC are all signed by both the inspector and the factory representative. Photos of all signed documents must be included in the report."
-      ],
       "source_rule_id": "2.2.1",
       "source_lines": {
-        "start": 315,
-        "end": 324
+        "start": 387,
+        "end": 404
       },
       "context": "QUESTION — check the signed documents field and verify photos are present",
-      "examples": {
-        "pass": [
-          "3 signed document photos uploaded, each captioned (e.g., \"Factory Disclaimer — signed by inspector and factory representative\")"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.are_the_qima_documents_signed.photo_count"
         ],
-        "fail": [
-          "All 3 documents are listed as signed but no photos of the signed documents are uploaded"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": null,
+        "check": "count_at_least(3)"
+      }
     },
     {
       "id": "3_1_1",
@@ -416,35 +227,19 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the random carton selection result field",
-      "focus_terms": [
-        "Random carton selection",
-        "Product Specifications checklist",
-        "random carton selection"
-      ],
-      "md_sections": [
-        "Random carton selection",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Inspector selects cartons all from the same pallet and marks the result as Pass",
-        "Report does not satisfy: Confirm that cartons were selected fully randomly. If random selection was not possible, the result must be marked as Failed."
-      ],
       "source_rule_id": "3.1.1",
       "source_lines": {
-        "start": 331,
-        "end": 340
+        "start": 411,
+        "end": 428
       },
       "context": "QUESTION — check the random carton selection result field",
-      "examples": {
-        "pass": [
-          "Cartons selected randomly across the warehouse; result marked Pass with selected carton numbers listed"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.random_carton_selection.result"
         ],
-        "fail": [
-          "Inspector selects cartons all from the same pallet and marks the result as Pass"
-        ]
+        "when": null,
+        "check": "in_set(PASS, FAIL)"
       }
     },
     {
@@ -454,38 +249,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the outer packing field and any associated remarks",
-      "focus_terms": [
-        "Outer Packing & Shipping Marks",
-        "Product Specifications checklist",
-        "outer packing"
-      ],
-      "md_sections": [
-        "Outer Packing & Shipping Marks",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Carton reads \"Fait en Chine\" and the inspector fails the Outer Packing section",
-        "Report does not satisfy: Verify the carton side reads \"Made in China / Fabrique en Chine.\" If the wording is incorrect (e.g., \"Fait en Chine\"), record a MINOR defect remark but do not fail this section. Misspellings of color and country of origin on the carton are also MINOR defects requiring a remark but not a failure."
-      ],
       "source_rule_id": "3.1.2",
       "source_lines": {
-        "start": 341,
-        "end": 350
+        "start": 429,
+        "end": 446
       },
       "context": "QUESTION — check the outer packing field and any associated remarks",
-      "examples": {
-        "pass": [
-          "Carton reads \"Fait en Chine\"; inspector records a MINOR defect remark and passes the section"
-        ],
-        "fail": [
-          "Carton reads \"Fait en Chine\" and the inspector fails the Outer Packing section"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -495,42 +269,20 @@
       "severity": "MINOR",
       "scope_type": "SECTION",
       "scope_detail": "check that the 3 required photo types are present in the Specifications section",
-      "focus_terms": [
-        "Outer Packing & Shipping Marks",
-        "Product Specifications checklist",
-        "report photos",
-        "that the 3 required photo types are present in the specifications",
-        "specifications",
-        "report under the specifications"
-      ],
-      "md_sections": [
-        "Outer Packing & Shipping Marks",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Only a photo of the carton front label is provided; no pallet photo or seal photo",
-        "Report does not satisfy: Verify that photos of (1) cartons stacked on pallets, (2) carton seals, and (3) labelling on the side of boxes are included in the report under the Specifications section."
-      ],
       "source_rule_id": "3.1.3",
       "source_lines": {
-        "start": 351,
-        "end": 360
+        "start": 447,
+        "end": 464
       },
       "context": "SECTION — check that the 3 required photo types are present in the Specifications section",
-      "examples": {
-        "pass": [
-          "3 photos provided: cartons on pallet, carton seal visible, side label showing lot/style/PO/size information"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.outer_packing_shipping_marks_front_side.photo_count"
         ],
-        "fail": [
-          "Only a photo of the carton front label is provided; no pallet photo or seal photo"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "count_at_least(3)"
+      }
     },
     {
       "id": "3_1_4",
@@ -539,35 +291,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the inner packing checkpoint result and comments",
-      "focus_terms": [
-        "Inner Packing & Unit Packing",
-        "Product Specifications checklist",
-        "inner packing"
-      ],
-      "md_sections": [
-        "Inner Packing & Unit Packing",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Anti-mold sheet not present; inspector marks result as Pass without remark",
-        "Report does not satisfy: Verify availability of mold prevention unit (anti-mold sheet or desiccant pack) and vent hole as specified in the tech pack. All products must have anti-mold sheets or desiccant packs."
-      ],
       "source_rule_id": "3.1.4",
       "source_lines": {
-        "start": 361,
-        "end": 370
+        "start": 465,
+        "end": 482
       },
       "context": "QUESTION — check the inner packing checkpoint result and comments",
-      "examples": {
-        "pass": [
-          "Anti-mold sheet confirmed in each polybag; vent hole confirmed; result marked Pass"
-        ],
-        "fail": [
-          "Anti-mold sheet not present; inspector marks result as Pass without remark"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -577,34 +311,19 @@
       "severity": "BLOCKING",
       "scope_type": "SECTION",
       "scope_detail": "cross-check inner product ID against outer carton marking",
-      "focus_terms": [
-        "Match packing info",
-        "Product Specifications checklist"
-      ],
-      "md_sections": [
-        "Match packing info",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Carton is marked PO 081901, style 261740, but the hangtag inside shows PO 082001",
-        "Report does not satisfy: Verify that the PO number, item/style number, and product description on the product identification inside the carton match the information on the corresponding export carton marking."
-      ],
       "source_rule_id": "3.1.5",
       "source_lines": {
-        "start": 371,
-        "end": 380
+        "start": 483,
+        "end": 500
       },
       "context": "SECTION — cross-check inner product ID against outer carton marking",
-      "examples": {
-        "pass": [
-          "All products checked confirm matching PO 081901 and style 261740 on both inner and outer identification"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.match_packing_info.result"
         ],
-        "fail": [
-          "Carton is marked PO 081901, style 261740, but the hangtag inside shows PO 082001"
-        ]
+        "when": null,
+        "check": "equals(PASS)"
       }
     },
     {
@@ -614,43 +333,20 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the photo content for the carton drop test checkpoint",
-      "focus_terms": [
-        "Carton drop test",
-        "Product Specifications checklist",
-        "report photos",
-        "photo content for the carton drop test"
-      ],
-      "md_sections": [
-        "Carton drop test",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "4 photos of cartons being dropped are uploaded even though the test passed",
-        "Report does not satisfy: Photos of the carton drop test must NOT be included in the report unless the test fails. Only a failure requires photos."
-      ],
       "source_rule_id": "3.1.6",
       "source_lines": {
-        "start": 381,
-        "end": 390
+        "start": 501,
+        "end": 518
       },
       "context": "QUESTION — check the photo content for the carton drop test checkpoint",
-      "never_flag_if": [
-        "Exception condition is met: unless the test fails"
-      ],
-      "examples": {
-        "pass": [
-          "No photos uploaded for the carton drop test; result marked Pass with comment \"PASSED\""
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.carton_drop_test.photo_count"
         ],
-        "fail": [
-          "4 photos of cartons being dropped are uploaded even though the test passed"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": "checklist.carton_drop_test.result equals PASS",
+        "check": "count_at_most(0)"
+      }
     },
     {
       "id": "3_1_7",
@@ -659,40 +355,20 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the photo content for this checkpoint",
-      "focus_terms": [
-        "Outer Packing: Assortment, Dimensions & Weight",
-        "Product Specifications checklist",
-        "report photos",
-        "photo content for this"
-      ],
-      "md_sections": [
-        "Outer Packing: Assortment, Dimensions & Weight",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "4 photos showing a tape measure placed against carton sides or a scale reading are uploaded",
-        "Report does not satisfy: Photos of measuring the boxes (tape measure applied to carton sides or weight scale reading) must NOT be included in the report. Only the dimensions/weight results table and carton overview photos are required."
-      ],
       "source_rule_id": "3.1.7",
       "source_lines": {
-        "start": 391,
-        "end": 400
+        "start": 519,
+        "end": 536
       },
       "context": "QUESTION — check the photo content for this checkpoint",
-      "examples": {
-        "pass": [
-          "Only the completed assortment/dimensions/weight table and carton overview photos are present"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.outer_packing_assortment_dimensions_weight.photo_count"
         ],
-        "fail": [
-          "4 photos showing a tape measure placed against carton sides or a scale reading are uploaded"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "count_at_most(0)"
+      }
     },
     {
       "id": "3_1_8",
@@ -701,41 +377,17 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check folding method against tech pack and note in remarks if different",
-      "focus_terms": [
-        "Folding method",
-        "Inspector's Remark",
-        "Other Remarks",
-        "other remarks"
-      ],
-      "md_sections": [
-        "Folding method",
-        "Inspector's Remark",
-        "Other Remarks",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Folding method differs from tech pack; inspector fails the Specifications section",
-        "Report does not satisfy: If the folding method on site differs from the tech pack specification, record this in the Other Remarks section. Do not fail the Specifications section for this reason."
-      ],
       "source_rule_id": "3.1.8",
       "source_lines": {
-        "start": 401,
-        "end": 410
+        "start": 537,
+        "end": 554
       },
       "context": "FULL REPORT — cross-check folding method against tech pack and note in remarks if different",
-      "never_flag_if": [
-        "the folding method on site differs from the tech pack specification is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Folding method differs from tech pack; inspector adds remark and passes the section"
-        ],
-        "fail": [
-          "Folding method differs from tech pack; inspector fails the Specifications section"
-        ]
+      "check_block": {
+        "data_source": "spec_sheet",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -745,41 +397,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the swift attach color on serial tags",
-      "focus_terms": [
-        "Swift attaches",
-        "serial tags",
-        "Inspector's Remark",
-        "other remarks"
-      ],
-      "md_sections": [
-        "Swift attaches",
-        "serial tags",
-        "Inspector's Remark",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Clear swift attaches found; inspector fails the Product Labels section",
-        "Report does not satisfy: Swift attaches for serial tags must be black. If they are clear/transparent, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section."
-      ],
       "source_rule_id": "3.1.9",
       "source_lines": {
-        "start": 411,
-        "end": 420
+        "start": 555,
+        "end": 572
       },
       "context": "QUESTION — check the swift attach color on serial tags",
-      "examples": {
-        "pass": [
-          "Clear swift attaches found; inspector notes \"Swift attaches are clear, not black — MINOR defect\" in remarks and passes the section"
-        ],
-        "fail": [
-          "Clear swift attaches found; inspector fails the Product Labels section"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -789,44 +417,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check joker tag attachment method on denim pants only",
-      "focus_terms": [
-        "Joker tags",
-        "denim pants only",
-        "Inspector's Remark",
-        "other remarks"
-      ],
-      "md_sections": [
-        "Joker tags",
-        "denim pants only",
-        "Inspector's Remark",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Joker tags attached with black plastic swift attaches; inspector fails the Specifications section",
-        "Report does not satisfy: For denim pants, joker tags must be sewn on with thread. If attached with black plastic swift attaches instead, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section."
-      ],
       "source_rule_id": "3.1.10",
       "source_lines": {
-        "start": 421,
-        "end": 430
+        "start": 573,
+        "end": 590
       },
       "context": "QUESTION — check joker tag attachment method on denim pants only",
-      "never_flag_if": [
-        "Report context does not match 'denim pants' — rule is not applicable"
-      ],
-      "examples": {
-        "pass": [
-          "Joker tags attached with black plastic swift attaches; inspector notes \"Joker tags not sewn — MINOR defect\" in remarks and passes the section"
-        ],
-        "fail": [
-          "Joker tags attached with black plastic swift attaches; inspector fails the Specifications section"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -836,42 +437,20 @@
       "severity": "MINOR",
       "scope_type": "SECTION",
       "scope_detail": "check that all label types (main label, care label, hangtags) are present together in the same section",
-      "focus_terms": [
-        "Product Labels",
-        "Product Specifications checklist",
-        "report photos",
-        "that all label types (main label, care label, hangtags) are present together in the same",
-        "same",
-        "product labels"
-      ],
-      "md_sections": [
-        "Product Labels",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Care labels appear in the Workmanship section; hangtags appear only at the end of the report",
-        "Report does not satisfy: Verify that all hang tags and care labels are photographed together and grouped in the Product Labels section of the report. Do not scatter label photos across different sections."
-      ],
       "source_rule_id": "3.2.1",
       "source_lines": {
-        "start": 435,
-        "end": 444
+        "start": 595,
+        "end": 612
       },
       "context": "SECTION — check that all label types (main label, care label, hangtags) are present together in the same section",
-      "examples": {
-        "pass": [
-          "Main label, care labels, and all hangtag views are grouped together under Product Labels in the Specifications section"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.product_labels.photo_count"
         ],
-        "fail": [
-          "Care labels appear in the Workmanship section; hangtags appear only at the end of the report"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "count_at_least(1)"
+      }
     },
     {
       "id": "3_2_2",
@@ -880,36 +459,17 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check booking information against all 3 product identification components",
-      "focus_terms": [
-        "Product Labels",
-        "style number, PO, color, lot number consistency"
-      ],
-      "md_sections": [
-        "Product Labels",
-        "style number, PO, color, lot number consistency",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "The style number on the barcode hangtag reads 261838 instead of 261740",
-        "Report does not satisfy: Verify that the style number, PO number, color(s), and lot number are visible and consistent across: (1) the care and content label header (style number and PO number only), (2) the serial barcode hangtag (style number, color(s), PO number, lot number), and (3) the shipping carton marking (style number, color(s), sizes, PO number, lot number)."
-      ],
       "source_rule_id": "3.2.2",
       "source_lines": {
-        "start": 445,
-        "end": 454
+        "start": 613,
+        "end": 630
       },
       "context": "FULL REPORT — cross-check booking information against all 3 product identification components",
-      "examples": {
-        "pass": [
-          "Style 261740, PO 081901, and lot number consistently appear on care label, barcode hangtag, and carton marking"
-        ],
-        "fail": [
-          "The style number on the barcode hangtag reads 261838 instead of 261740"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -919,39 +479,20 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the Product Logo result field and associated photos",
-      "focus_terms": [
-        "Product Logo",
-        "Product Specifications checklist",
-        "product logo"
-      ],
-      "md_sections": [
-        "Product Logo",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Inspector marks \"No Product Logo / N/A\" when the logo is present on a sewn-on trim piece",
-        "Report does not satisfy: Carefully check the physical product for the brand logo, including on sewn-on trims and interior labels. Do not mark as N/A or \"no product logo\" without a thorough check of all surfaces and trims."
-      ],
       "source_rule_id": "3.2.3",
       "source_lines": {
-        "start": 455,
-        "end": 464
+        "start": 631,
+        "end": 648
       },
       "context": "QUESTION — check the Product Logo result field and associated photos",
-      "examples": {
-        "pass": [
-          "Inspector finds the Joseph Ribkoff logo on a sewn-on trim, marks the field correctly, and provides a photo"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.product_logo.result"
         ],
-        "fail": [
-          "Inspector marks \"No Product Logo / N/A\" when the logo is present on a sewn-on trim piece"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "checklist.product_logo.result != NOT_APPLICABLE"
+      }
     },
     {
       "id": "3_2_4",
@@ -960,40 +501,19 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check brand logo label between approval sample and bulk",
-      "focus_terms": [
-        "Product Labels",
-        "brand logo comparison vs. approval sample"
-      ],
-      "md_sections": [
-        "Product Labels",
-        "brand logo comparison vs. approval sample",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Logo label font on bulk slightly differs from approval sample; inspector records as Minor and passes",
-        "Report does not satisfy: If there is any visual variation or damage to the brand logo label between the approval sample and the bulk, the report must be marked FAIL. Brand logo variation is a CRITICAL defect."
-      ],
       "source_rule_id": "3.2.4",
       "source_lines": {
-        "start": 465,
-        "end": 474
+        "start": 649,
+        "end": 666
       },
       "context": "FULL REPORT — cross-check brand logo label between approval sample and bulk",
-      "never_flag_if": [
-        "there is any visual variation or damage to the brand logo label between the approval sample and the bulk is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Logo label visually differs from approval sample; inspector marks Product Labels as Failed — CRITICAL defect"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.product_style_construction.result"
         ],
-        "fail": [
-          "Logo label font on bulk slightly differs from approval sample; inspector records as Minor and passes"
-        ]
+        "when": null,
+        "check": "equals(PASS)"
       }
     },
     {
@@ -1003,41 +523,17 @@
       "severity": "BLOCKING",
       "scope_type": "SECTION",
       "scope_detail": "compare bulk size tab against approval sample within the Specifications section",
-      "focus_terms": [
-        "Size tab",
-        "Product Specifications checklist",
-        "specifications"
-      ],
-      "md_sections": [
-        "Size tab",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Size tab color on bulk differs from approval; inspector records as Minor",
-        "Report does not satisfy: If there is any visual variation between the approval sample size tab and the production size tab, the report must be marked FAIL. Size tab variation is a MAJOR defect."
-      ],
       "source_rule_id": "3.2.5",
       "source_lines": {
-        "start": 475,
-        "end": 484
+        "start": 667,
+        "end": 684
       },
       "context": "SECTION — compare bulk size tab against approval sample within the Specifications section",
-      "never_flag_if": [
-        "there is any visual variation between the approval sample size tab and the production size tab is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Size tab visually differs from approval sample; inspector marks Product Labels as Failed — MAJOR defect"
-        ],
-        "fail": [
-          "Size tab color on bulk differs from approval; inspector records as Minor"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1047,36 +543,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the care label language sequence against approval sample",
-      "focus_terms": [
-        "Care content label",
-        "language sequence"
-      ],
-      "md_sections": [
-        "Care content label",
-        "language sequence",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Language order on bulk care label differs from approval; inspector fails the Product Labels section",
-        "Report does not satisfy: Misprinting or variation in the sequence of languages on care content labels compared to the approval sample is NOT a reason to fail the report."
-      ],
       "source_rule_id": "3.2.6",
       "source_lines": {
-        "start": 485,
-        "end": 494
+        "start": 685,
+        "end": 702
       },
       "context": "QUESTION — check the care label language sequence against approval sample",
-      "examples": {
-        "pass": [
-          "Language order differs from approval; inspector notes this in remarks but passes the section"
-        ],
-        "fail": [
-          "Language order on bulk care label differs from approval; inspector fails the Product Labels section"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1086,38 +563,17 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check hanger specification against tech pack when shipping on hangers is required",
-      "focus_terms": [
-        "Hangers",
-        "Product Specifications checklist (when applicable)"
-      ],
-      "md_sections": [
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Products shipped on unbranded hangers when tech pack specifies Joseph Ribkoff logo hangers; no remark in report",
-        "Report does not satisfy: If the lot is to be shipped on hangers, verify that hangers bear the Joseph Ribkoff logo as specified in the tech pack."
-      ],
       "source_rule_id": "3.2.7",
       "source_lines": {
-        "start": 495,
-        "end": 504
+        "start": 703,
+        "end": 720
       },
       "context": "QUESTION — check hanger specification against tech pack when shipping on hangers is required",
-      "never_flag_if": [
-        "the lot is to be shipped on hangers is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Joseph Ribkoff logo hangers confirmed on all units; noted as conforming to tech pack"
-        ],
-        "fail": [
-          "Products shipped on unbranded hangers when tech pack specifies Joseph Ribkoff logo hangers; no remark in report"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1127,36 +583,21 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity assigned to each untrimmed thread defect entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Photo shows a thread end approximately 1/2\" long; inspector classifies it as MINOR"
-      ],
       "source_rule_id": "4.1.1",
       "source_lines": {
-        "start": 511,
-        "end": 526
+        "start": 727,
+        "end": 750
       },
       "context": "QUESTION — check the severity assigned to each untrimmed thread defect entry",
-      "lookup_table": "| Thread length | Severity |\n|---|---|\n| > 1/4\" | MAJOR |\n| < 1/4\" | MINOR |",
-      "examples": {
-        "pass": [
-          "Photo shows a thread end approximately 1/2\" long; inspector classifies it as MAJOR"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "workmanship.found_critical",
+          "workmanship.max_defects_critical"
         ],
-        "fail": [
-          "Photo shows a thread end approximately 1/2\" long; inspector classifies it as MINOR"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "workmanship.found_critical <= workmanship.max_defects_critical"
+      }
     },
     {
       "id": "4_1_2",
@@ -1165,35 +606,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity assigned to any dirt/stain defect entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "Parties & Location",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A stain on the front panel is classified as MINOR",
-        "Report does not satisfy: All dirt and stain defects must be classified as MAJOR, regardless of size or location."
-      ],
       "source_rule_id": "4.1.2",
       "source_lines": {
-        "start": 527,
-        "end": 536
+        "start": 751,
+        "end": 768
       },
       "context": "QUESTION — check the severity assigned to any dirt/stain defect entry",
-      "examples": {
-        "pass": [
-          "A stain on the front panel is classified as MAJOR"
-        ],
-        "fail": [
-          "A stain on the front panel is classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1203,34 +626,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity assigned to any stitching defect entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A stitching skip on the side seam is classified as MINOR",
-        "Report does not satisfy: All stitching defects must be classified as MAJOR."
-      ],
       "source_rule_id": "4.1.3",
       "source_lines": {
-        "start": 537,
-        "end": 546
+        "start": 769,
+        "end": 786
       },
       "context": "QUESTION — check the severity assigned to any stitching defect entry",
-      "examples": {
-        "pass": [
-          "A stitching skip on the side seam is classified as MAJOR"
-        ],
-        "fail": [
-          "A stitching skip on the side seam is classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1240,34 +646,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity assigned to any yarn defect or hole entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A small hole in the fabric is classified as MINOR",
-        "Report does not satisfy: Yarn defects and holes must be classified as MAJOR."
-      ],
       "source_rule_id": "4.1.4",
       "source_lines": {
-        "start": 547,
-        "end": 556
+        "start": 787,
+        "end": 804
       },
       "context": "QUESTION — check the severity assigned to any yarn defect or hole entry",
-      "examples": {
-        "pass": [
-          "A small hole in the fabric is classified as MAJOR"
-        ],
-        "fail": [
-          "A small hole in the fabric is classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1277,34 +666,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity of any wrinkle or press mark defect entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A crease visible at 1 m on the front panel is classified as MINOR",
-        "Report does not satisfy: Wrinkles, over-press marks, or creases visible from 1 meter away must be classified as MAJOR."
-      ],
       "source_rule_id": "4.1.5",
       "source_lines": {
-        "start": 557,
-        "end": 566
+        "start": 805,
+        "end": 822
       },
       "context": "QUESTION — check the severity of any wrinkle or press mark defect entry",
-      "examples": {
-        "pass": [
-          "A crease visible at 1 m on the front panel is classified as MAJOR"
-        ],
-        "fail": [
-          "A crease visible at 1 m on the front panel is classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1314,37 +686,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the severity assigned to any seam quality defect entry",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A puckered seam causing partial opening classified as MINOR",
-        "Report does not satisfy: Any seam with excessive puckering, poor tension, or linking that causes the seam to open must be classified as MAJOR."
-      ],
       "source_rule_id": "4.1.6",
       "source_lines": {
-        "start": 567,
-        "end": 576
+        "start": 823,
+        "end": 840
       },
       "context": "QUESTION — check the severity assigned to any seam quality defect entry",
-      "examples": {
-        "pass": [
-          "A puckered seam causing partial opening classified as MAJOR"
-        ],
-        "fail": [
-          "A puckered seam causing partial opening classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1354,37 +706,17 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check product form against approval sample and tech pack",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Product silhouette differs from approval sample; classified as MINOR",
-        "Report does not satisfy: Any product whose shape or form differs from the specifications or approval sample must be classified as a MAJOR workmanship defect."
-      ],
       "source_rule_id": "4.1.7",
       "source_lines": {
-        "start": 577,
-        "end": 586
+        "start": 841,
+        "end": 858
       },
       "context": "FULL REPORT — cross-check product form against approval sample and tech pack",
-      "examples": {
-        "pass": [
-          "Product silhouette differs from approval sample; classified as MAJOR"
-        ],
-        "fail": [
-          "Product silhouette differs from approval sample; classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1394,34 +726,17 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check trim installation against tech pack and approval sample",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A rhinestone is falling off; classified as MINOR",
-        "Report does not satisfy: Any trim that is missing, not installed securely, or falling off must be classified as MAJOR. Trim placement and installation must conform to the tech pack and/or approval sample."
-      ],
       "source_rule_id": "4.1.8",
       "source_lines": {
-        "start": 587,
-        "end": 596
+        "start": 859,
+        "end": 876
       },
       "context": "FULL REPORT — cross-check trim installation against tech pack and approval sample",
-      "examples": {
-        "pass": [
-          "A rhinestone is falling off; classified as MAJOR"
-        ],
-        "fail": [
-          "A rhinestone is falling off; classified as MINOR"
-        ]
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1431,42 +746,20 @@
       "severity": "MINOR",
       "scope_type": "SECTION",
       "scope_detail": "check the number of photos per defect entry in the Workmanship section",
-      "focus_terms": [
-        "Defects checklist",
-        "Workmanship section",
-        "report photos",
-        "number of photos per defect entry in the workmanship",
-        "workmanship"
-      ],
-      "md_sections": [
-        "Defects",
-        "Workmanship section",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "20 photos of untrimmed threads uploaded for a single defect entry",
-        "Report does not satisfy: Include a maximum of 5 photos per defect type. If the same defect is found on more than 5 units, upload only 5 representative photos and document the total count in the report. For multiple references or colors, include only 1 photo per color."
-      ],
       "source_rule_id": "4.2.1",
       "source_lines": {
-        "start": 601,
-        "end": 610
+        "start": 881,
+        "end": 898
       },
       "context": "SECTION — check the number of photos per defect entry in the Workmanship section",
-      "examples": {
-        "pass": [
-          "5 photos maximum for \"Untrimmed Thread Ends,\" representing the variety of affected units; report states total count"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.defects_without_photo"
         ],
-        "fail": [
-          "20 photos of untrimmed threads uploaded for a single defect entry"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": null,
+        "check": "equals(0)"
+      }
     },
     {
       "id": "5_1_1",
@@ -1475,35 +768,19 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check SKU in chart against report header; check file name in Attachments",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "Product Dimensions SL checklist; Attachments section"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "Product Dimensions SL",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "File is named \"Measurement chart format-joseph Ribkoff.xlsx\"; style number in chart reads 261838 instead of 261740"
-      ],
       "source_rule_id": "5.1.1",
       "source_lines": {
-        "start": 617,
-        "end": 641
+        "start": 905,
+        "end": 937
       },
       "context": "FULL REPORT — cross-check SKU in chart against report header; check file name in Attachments",
-      "lookup_table": "| Category | Mandatory POMs | Template file |\n|---|---|---|\n| Jacket/Coat with closed front | 15 | POM JACKET _ 2022-04-07[1].xlsx |\n| Jacket/Coat with open front | 18 | POM JACKET _ 2022-04-07[1].xlsx |\n| Denim Jacket | 15 | POM JACKET _ 2022-04-07[1].xlsx |\n| Sweater | 11 | POM KNITWEAR- SWEATERS-QIMA 2022-04-07[1].xlsx |\n| Cardigan | 12 | POM KNITWEAR- SWEATERS-QIMA 2022-04-07[1].xlsx |\n| Alpha Pull-On Pant | 10 | POM DENIM PANT _PULL ON PANT _ QIMA_ 2022-04-07[1].xlsx |\n| Denim Pants | 11 | POM DENIM PANT _PULL ON PANT _ QIMA_ 2022-04-07[1].xlsx |\n| Skirts 0–24 | 7 | POM SKIRT-QIMA_ 2022-04-07[1].xlsx |\n| Skirts Pull-On XS–XXL | 5 | POM SKIRT-QIMA_ 2022-04-07[1].xlsx |\n| Dress/Blouse | 17 | POM DRESSES -QIMA _ 2022-04-07[1].xlsx |\n| Other products | Per booking attachment | Per booking attachment |",
-      "examples": {
-        "pass": [
-          "File is named \"Measurement Chart - 261740.xlsx\"; style number in chart reads 261740"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.product_dimensions_result.attachment_filenames"
         ],
-        "fail": [
-          "File is named \"Measurement chart format-joseph Ribkoff.xlsx\"; style number in chart reads 261838 instead of 261740"
-        ]
+        "when": null,
+        "check": "filename_matches(\"Measurement Chart-*.xlsx\")"
       }
     },
     {
@@ -1513,40 +790,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check highlighting in the attached measurement chart and the result field",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "measurement chart (Excel attachment)",
-        "report result field",
-        "highlighting in the attached measurement chart and the",
-        "excel file. apply the tolerance rule as follows: if all out-of-tolerance values are within ±1/8\", classify as minor — add a remark and do not fail the"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "measurement chart (Excel attachment)",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A POM in \"Front HSP\" is 5/8\" out of spec; the cell is not highlighted and the measurement section is marked Pass",
-        "Report does not satisfy: All out-of-tolerance measurements must be highlighted in yellow in the Excel file. Apply the tolerance rule as follows: if all out-of-tolerance values are within ±1/8\", classify as MINOR — add a remark and do not fail the section. If any tolerance exceeds ±1/8\", highlight in yellow with red text — the measurement section must be marked FAIL."
-      ],
       "source_rule_id": "5.1.2",
       "source_lines": {
-        "start": 642,
-        "end": 651
+        "start": 938,
+        "end": 955
       },
       "context": "QUESTION — check highlighting in the attached measurement chart and the result field",
-      "examples": {
-        "pass": [
-          "The \"Front HSP\" cell is highlighted in yellow with red text; measurement section is marked Fail"
-        ],
-        "fail": [
-          "A POM in \"Front HSP\" is 5/8\" out of spec; the cell is not highlighted and the measurement section is marked Pass"
-        ]
+      "check_block": {
+        "data_source": "spec_sheet",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1556,35 +810,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check chart structure and content for completeness and accuracy",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "header row and content of measurement chart"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "header row and content of measurement chart",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "A result cell in the M size column contains the letter \"o\" instead of a numeric value; style number field is blank",
-        "Report does not satisfy: Verify that (1) no column is left empty, (2) the style number is written in the chart header, (3) top-row bulk measurements are identified by size and/or color, and (4) no typo errors exist (e.g., letters entered in numeric result cells)."
-      ],
       "source_rule_id": "5.1.3",
       "source_lines": {
-        "start": 652,
-        "end": 661
+        "start": 956,
+        "end": 973
       },
       "context": "QUESTION — check chart structure and content for completeness and accuracy",
-      "examples": {
-        "pass": [
-          "All cells contain numeric values; style number reads \"261740\" in the chart header; columns are labeled by size (XS, S, M, L, XL, XXL)"
-        ],
-        "fail": [
-          "A result cell in the M size column contains the letter \"o\" instead of a numeric value; style number field is blank"
-        ]
+      "check_block": {
+        "data_source": "spec_sheet",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1594,39 +830,18 @@
       "severity": "BLOCKING",
       "scope_type": "SECTION",
       "scope_detail": "confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "checklist photos and attachments",
-        "product dimensions",
-        "product dimensions result"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A photo of a weight scale reading is uploaded under Product Dimensions Result; the chart screenshot is too blurry to read",
-        "Report does not satisfy: Measurement chart screenshots (print screen of POM) and the Excel file must both be uploaded exclusively in the Product Dimensions Result section. Product weight photos must NOT appear in this section. The print screen must be legible and not blurry."
-      ],
       "source_rule_id": "5.1.4",
       "source_lines": {
-        "start": 662,
-        "end": 671
+        "start": 974,
+        "end": 991
       },
       "context": "SECTION — confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
-      "examples": {
-        "pass": [
-          "Only the measurement chart print screen (sharp and readable) and the Excel attachment appear in the Product Dimensions Result section"
-        ],
-        "fail": [
-          "A photo of a weight scale reading is uploaded under Product Dimensions Result; the chart screenshot is too blurry to read"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "spec_sheet",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_1_5",
@@ -1635,40 +850,17 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check total units measured for denim products",
-      "focus_terms": [
-        "Product Dimensions",
-        "total sample size (denim category only)"
-      ],
-      "md_sections": [
-        "Product Dimensions",
-        "total sample size (denim category only)",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Denim pant inspection reports 13 units measured",
-        "Report does not satisfy: For denim products, 20 units must be measured (effective September 10, 2021), using sampling level S4 or Level 1 based on booking quantity."
-      ],
       "source_rule_id": "5.1.5",
       "source_lines": {
-        "start": 672,
-        "end": 681
+        "start": 992,
+        "end": 1009
       },
       "context": "QUESTION — check total units measured for denim products",
-      "never_flag_if": [
-        "Report context does not match 'denim category' — rule is not applicable"
-      ],
-      "examples": {
-        "pass": [
-          "Denim pant inspection reports 20 units measured at sampling level S4"
-        ],
-        "fail": [
-          "Denim pant inspection reports 13 units measured"
-        ]
+      "check_block": {
+        "data_source": "spec_sheet",
+        "where": [],
+        "when": null,
+        "check": null
       }
     },
     {
@@ -1678,40 +870,20 @@
       "severity": "MINOR",
       "scope_type": "SECTION",
       "scope_detail": "check the number of photos per test checkpoint",
-      "focus_terms": [
-        "Tests checklist",
-        "all test checkpoints",
-        "report photos",
-        "number of photos per test"
-      ],
-      "md_sections": [
-        "Tests",
-        "all test checkpoints",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "4 photos uploaded for the Adhesive test even though it passed",
-        "Report does not satisfy: Include only 1 photo per test in the checklist. For failed tests, provide only 1 photo per failure. Do not upload multiple photos for the same test."
-      ],
       "source_rule_id": "5.2.1",
       "source_lines": {
-        "start": 686,
-        "end": 695
+        "start": 1014,
+        "end": 1031
       },
       "context": "SECTION — check the number of photos per test checkpoint",
-      "examples": {
-        "pass": [
-          "1 photo uploaded for the Adhesive test showing the tape application"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.color_shading_check.photo_count"
         ],
-        "fail": [
-          "4 photos uploaded for the Adhesive test even though it passed"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": null,
+        "check": "count_at_most(1)"
+      }
     },
     {
       "id": "5_2_2",
@@ -1720,40 +892,23 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the stitch density result and photo source",
-      "focus_terms": [
-        "Stitch density check",
-        "Tests checklist",
-        "report photos",
-        "stitch density"
-      ],
-      "md_sections": [
-        "Stitch density check",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Photo shows stitch density measured on the main label seam; no numeric count is stated in the comment",
-        "Report does not satisfy: The stitch count per inch must be clearly stated as a numeric value in the report, with a supporting photo taken from a seam assembly — not from sewing on the main label."
-      ],
       "source_rule_id": "5.2.2",
       "source_lines": {
-        "start": 696,
-        "end": 705
+        "start": 1032,
+        "end": 1051
       },
       "context": "QUESTION — check the stitch density result and photo source",
-      "examples": {
-        "pass": [
-          "Photo shows stitch count on a side seam assembly; report states \"42 stitches per inch\""
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "checklist.stitch_density_check.comment"
         ],
-        "fail": [
-          "Photo shows stitch density measured on the main label seam; no numeric count is stated in the comment"
+        "when": null,
+        "check": [
+          "present",
+          "has_number"
         ]
-      },
-      "photo_check": "content"
+      }
     },
     {
       "id": "5_2_3",
@@ -1762,39 +917,18 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check that both approval and bulk sample photos are present and labeled",
-      "focus_terms": [
-        "Ironing, washing, treatment check",
-        "Tests checklist",
-        "report photos"
-      ],
-      "md_sections": [
-        "Ironing, washing, treatment check",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Only a photo of the bulk garment is provided with no approval sample for comparison",
-        "Report does not satisfy: Include clear photos of both the approval sample and the bulk product side by side, each with a caption identifying which is which."
-      ],
       "source_rule_id": "5.2.3",
       "source_lines": {
-        "start": 706,
-        "end": 715
+        "start": 1052,
+        "end": 1069
       },
       "context": "QUESTION — check that both approval and bulk sample photos are present and labeled",
-      "examples": {
-        "pass": [
-          "2 photos: \"Ironing check — Approval Sample Checked\" and \"Ironing check — Bulk Sample Checked\""
-        ],
-        "fail": [
-          "Only a photo of the bulk garment is provided with no approval sample for comparison"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_2_4",
@@ -1803,40 +937,18 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the barcode type used, the photo count per barcode type, and the interpretation of results",
-      "focus_terms": [
-        "Barcode scanning test",
-        "Tests checklist",
-        "report photos",
-        "barcode type used, the photo count per barcode type, and the interpretation of"
-      ],
-      "md_sections": [
-        "Barcode scanning test",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Inspector uses UPC 12 scanner and fails the section because a leading zero is missing; only 1 global photo uploaded despite 2 barcode types on the product",
-        "Report does not satisfy: The UPC 13 scanner must be used (not UPC 12). Upload 1 photo per barcode type present on the product. If a barcode scan result is missing a leading zero, record this as a remark but do not fail this section."
-      ],
       "source_rule_id": "5.2.4",
       "source_lines": {
-        "start": 716,
-        "end": 725
+        "start": 1070,
+        "end": 1087
       },
       "context": "QUESTION — check the barcode type used, the photo count per barcode type, and the interpretation of results",
-      "examples": {
-        "pass": [
-          "Inspector uses UPC 13 scanner; 1 photo per barcode type uploaded; missing leading zero noted as remark; section passed"
-        ],
-        "fail": [
-          "Inspector uses UPC 12 scanner and fails the section because a leading zero is missing; only 1 global photo uploaded despite 2 barcode types on the product"
-        ]
-      },
-      "photo_check": "metadata"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_2_5",
@@ -1845,40 +957,18 @@
       "severity": "MINOR",
       "scope_type": "QUESTION",
       "scope_detail": "check the symmetry check result and supporting photo",
-      "focus_terms": [
-        "Symmetry check",
-        "Tests checklist",
-        "report photos",
-        "symmetry check"
-      ],
-      "md_sections": [
-        "Symmetry check",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Symmetry check marked Pass with no photo showing the front facing verification",
-        "Report does not satisfy: A verification of the front facing must be done and must be visible in the report. Fold the product on its symmetry axis or use a measurement tool to compare. The result and a supporting photo must be present."
-      ],
       "source_rule_id": "5.2.5",
       "source_lines": {
-        "start": 726,
-        "end": 735
+        "start": 1088,
+        "end": 1105
       },
       "context": "QUESTION — check the symmetry check result and supporting photo",
-      "examples": {
-        "pass": [
-          "Photo shows product folded on symmetry axis or front facing laid flat; result marked Pass with comment \"PASSED\""
-        ],
-        "fail": [
-          "Symmetry check marked Pass with no photo showing the front facing verification"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_2_6",
@@ -1887,40 +977,18 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check whether a fit model was used when leg twisting was identified",
-      "focus_terms": [
-        "Denim pants",
-        "leg twisting",
-        "fit model"
-      ],
-      "md_sections": [
-        "Denim pants",
-        "leg twisting",
-        "fit model",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Leg twisting noted in remarks but no fit model photos are provided",
-        "Report does not satisfy: If leg twisting is identified during inspection of denim pants, the pants must be fitted on a fit model to validate the finding. Clear front and back view photos must be taken on the fit model and uploaded."
-      ],
       "source_rule_id": "5.2.6",
       "source_lines": {
-        "start": 736,
-        "end": 745
+        "start": 1106,
+        "end": 1123
       },
       "context": "QUESTION — check whether a fit model was used when leg twisting was identified",
-      "never_flag_if": [
-        "leg twisting is identified during inspection of denim pants is not identified or mentioned in the report"
-      ],
-      "examples": {
-        "pass": [
-          "Leg twisting confirmed; clear front and back fit model photos uploaded and captioned"
-        ],
-        "fail": [
-          "Leg twisting noted in remarks but no fit model photos are provided"
-        ]
-      },
-      "photo_check": "metadata"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_2_7",
@@ -1929,38 +997,18 @@
       "severity": "TO_CONFIRM",
       "scope_type": "QUESTION",
       "scope_detail": "check that fit model photos are present for the product inspected",
-      "focus_terms": [
-        "Tests checklist",
-        "fit model photos (all products)"
-      ],
-      "md_sections": [
-        "Tests",
-        "fit model photos (all products)",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "No fit model photos anywhere in the report",
-        "Report does not satisfy: Samples must be tried on a fit model and photos provided in the report."
-      ],
       "source_rule_id": "5.2.7",
       "source_lines": {
-        "start": 746,
-        "end": 757
+        "start": 1124,
+        "end": 1143
       },
       "context": "QUESTION — check that fit model photos are present for the product inspected",
-      "examples": {
-        "pass": [
-          "At least 1 photo of a sample tried on a fit model, captioned accordingly"
-        ],
-        "fail": [
-          "No fit model photos anywhere in the report"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "5_3_1",
@@ -1969,42 +1017,18 @@
       "severity": "BLOCKING",
       "scope_type": "SECTION",
       "scope_detail": "check all approval sample comparison photos in the Specifications section",
-      "focus_terms": [
-        "Approval Sample Comparison",
-        "Product Specifications checklist",
-        "report photos",
-        "all approval sample comparison photos in the specifications",
-        "specifications",
-        "other remarks"
-      ],
-      "md_sections": [
-        "Approval Sample Comparison",
-        "Product Specifications",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Photo shows only 2 bulk garments hanging together; no approval sample is visible; caption reads \"Approval Sample Comparison\" with no identification",
-        "Report does not satisfy: Each approval sample comparison photo must show the on-site bulk product and the approval sample physically side by side. Each photo must have a caption explicitly identifying which item is the approval sample. The approval sample is identified by a green \"QIMA SAMPLE\" tag; if the tag is missing, note this in the Other Remarks section."
-      ],
       "source_rule_id": "5.3.1",
       "source_lines": {
-        "start": 762,
-        "end": 771
+        "start": 1148,
+        "end": 1165
       },
       "context": "SECTION — check all approval sample comparison photos in the Specifications section",
-      "examples": {
-        "pass": [
-          "Photo shows bulk garment and approval sample (with green QIMA tag) side by side; caption reads \"Approval Sample Comparison — left: approval sample, right: bulk\""
-        ],
-        "fail": [
-          "Photo shows only 2 bulk garments hanging together; no approval sample is visible; caption reads \"Approval Sample Comparison\" with no identification"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "6_1_1",
@@ -2013,39 +1037,20 @@
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "check the Starting Pictures section",
-      "focus_terms": [
-        "Starting pictures",
-        "report photo section",
-        "starting pictures"
-      ],
-      "md_sections": [
-        "Starting pictures",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Starting photo shows the inspector in a corridor with no factory name or logo visible",
-        "Report does not satisfy: Verify that a starting photo is present showing the inspector standing in front of the factory logo or name (factory identifier clearly visible)."
-      ],
       "source_rule_id": "6.1.1",
       "source_lines": {
-        "start": 778,
-        "end": 787
+        "start": 1172,
+        "end": 1189
       },
       "context": "QUESTION — check the Starting Pictures section",
-      "examples": {
-        "pass": [
-          "Starting photo shows inspector in front of a wall displaying the factory name in large characters or a logo sign"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "report.overall_result"
         ],
-        "fail": [
-          "Starting photo shows the inspector in a corridor with no factory name or logo visible"
-        ]
-      },
-      "photo_check": "content"
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
     },
     {
       "id": "6_1_2",
@@ -2054,38 +1059,18 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "review all photo placements and counts throughout the report",
-      "focus_terms": [
-        "All checklist sections",
-        "report photos throughout"
-      ],
-      "md_sections": [
-        "All",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "3 identical photos of the same label are uploaded to the same checkpoint; photos of the factory exterior are added at the end",
-        "Report does not satisfy: Exactly 1 photo per checkpoint is required. Duplicate photos must not appear in the report. General factory environment photos (exterior, inspector walking around) must not be added."
-      ],
       "source_rule_id": "6.1.2",
       "source_lines": {
-        "start": 788,
-        "end": 797
+        "start": 1190,
+        "end": 1207
       },
       "context": "FULL REPORT — review all photo placements and counts throughout the report",
-      "examples": {
-        "pass": [
-          "1 photo per checkpoint; no duplicate or general environment photos present"
-        ],
-        "fail": [
-          "3 identical photos of the same label are uploaded to the same checkpoint; photos of the factory exterior are added at the end"
-        ]
-      },
-      "photo_check": "metadata"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "6_1_3",
@@ -2094,38 +1079,18 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "check that every photo in the report is accompanied by a caption",
-      "focus_terms": [
-        "All photos",
-        "report-wide"
-      ],
-      "md_sections": [
-        "All photos",
-        "report-wide",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "A photo of an open zipper is included with no description; reviewers cannot determine whether this indicates a defect",
-        "Report does not satisfy: All photos must have captions describing what they show. A photo without a caption is a reportable issue."
-      ],
       "source_rule_id": "6.1.3",
       "source_lines": {
-        "start": 798,
-        "end": 807
+        "start": 1208,
+        "end": 1225
       },
       "context": "FULL REPORT — check that every photo in the report is accompanied by a caption",
-      "examples": {
-        "pass": [
-          "Caption reads: \"Zipper test — open and close check, PASSED\""
-        ],
-        "fail": [
-          "A photo of an open zipper is included with no description; reviewers cannot determine whether this indicates a defect"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "6_1_4",
@@ -2134,38 +1099,18 @@
       "severity": "MINOR",
       "scope_type": "FULL REPORT",
       "scope_detail": "confirm measurement chart content appears only in the Product Dimensions Result section",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "report photos and attachments",
-        "product dimensions result"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Measurement chart screenshot is uploaded under the General Information section in addition to the Product Dimensions section",
-        "Report does not satisfy: Measurement chart screenshots and the Excel file must be uploaded only in the Product Dimensions Result section. Verify these materials do not appear in any other section of the report."
-      ],
       "source_rule_id": "6.1.4",
       "source_lines": {
-        "start": 808,
-        "end": 817
+        "start": 1226,
+        "end": 1243
       },
       "context": "FULL REPORT — confirm measurement chart content appears only in the Product Dimensions Result section",
-      "examples": {
-        "pass": [
-          "Measurement chart screenshot and Excel file appear exclusively under Product Dimensions Result"
-        ],
-        "fail": [
-          "Measurement chart screenshot is uploaded under the General Information section in addition to the Product Dimensions section"
-        ]
-      },
-      "photo_check": "content"
+      "check_block": {
+        "data_source": "external",
+        "where": [],
+        "when": null,
+        "check": null
+      }
     },
     {
       "id": "7_1_1",
@@ -2174,36 +1119,19 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check the AQL values displayed in the Workmanship section header against the above",
-      "focus_terms": [
-        "Workmanship sampling standards",
-        "Workmanship section header",
-        "aql values displayed in the workmanship",
-        "workmanship"
-      ],
-      "md_sections": [
-        "Workmanship sampling standards",
-        "Workmanship section header",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Report shows Major AQL = 4.0 for a PSI inspection"
-      ],
       "source_rule_id": "7.1.1",
       "source_lines": {
-        "start": 822,
-        "end": 836
+        "start": 1248,
+        "end": 1270
       },
       "context": "FULL REPORT — cross-check the AQL values displayed in the Workmanship section header against the above",
-      "lookup_table": "| Inspection type | Sampling level | Critical AQL | Major AQL | Minor AQL |\n|---|---|---|---|---|\n| All (PSI and DUPRO) | Level II | 0 | 2.5 | 4.0 |",
-      "examples": {
-        "pass": [
-          "Report shows Critical AQL = 0, Major AQL = 2.5, Minor AQL = 4.0, Sampling Level II"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "workmanship.aql_level_major"
         ],
-        "fail": [
-          "Report shows Major AQL = 4.0 for a PSI inspection"
-        ]
+        "when": null,
+        "check": "equals(2.5)"
       }
     },
     {
@@ -2213,37 +1141,19 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check measurement sampling level and unit count against the above requirements",
-      "focus_terms": [
-        "Product Dimensions SL checklist",
-        "sampling header"
-      ],
-      "md_sections": [
-        "Product Dimensions SL",
-        "sampling header",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Denim pant inspection reports 13 units measured at sampling level S3"
-      ],
       "source_rule_id": "7.1.2",
       "source_lines": {
-        "start": 837,
-        "end": 852
+        "start": 1271,
+        "end": 1294
       },
       "context": "FULL REPORT — cross-check measurement sampling level and unit count against the above requirements",
-      "lookup_table": "| Product type | Sampling level | Measurement AQL | Minimum units measured |\n|---|---|---|---|\n| Non-denim | S3 | 4.0 | Per S3 table |\n| Denim | S4 or Level 1 | 4.0 | 20 units |",
-      "examples": {
-        "pass": [
-          "Denim pant inspection reports 20 units measured at sampling level S4, AQL 4.0"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "workmanship.aql_level_minor"
         ],
-        "fail": [
-          "Denim pant inspection reports 13 units measured at sampling level S3"
-        ]
+        "when": null,
+        "check": "equals(4.0)"
       }
     },
     {
@@ -2253,38 +1163,20 @@
       "severity": "BLOCKING",
       "scope_type": "FULL REPORT",
       "scope_detail": "cross-check overall result against all section results and defect counts",
-      "focus_terms": [
-        "Overall result",
-        "report header",
-        "overall"
-      ],
-      "md_sections": [
-        "Overall result",
-        "Parties & Location",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Report shows overall PASS despite a brand logo variation vs. approval sample (CRITICAL) and Major defects exceeding the AQL acceptance number",
-        "Report does not satisfy: The overall result must be PASS only if ALL conditions below are met. Any single failing condition must result in a FAIL overall result."
-      ],
       "source_rule_id": "8.1.1",
       "source_lines": {
-        "start": 857,
-        "end": 924
+        "start": 1299,
+        "end": 1374
       },
       "context": "FULL REPORT — cross-check overall result against all section results and defect counts",
-      "examples": {
-        "pass": [
-          "Report shows overall FAIL because 1 Critical defect (brand logo variation) was found, even though all other sections passed"
+      "check_block": {
+        "data_source": "in_report",
+        "where": [
+          "product._first.real_packed_quantity",
+          "product._first.ordered_quantity"
         ],
-        "fail": [
-          "Report shows overall PASS despite a brand logo variation vs. approval sample (CRITICAL) and Major defects exceeding the AQL acceptance number"
-        ]
+        "when": "report.overall_result equals PASS",
+        "check": "ratio_at_least(0.8)"
       }
     }
   ]

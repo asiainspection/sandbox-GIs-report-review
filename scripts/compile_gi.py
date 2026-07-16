@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-"""Compile GI checkpoints to cached obligation CheckSpecs.
-
-Usage:
-    .venv/bin/python scripts/compile_gi.py data/pipeline/checkpoints/ribkoff_checkpoints.json \
-        --hand-specs data/clients/ribkoff/gi/hand_specs.json
-"""
+"""Compile GI checkpoints to cached obligation CheckSpecs."""
 
 from __future__ import annotations
 
@@ -29,19 +23,13 @@ def main() -> None:
         type=Path,
         help="Output path (default: data/pipeline/checkspecs/<stem>_checkspecs.json)",
     )
-    parser.add_argument(
-        "--hand-specs",
-        type=Path,
-        default=None,
-        help="Optional hand operator specs JSON",
-    )
     args = parser.parse_args()
 
     stem = args.checkpoints.stem.replace("_checkpoints", "")
     if stem.endswith("_v2"):
         stem = stem[:-3]
     output = args.output or ROOT / "data" / "pipeline" / "checkspecs" / f"{stem}_checkspecs.json"
-    specs = compile_gi(args.checkpoints, output, hand_specs_path=args.hand_specs)
+    specs = compile_gi(args.checkpoints, output)
     print(f"Wrote {len(specs)} specs -> {output}")
 
 

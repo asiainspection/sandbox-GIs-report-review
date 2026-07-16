@@ -22,7 +22,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from checkspec import load_hand_specs, resolve_specs  # noqa: E402
+from checkspec import resolve_specs  # noqa: E402
 from clients import ensure_pipeline_dirs, list_clients, load_client  # noqa: E402
 from fact_index import build_fact_index  # noqa: E402
 from review import run_production_review  # noqa: E402
@@ -40,20 +40,16 @@ def _flagged_ids(summary: dict) -> set[str]:
 def _offline_policy(
     report_path: Path,
     checkpoints_path: Path,
-    specs_path: Path | None,
 ) -> dict[str, Any]:
     report = json.loads(report_path.read_text(encoding="utf-8"))
     facts = build_fact_index(report)
     semantic = parse_semantic_report(report)
     checkpoints = load_checkpoints(checkpoints_path)
-    hand = load_hand_specs(specs_path) if specs_path and Path(specs_path).exists() else {}
     from clients import checkspecs_cache_path
     cache = checkspecs_cache_path(checkpoints_path, ROOT)
     specs = resolve_specs(
         checkpoints,
-        hand_specs=hand,
         checkpoints_path=checkpoints_path,
-        hand_specs_path=specs_path,
         cache_path=cache if cache.exists() else None,
     )
     strict = strict_blocking_enabled()
@@ -97,7 +93,6 @@ def _run_arm(
     *,
     report: Path,
     checkpoints: Path,
-    specs: Path | None,
     offline: bool,
     enable_vision: bool,
 ) -> dict[str, Any]:
@@ -105,12 +100,11 @@ def _run_arm(
     if arm != "policy_guard":
         raise ValueError(f"Unsupported arm {arm!r}; only policy_guard is available after cleanup.")
     if offline:
-        summary = _offline_policy(report, checkpoints, specs)
+        summary = _offline_policy(report, checkpoints)
     else:
         run = run_production_review(
             report,
             checkpoints,
-            specs_path=specs,
             project_root=ROOT,
             enable_vision=enable_vision,
         )
@@ -169,7 +163,6 @@ def main() -> None:
         if not cps.exists():
             print(f"\nSKIP {gi}: missing checkpoints {cps}")
             continue
-        specs = client.hand_specs if client.hand_specs and client.hand_specs.exists() else None
         print("\n" + "=" * 78)
         print(f"GI: {gi}")
         print("=" * 78)
@@ -183,7 +176,6 @@ def main() -> None:
                     arm,
                     report=report,
                     checkpoints=cps,
-                    specs=specs,
                     offline=args.offline,
                     enable_vision=enable_vision,
                 )
@@ -213,7 +205,6 @@ def main() -> None:
                     arm,
                     report=report,
                     checkpoints=cps,
-                    specs=specs,
                     offline=args.offline,
                     enable_vision=enable_vision,
                 )

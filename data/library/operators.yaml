@@ -1,0 +1,32 @@
+# Claude cheat sheet — operators
+# Give this file to Claude with the checkpoint.
+# Real functions live in src/primitives.py — this file is names + one-line meaning only.
+#
+# Write checks in compact form (see check_format.yaml), e.g.:
+#   check: no_language(chinese)
+#   check: count_at_least(1)
+#   check: extract("Quote the sentence that …")
+#
+# Prefer deterministic ops. extract / vision = let LLM decide.
+
+operators:
+
+  # --- deterministic (apply to `where`) ---
+  present: "field is non-blank"
+  equals: "field equals an exact value — equals(PENDING)"
+  in_set: "field is one of a list — in_set(YES, NO)"
+  matches: "field matches a regex — matches(\"\\\\d+%\")"
+  no_language: "field has no chars of a language — no_language(chinese)"
+  contains: "field contains a substring — contains(\"not ok\")"
+  has_number: "field text contains at least one digit"
+  compare: "compare field vs value/field — compare(>=, 1) or compare(other_field, !=)"
+  count_at_least: "count >= N — count_at_least(1)"
+  count_at_most: "count <= N — count_at_most(0) for no photos"
+  ratio_at_least: "where[0]/where[1] >= min — ratio_at_least(0.8)"
+  scan_present: "term appears in report — scan_present(\"GSS\")"
+  scan_absent: "term must never appear — scan_absent(\"Golden Sample\")"
+  filename_matches: "attachment filename matches pattern"
+
+  # --- let LLM decide (model quotes / sees; Python still decides) ---
+  extract: "LLM quotes one fact from where — extract(\"…question…\")"
+  vision: "LLM answers one yes/no about photo content — vision(\"…question…\")"

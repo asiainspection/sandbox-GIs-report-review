@@ -8,14 +8,26 @@ from semantic_report import SemanticReport, normalize_name
 
 # Canonical selectors exposed to the compiler (closed vocabulary).
 FACT_SELECTORS: dict[str, str] = {
-    "report.overall_result": "Overall inspection result (PASS/FAIL)",
+    "report.overall_result": "Overall inspection result (PASS/FAIL/PENDING)",
     "report.inspection_type": "Inspection type",
+    "report.inspection_date": "Inspection date",
+    "report.planned_date": "Originally planned inspection date",
+    "report.days_postponed": "Days postponed (+) or advanced (-) vs planned",
     "report.global_remark": "Inspector global remark",
+    "report.supplier_name": "Supplier / responsible entity name",
+    "report.factory_name": "Factory / production entity name",
     "report.factory_address": "Factory address on cover",
+    "report.production_site": "Production site address",
     "report.po_reference": "PO reference",
     "report.product_label": "Product name on cover",
+    "report.sku": "SKU / product reference",
     "report.tests_result": "Tests result summary",
     "report.destinations": "Shipment destination names",
+    "report.all_text": "All report text (FULL_REPORT scan)",
+    "report.all_captions": "All photo captions (FULL_REPORT scan)",
+    "report.attachment_filenames": "All attachment filenames",
+    "report.defect_count": "Number of workmanship defects recorded",
+    "report.defects_without_photo": "Defects with photo_count == 0",
     "workmanship.result": "Workmanship result",
     "workmanship.aql_level_major": "Major AQL level",
     "workmanship.aql_level_minor": "Minor AQL level",
@@ -132,18 +144,44 @@ def resolve_selector(selector: str, facts: dict[str, Any], semantic: SemanticRep
         return semantic.overall_result
     if selector == "report.inspection_type":
         return semantic.inspection_type
+    if selector == "report.inspection_date":
+        return semantic.inspection_date
+    if selector == "report.planned_date":
+        return semantic.planned_date
+    if selector == "report.days_postponed":
+        return semantic.days_postponed
     if selector == "report.global_remark":
         return semantic.global_remark
+    if selector == "report.supplier_name":
+        return semantic.supplier_name
+    if selector == "report.factory_name":
+        return semantic.factory_name
     if selector == "report.factory_address":
         return semantic.factory_address
+    if selector == "report.production_site":
+        return semantic.production_site
     if selector == "report.po_reference":
         return semantic.po_reference
     if selector == "report.product_label":
         return semantic.product_label
+    if selector == "report.sku":
+        return semantic.sku
     if selector == "report.tests_result":
         return semantic.tests_result
     if selector == "report.destinations":
         return semantic.destinations
+    if selector == "report.all_text":
+        return semantic.all_text
+    if selector == "report.all_captions":
+        return semantic.all_captions
+    if selector == "report.attachment_filenames":
+        return semantic.attachment_filenames
+    if selector == "report.defect_count":
+        return semantic.defect_count
+    if selector == "report.defects_without_photo":
+        return semantic.defects_without_photo
+    if selector == "report.defects":
+        return semantic.defects
 
     if selector.startswith("workmanship.") and semantic.workmanship:
         field = selector.split(".", 1)[1]

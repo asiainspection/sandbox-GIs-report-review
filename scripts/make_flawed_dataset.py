@@ -21,7 +21,7 @@ from typing import Any, Callable
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from checkspec import load_hand_specs, resolve_specs  # noqa: E402
+from checkspec import resolve_specs  # noqa: E402
 from fact_index import build_fact_index  # noqa: E402
 from fact_schema import bind_checklist_name  # noqa: E402
 from gi_review import load_checkpoints  # noqa: E402
@@ -32,7 +32,6 @@ CORRECTED_DIR = ROOT / "data/clients/ribkoff/corrected"
 OUT_DIR = ROOT / "data/clients/ribkoff/flawed"
 CLIENT = ROOT / "data/clients/ribkoff/client.json"
 CHECKPOINTS = ROOT / "data/pipeline/checkpoints/ribkoff_checkpoints.json"
-HAND_SPECS = ROOT / "data/clients/ribkoff/gi/hand_specs.json"
 
 _PHOTO_STUB = {
     "type": "PHOTO",
@@ -312,12 +311,9 @@ def main() -> None:
     introduced: dict[str, dict[str, str]] = {}
 
     checkpoints = load_checkpoints(CHECKPOINTS)
-    hand = load_hand_specs(HAND_SPECS) if HAND_SPECS.exists() else {}
     specs = resolve_specs(
         checkpoints,
-        hand_specs=hand,
         checkpoints_path=CHECKPOINTS,
-        hand_specs_path=HAND_SPECS if HAND_SPECS.exists() else None,
     )
 
     for path in sorted(CORRECTED_DIR.glob("Q*.json")):

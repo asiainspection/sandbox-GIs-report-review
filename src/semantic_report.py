@@ -164,9 +164,13 @@ class SemanticReport:
     overall_result: str
     inspection_type: str
     inspection_date: str
+    planned_date: str
+    days_postponed: int | None
     product_label: str
     sku: str
     po_reference: str
+    supplier_name: str
+    factory_name: str
     factory_address: str
     production_site: str
     global_remark: str
@@ -183,6 +187,75 @@ class SemanticReport:
 
     def get_checklist_item(self, name: str) -> ChecklistItem | None:
         return self.checklist_by_name.get(normalize_name(name))
+
+    @property
+    def defect_count(self) -> int:
+        return len(self.defects)
+
+    @property
+    def defects_without_photo(self) -> int:
+        return sum(1 for d in self.defects if int(d.get("photo_count") or 0) <= 0)
+
+    @property
+    def all_text(self) -> str:
+        """Concatenated report text for FULL_REPORT scan ops."""
+        parts: list[str] = [
+            self.global_remark,
+            self.product_label,
+            self.supplier_name,
+            self.factory_name,
+            self.factory_address,
+            self.production_site,
+            self.po_reference,
+            self.sku,
+        ]
+        for product in self.products:
+            parts.extend(
+                [
+                    product.product_name,
+                    product.sku,
+                    product.po_reference,
+                    product.unit,
+                ]
+            )
+        for item in self.checklist_items:
+            parts.extend(
+                [
+                    item.item_name,
+                    item.result,
+                    item.comment,
+                    item.instruction,
+                    " ".join(item.values or []),
+                    " ".join(item.attachment_filenames or []),
+                ]
+            )
+        for defect in self.defects:
+            parts.append(str(defect.get("name") or ""))
+            parts.append(str(defect.get("classification") or ""))
+        for key, value in self.custom_fields.items():
+            parts.append(f"{key} {value}")
+        parts.extend(self.inspector_instructions)
+        parts.extend(self.destinations)
+        return "\n".join(p for p in parts if str(p).strip())
+
+    @property
+    def all_captions(self) -> str:
+        """Concatenated photo captions for FULL_REPORT scan ops."""
+        captions: list[str] = []
+        for item in self.checklist_items:
+            captions.extend(c for c in (item.photo_captions or []) if str(c).strip())
+        for defect in self.defects:
+            captions.extend(
+                c for c in (defect.get("photo_captions") or []) if str(c).strip()
+            )
+        return "\n".join(captions)
+
+    @property
+    def attachment_filenames(self) -> list[str]:
+        names: list[str] = []
+        for item in self.checklist_items:
+            names.extend(item.attachment_filenames or [])
+        return names
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -284,6 +357,26 @@ def _defects_from_checklists(report: dict[str, Any]) -> list[dict[str, Any]]:
     return defects
 
 
+def _entity_name(entity: Any) -> str:
+    if not isinstance(entity, dict):
+        return ""
+    return clean_text(entity.get("name"))
+
+
+def _days_between(planned: str, inspected: str) -> int | None:
+    """Days inspection was postponed (positive) or advanced (negative) vs planned."""
+    if not planned or not inspected:
+        return None
+    try:
+        from datetime import date
+
+        p = date.fromisoformat(planned[:10])
+        i = date.fromisoformat(inspected[:10])
+        return (i - p).days
+    except ValueError:
+        return None
+
+
 def parse_semantic_report(report: dict[str, Any]) -> SemanticReport:
     """Parse raw QIMAone JSON into PDF-aligned semantic facts."""
     result_obj = report.get("result") or {}
@@ -307,16 +400,23 @@ def parse_semantic_report(report: dict[str, Any]) -> SemanticReport:
     ]
     destinations = [d for d in destinations if d]
 
+    inspection_date = clean_text(report.get("inspectionDate"))
+    planned_date = clean_text(report.get("plannedDate"))
+
     semantic = SemanticReport(
         report_id=str(report.get("reportId", "")),
         inspection_id=str(report.get("inspectionId", "")),
         inspection_reference=str(report.get("inspectionId", "")),
         overall_result=clean_text(report.get("inspectionResult") or result_obj.get("result")),
         inspection_type=inspection_type,
-        inspection_date=clean_text(report.get("inspectionDate")),
+        inspection_date=inspection_date,
+        planned_date=planned_date,
+        days_postponed=_days_between(planned_date, inspection_date),
         product_label=primary.product_name if primary else "",
         sku=primary.sku if primary else "",
         po_reference=primary.po_reference if primary else "",
+        supplier_name=_entity_name(report.get("responsibleEntity")),
+        factory_name=_entity_name(report.get("entity") or report.get("productionSiteEntity")),
         factory_address=format_address(report.get("entity")),
         production_site=format_address(report.get("productionSiteEntity")),
         global_remark=comment_message(result_obj.get("globalRemark")),

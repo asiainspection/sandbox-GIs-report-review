@@ -1,0 +1,161 @@
+# Check-block format — append ONE block at the end of each checkpoint in rules.md
+#
+# Keep the human prose (ID, Field/Location, What to check, Scope, examples) unchanged.
+# Claude fills only this machine block.
+#
+# Give Claude:
+#   - operators.yaml
+#   - report_fields.yaml
+#   - checklist_names/<client>.txt
+#   - this file
+
+# ===========================================================================
+# GENERAL STRUCTURE
+# ===========================================================================
+#
+# Every GI rule is:  WHEN <trigger>  THEN <check on where>
+#                    (unless evidence is outside the report → advisory)
+#
+# Four keys only:
+#
+#   data_source  where does the evidence live?
+#                in_report | IP | PO_booking | spec_sheet | email | external | other
+#                in_report / IP → engine checks
+#                anything else  → ADVISORY only (never auto-flag), check: null
+#
+#   where        list of fields from report_fields.yaml (or checklist.<name>.<suffix>)
+#                empty [] when data_source ≠ in_report
+#
+#   when         optional TRIGGER — same compact style as check, or null if always-on
+#                if false at runtime → rule does not apply (clear, not a flag)
+#
+#   check        the OBLIGATION — one compact op call (or a list = all must hold)
+#                null only when data_source ≠ in_report
+#
+# Runtime: Python decides clear / violates / unable / advisory.
+# extract / vision only QUOTE facts — they do not grade.
+
+# ---------------------------------------------------------------------------
+# TEMPLATE
+# ---------------------------------------------------------------------------
+#
+# ```check
+# data_source: in_report
+# where: [report.factory_address]
+# when: null
+# check: no_language(chinese)
+# ```
+
+# ---------------------------------------------------------------------------
+# HOW TO WRITE `check` / `when` (compact calls)
+# ---------------------------------------------------------------------------
+#
+# Ops apply to `where` by default. Args go in parentheses.
+# Multi-field where: name the field inside the call when needed.
+#
+#   present
+#   equals(PENDING)
+#   in_set(YES, NO)
+#   matches("\\d+%")
+#   no_language(chinese)
+#   contains("not ok")
+#   has_number
+#   compare(>=, 1)                          # where[0] compared to a constant
+#   compare(product._first.ordered_quantity, !=)   # where[0] vs another field
+#   count_at_least(1)
+#   count_at_most(0)
+#   ratio_at_least(0.8)                     # where = [numerator, denominator]
+#   scan_present("GSS")
+#   scan_absent("Golden Sample")
+#   filename_matches("Measurement Chart-*.xlsx")
+#   extract("Quote the sentence that …, or null if absent.")
+#   vision("Does the photo show …?")
+#
+# Several checks at once (implicit AND):
+#   check:
+#     - present
+#     - no_language(chinese)
+#
+# Prefer deterministic ops. Use extract / vision only when judgment is needed.
+
+# ---------------------------------------------------------------------------
+# RULES FOR CLAUDE
+# ---------------------------------------------------------------------------
+# 1. Pick fields ONLY from report_fields.yaml (or checklist.<name>.<suffix>).
+#    Use checklist_names/<client>.txt as real-name hints.
+# 2. Pick ops ONLY from operators.yaml — write them in the compact form above.
+# 3. Prefer deterministic ops. extract / vision = let LLM decide.
+# 4. Evidence outside the report → data_source ≠ in_report, where: [], check: null.
+# 5. Never invent a selector.
+# 6. Captions are often empty — prefer photo_count.
+# 7. One ```check block per checkpoint. Do not rewrite the human prose above it.
+
+# ---------------------------------------------------------------------------
+# EXAMPLES
+# ---------------------------------------------------------------------------
+
+# 1) Factory address in English (always-on)
+# ```check
+# data_source: in_report
+# where: [report.factory_address]
+# when: null
+# check:
+#   - present
+#   - no_language(chinese)
+# ```
+
+# 2) If adhesive failed → overall must be PENDING
+# ```check
+# data_source: in_report
+# where: [checklist.adhesive_test.result, report.overall_result]
+# when: checklist.adhesive_test.result contains "not ok"
+# check: report.overall_result equals PENDING
+# ```
+
+# 3) Photos required on carton drop test
+# ```check
+# data_source: in_report
+# where: [checklist.carton_drop_test.photo_count]
+# when: null
+# check: count_at_least(1)
+# ```
+
+# 4) Forbidden term anywhere in the report
+# ```check
+# data_source: in_report
+# where: [report.all_text]
+# when: null
+# check: scan_absent("Golden Sample")
+# ```
+
+# 5) Packed qty >= 80% of ordered
+# ```check
+# data_source: in_report
+# where: [product._first.real_packed_quantity, product._first.ordered_quantity]
+# when: null
+# check: ratio_at_least(0.8)
+# ```
+
+# 6) Remark must explain quantity discrepancy (let LLM decide)
+# ```check
+# data_source: in_report
+# where: [report.global_remark]
+# when: product._first.real_packed_quantity != product._first.ordered_quantity
+# check: extract("Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.")
+# ```
+
+# 7) Needs PO / booking — cannot check from report
+# ```check
+# data_source: PO_booking
+# where: []
+# when: null
+# check: null
+# ```
+
+# 8) Photo must show X (vision — last resort)
+# ```check
+# data_source: in_report
+# where: [checklist.carton_drop_test.photo_count]
+# when: null
+# check: vision("Does the photo set include a clear after-drop view of both carton exterior and product interior?")
+# ```

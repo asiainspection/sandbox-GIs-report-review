@@ -2,7 +2,6 @@
   "id": "ribkoff",
   "name": "Joseph Ribkoff",
   "gi_rules": "gi/rules.md",
-  "hand_specs": "gi/hand_specs.json",
   "corrected_dir": "corrected",
   "flawed_dir": "flawed",
   "introduced_checkpoints": {

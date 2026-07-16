@@ -1,0 +1,54 @@
+# Checklist names for client=hallmark
+# Generated from 147 item occurrences across corrected reports.
+# Hints for Claude authoring — pick a real name, then use checklist.<name>.<suffix>.
+# Runtime fuzzy-matches casing/whitespace; unmatched → unable (not a flag).
+
+Adhesive test  # seen=3
+Approval Sample Comparison  # seen=3
+Are the QIMA documents signed?  # seen=3
+Available Quantity Check: Finished&Packed&Unpacked  # seen=3
+Available Quantity Details  # seen=3
+Barcode scanning test  # seen=3
+Button check  # seen=3
+Cartons after selection  # seen=3
+Cartons before selection  # seen=3
+Color shading check  # seen=3
+Defect photos (Workmanship section)  # seen=3
+Elastic waistband stretched length  # seen=3
+Factory Cooperation, Organization and Cleanliness  # seen=3
+Fatigue test  # seen=3
+FR Test Report Check (Document Availability checklist)  # seen=3
+HCLP  # seen=3
+High Attention Product (HA)  # seen=3
+Inner Packing & Unit Packing  # seen=3
+Inspection location  # seen=3
+Inspection Room Lighting Conditions  # seen=3
+Ironing, washing, treatment check  # seen=3
+Is the factory/workshop location same as booked?  # seen=3
+Label check  # seen=3
+Match packing info  # seen=3
+Metal / needle detection check  # seen=3
+Mold Prevention Check  # seen=3
+Odor check  # seen=3
+Outer Packing & Shipping Marks: Front & Side  # seen=3
+Outer Packing: Assortment, Dimensions & Weight  # seen=3
+Pocket / holder check  # seen=3
+Product Color  # seen=3
+Product Dimensions Item Details  # seen=3
+Product Dimensions Result  # seen=3
+Product Labels  # seen=3
+Product Logo  # seen=3
+Product Style & Construction  # seen=3
+Pull test  # seen=3
+Quantity and assortment check (per package)  # seen=3
+Random carton selection  # seen=3
+Rubbing (marking) test  # seen=3
+Seam strength test  # seen=3
+Selected cartons  # seen=3
+Shake test info  # seen=3
+SR Test Report Check (Document Availability checklist)  # seen=3
+Stitch density check  # seen=3
+Symmetry check  # seen=3
+Tools calibration  # seen=3
+Trims check  # seen=3
+Zipper test  # seen=3

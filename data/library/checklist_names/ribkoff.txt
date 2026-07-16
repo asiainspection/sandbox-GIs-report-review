@@ -1,0 +1,51 @@
+# Checklist names for client=ribkoff
+# Generated from 315 item occurrences across corrected reports.
+# Hints for Claude authoring — pick a real name, then use checklist.<name>.<suffix>.
+# Runtime fuzzy-matches casing/whitespace; unmatched → unable (not a flag).
+
+Adhesive test  # seen=7
+Approval Sample Comparison  # seen=7
+Are the QIMA documents signed?  # seen=7
+Available Quantity Check: Finished&Packed&Unpacked  # seen=7
+Available Quantity Details  # seen=7
+Barcode scanning test  # seen=7
+Button check  # seen=7
+Carton drop test  # seen=7
+Cartons after selection  # seen=7
+Cartons before selection  # seen=7
+Color shading check  # seen=7
+Elastic cuff/waistband stretched length  # seen=3
+Elastic waistband stretched length  # seen=4
+Factory Cooperation, Organization and Cleanliness  # seen=7
+Fatigue test  # seen=7
+Inner Packing & Unit Packing  # seen=7
+Inspection location  # seen=7
+Inspection Room Lighting Conditions  # seen=7
+Ironing, washing, treatment check  # seen=7
+Is the factory/workshop location same as booked?  # seen=7
+Label check  # seen=7
+Match packing info  # seen=7
+Metal / needle detection check  # seen=7
+Mold Prevention Check  # seen=7
+Odor check  # seen=7
+Outer Packing & Shipping Marks: Front & Side  # seen=7
+Outer Packing: Assortment, Dimensions & Weight  # seen=7
+Pocket / holder check  # seen=7
+Product Color  # seen=7
+Product Dimensions Item Details  # seen=7
+Product Dimensions Result  # seen=7
+Product Labels  # seen=7
+Product Logo  # seen=7
+Product Style & Construction  # seen=7
+Pull test  # seen=7
+Quantity and assortment check (per package)  # seen=7
+Random carton selection  # seen=7
+Rubbing (marking) test  # seen=7
+Seam strength test  # seen=7
+Selected cartons  # seen=7
+Shake test info  # seen=7
+Stitch density check  # seen=7
+Symmetry check  # seen=7
+Tools calibration  # seen=7
+Trims check  # seen=7
+Zipper test  # seen=7

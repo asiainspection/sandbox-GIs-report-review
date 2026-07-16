@@ -14,7 +14,7 @@ from symbolic_eval import MATCH_CLEAR, MATCH_CLEAR_UNMATCH, MATCH_UNABLE, Symbol
 
 @dataclass
 class ObligationVerdict:
-    status: str  # clear | violates | not_applicable | unable
+    status: str  # clear | violates | not_applicable | unable | advisory
     match: str
     reason: str
     evidence: str
@@ -45,6 +45,23 @@ def evaluate_obligation(
     confidence_threshold: float = 0.75,
 ) -> ObligationVerdict:
     data = spec.to_dict() if isinstance(spec, ObligationSpec) else spec
+    if data.get("status_class") == "advisory" or str(data.get("source") or "") == "advisory":
+        ds = str(data.get("data_source") or "external")
+        return ObligationVerdict(
+            status="advisory",
+            match=MATCH_CLEAR,
+            reason=f"Evidence requires {ds}; cannot auto-check from report alone.",
+            evidence="",
+            source="obligation:advisory",
+        )
+    if str(data.get("source") or "") == "missing_block":
+        return ObligationVerdict(
+            status="advisory",
+            match=MATCH_CLEAR,
+            reason="No check block authored for this checkpoint yet.",
+            evidence="",
+            source="obligation:missing_block",
+        )
     ctx = EvalContext(
         facts=facts,
         semantic=semantic,
@@ -91,16 +108,6 @@ def evaluate_obligation(
                 evidence=unless_result.evidence,
                 source="obligation:excused",
             )
-
-    # Ungated fail_if→atom is provisional — skip THEN / LLM leaves entirely.
-    if str(data.get("source") or "") == "fail_if_atoms" and not data.get("when"):
-        return ObligationVerdict(
-            status="unable",
-            match=MATCH_UNABLE,
-            reason="Ungated fail_if obligation deferred until a structured WHEN exists.",
-            evidence="",
-            source="obligation:ungated_fail_if",
-        )
 
     then_node = data.get("then")
     if not then_node:

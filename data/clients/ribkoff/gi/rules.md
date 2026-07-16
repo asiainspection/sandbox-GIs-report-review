@@ -200,6 +200,14 @@ Each rule entry contains:
 **Correct example:** "Floor 5, LongSheng Building, No.11, Keji East Rd., H&N Development, Shantou, GuangDong, China. Zip code: 515041"
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 1.1.2
@@ -209,6 +217,14 @@ Each rule entry contains:
 **Error example:** Inspector marks "Yes" with no remark, but the on-site address differs from the booked address
 **Correct example:** Inspector marks "No" and adds: "Factory located at [actual address]; booking recorded [booked address]"
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: PO_booking
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -223,6 +239,14 @@ Each rule entry contains:
 **Error example:** Remarks section states only "3 defects found" with no PO breakdown and no percentage
 **Correct example:** "PO 081901: 3 defects found (1 MAJ Untrimmed Thread Ends, 2 MIN Untrimmed thread ends <1/4"). Total: 6.00% defect found (3/50)"
 **Severity:** `MINOR`
+
+
+```check
+data_source: in_report
+where: [report.global_remark]
+when: null
+check: extract("Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.")
+```
 
 ---
 
@@ -244,6 +268,14 @@ Each rule entry contains:
 **Correct example:** PSI with 516 pcs packed (103%) out of 500 ordered — threshold met, inspection proceeds
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [product._first.real_packed_quantity, product._first.ordered_quantity]
+when: null
+check: ratio_at_least(0.8)
+```
+
 ---
 
 **ID:** 1.3.2
@@ -253,6 +285,14 @@ Each rule entry contains:
 **Error example:** 516 pcs on site vs. 500 pcs booked, with no mention of the 16-unit overage anywhere in the report
 **Correct example:** "Total 516 pcs / 103% packed in cartons. Overage of 16 pcs vs. booking of 500 pcs."
 **Severity:** `MINOR`
+
+
+```check
+data_source: in_report
+where: [report.global_remark]
+when: product._first.real_packed_quantity != product._first.ordered_quantity
+check: extract("Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.")
+```
 
 ---
 
@@ -270,6 +310,14 @@ Each rule entry contains:
 
 > ⚠️ TO CONFIRM: The GI states this rule but does not define the exhaustive list of Inspection Details fields it applies to. Confirm the full scope with Joseph Ribkoff.
 
+
+```check
+data_source: in_report
+where: [report.global_remark]
+when: null
+check: extract("For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.")
+```
+
 ---
 
 ## Section 2 – Documents and Booking Verification
@@ -286,6 +334,14 @@ Each rule entry contains:
 **Correct example:** Booking style 261740 matches the SKU on the care label header, the barcode hangtag, and the carton marking
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: PO_booking
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 2.1.2
@@ -296,6 +352,14 @@ Each rule entry contains:
 **Correct example:** Inspector proceeds and notes: "Color description on site is Navy 2166; booking reference is Midnight Blue. Quantities: [breakdown]."
 **Severity:** `MINOR`
 
+
+```check
+data_source: PO_booking
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 2.1.3
@@ -305,6 +369,14 @@ Each rule entry contains:
 **Error example:** Hangtag shows Lot 081901; carton marking shows Lot 082001 — no remark provided
 **Correct example:** Hangtag and carton both show Lot 081901; result recorded as conforming
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: in_report
+where: [report.global_remark]
+when: null
+check: extract("Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.")
+```
 
 ---
 
@@ -319,6 +391,14 @@ Each rule entry contains:
 **Error example:** All 3 documents are listed as signed but no photos of the signed documents are uploaded
 **Correct example:** 3 signed document photos uploaded, each captioned (e.g., "Factory Disclaimer — signed by inspector and factory representative")
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: in_report
+where: [checklist.are_the_qima_documents_signed.photo_count]
+when: null
+check: count_at_least(3)
+```
 
 ---
 
@@ -336,6 +416,14 @@ Each rule entry contains:
 **Correct example:** Cartons selected randomly across the warehouse; result marked Pass with selected carton numbers listed
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [checklist.random_carton_selection.result]
+when: null
+check: in_set(PASS, FAIL)
+```
+
 ---
 
 **ID:** 3.1.2
@@ -345,6 +433,14 @@ Each rule entry contains:
 **Error example:** Carton reads "Fait en Chine" and the inspector fails the Outer Packing section
 **Correct example:** Carton reads "Fait en Chine"; inspector records a MINOR defect remark and passes the section
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -356,6 +452,14 @@ Each rule entry contains:
 **Correct example:** 3 photos provided: cartons on pallet, carton seal visible, side label showing lot/style/PO/size information
 **Severity:** `MINOR`
 
+
+```check
+data_source: in_report
+where: [checklist.outer_packing_shipping_marks_front_side.photo_count]
+when: null
+check: count_at_least(3)
+```
+
 ---
 
 **ID:** 3.1.4
@@ -365,6 +469,14 @@ Each rule entry contains:
 **Error example:** Anti-mold sheet not present; inspector marks result as Pass without remark
 **Correct example:** Anti-mold sheet confirmed in each polybag; vent hole confirmed; result marked Pass
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -376,6 +488,14 @@ Each rule entry contains:
 **Correct example:** All products checked confirm matching PO 081901 and style 261740 on both inner and outer identification
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [checklist.match_packing_info.result]
+when: null
+check: equals(PASS)
+```
+
 ---
 
 **ID:** 3.1.6
@@ -385,6 +505,14 @@ Each rule entry contains:
 **Error example:** 4 photos of cartons being dropped are uploaded even though the test passed
 **Correct example:** No photos uploaded for the carton drop test; result marked Pass with comment "PASSED"
 **Severity:** `MINOR`
+
+
+```check
+data_source: in_report
+where: [checklist.carton_drop_test.photo_count]
+when: checklist.carton_drop_test.result equals PASS
+check: count_at_most(0)
+```
 
 ---
 
@@ -396,6 +524,14 @@ Each rule entry contains:
 **Correct example:** Only the completed assortment/dimensions/weight table and carton overview photos are present
 **Severity:** `MINOR`
 
+
+```check
+data_source: in_report
+where: [checklist.outer_packing_assortment_dimensions_weight.photo_count]
+when: null
+check: count_at_most(0)
+```
+
 ---
 
 **ID:** 3.1.8
@@ -405,6 +541,14 @@ Each rule entry contains:
 **Error example:** Folding method differs from tech pack; inspector fails the Specifications section
 **Correct example:** Folding method differs from tech pack; inspector adds remark and passes the section
 **Severity:** `MINOR`
+
+
+```check
+data_source: spec_sheet
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -416,6 +560,14 @@ Each rule entry contains:
 **Correct example:** Clear swift attaches found; inspector notes "Swift attaches are clear, not black — MINOR defect" in remarks and passes the section
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.1.10
@@ -425,6 +577,14 @@ Each rule entry contains:
 **Error example:** Joker tags attached with black plastic swift attaches; inspector fails the Specifications section
 **Correct example:** Joker tags attached with black plastic swift attaches; inspector notes "Joker tags not sewn — MINOR defect" in remarks and passes the section
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -440,6 +600,14 @@ Each rule entry contains:
 **Correct example:** Main label, care labels, and all hangtag views are grouped together under Product Labels in the Specifications section
 **Severity:** `MINOR`
 
+
+```check
+data_source: in_report
+where: [checklist.product_labels.photo_count]
+when: null
+check: count_at_least(1)
+```
+
 ---
 
 **ID:** 3.2.2
@@ -449,6 +617,14 @@ Each rule entry contains:
 **Error example:** The style number on the barcode hangtag reads 261838 instead of 261740
 **Correct example:** Style 261740, PO 081901, and lot number consistently appear on care label, barcode hangtag, and carton marking
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -460,6 +636,14 @@ Each rule entry contains:
 **Correct example:** Inspector finds the Joseph Ribkoff logo on a sewn-on trim, marks the field correctly, and provides a photo
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [checklist.product_logo.result]
+when: null
+check: checklist.product_logo.result != NOT_APPLICABLE
+```
+
 ---
 
 **ID:** 3.2.4
@@ -469,6 +653,14 @@ Each rule entry contains:
 **Error example:** Logo label font on bulk slightly differs from approval sample; inspector records as Minor and passes
 **Correct example:** Logo label visually differs from approval sample; inspector marks Product Labels as Failed — CRITICAL defect
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: in_report
+where: [checklist.product_style_construction.result]
+when: null
+check: equals(PASS)
+```
 
 ---
 
@@ -480,6 +672,14 @@ Each rule entry contains:
 **Correct example:** Size tab visually differs from approval sample; inspector marks Product Labels as Failed — MAJOR defect
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.2.6
@@ -490,6 +690,14 @@ Each rule entry contains:
 **Correct example:** Language order differs from approval; inspector notes this in remarks but passes the section
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.2.7
@@ -499,6 +707,14 @@ Each rule entry contains:
 **Error example:** Products shipped on unbranded hangers when tech pack specifies Joseph Ribkoff logo hangers; no remark in report
 **Correct example:** Joseph Ribkoff logo hangers confirmed on all units; noted as conforming to tech pack
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -522,6 +738,14 @@ Each rule entry contains:
 **Correct example:** Photo shows a thread end approximately 1/2" long; inspector classifies it as MAJOR
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [workmanship.found_critical, workmanship.max_defects_critical]
+when: null
+check: workmanship.found_critical <= workmanship.max_defects_critical
+```
+
 ---
 
 **ID:** 4.1.2
@@ -531,6 +755,14 @@ Each rule entry contains:
 **Error example:** A stain on the front panel is classified as MINOR
 **Correct example:** A stain on the front panel is classified as MAJOR
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -542,6 +774,14 @@ Each rule entry contains:
 **Correct example:** A stitching skip on the side seam is classified as MAJOR
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 4.1.4
@@ -551,6 +791,14 @@ Each rule entry contains:
 **Error example:** A small hole in the fabric is classified as MINOR
 **Correct example:** A small hole in the fabric is classified as MAJOR
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -562,6 +810,14 @@ Each rule entry contains:
 **Correct example:** A crease visible at 1 m on the front panel is classified as MAJOR
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 4.1.6
@@ -571,6 +827,14 @@ Each rule entry contains:
 **Error example:** A puckered seam causing partial opening classified as MINOR
 **Correct example:** A puckered seam causing partial opening classified as MAJOR
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -582,6 +846,14 @@ Each rule entry contains:
 **Correct example:** Product silhouette differs from approval sample; classified as MAJOR
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 4.1.8
@@ -591,6 +863,14 @@ Each rule entry contains:
 **Error example:** A rhinestone is falling off; classified as MINOR
 **Correct example:** A rhinestone is falling off; classified as MAJOR
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -605,6 +885,14 @@ Each rule entry contains:
 **Error example:** 20 photos of untrimmed threads uploaded for a single defect entry
 **Correct example:** 5 photos maximum for "Untrimmed Thread Ends," representing the variety of affected units; report states total count
 **Severity:** `MINOR`
+
+
+```check
+data_source: in_report
+where: [report.defects_without_photo]
+when: null
+check: equals(0)
+```
 
 ---
 
@@ -637,6 +925,14 @@ Each rule entry contains:
 **Correct example:** File is named "Measurement Chart - 261740.xlsx"; style number in chart reads 261740
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [checklist.product_dimensions_result.attachment_filenames]
+when: null
+check: filename_matches("Measurement Chart-*.xlsx")
+```
+
 ---
 
 **ID:** 5.1.2
@@ -646,6 +942,14 @@ Each rule entry contains:
 **Error example:** A POM in "Front HSP" is 5/8" out of spec; the cell is not highlighted and the measurement section is marked Pass
 **Correct example:** The "Front HSP" cell is highlighted in yellow with red text; measurement section is marked Fail
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: spec_sheet
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -657,6 +961,14 @@ Each rule entry contains:
 **Correct example:** All cells contain numeric values; style number reads "261740" in the chart header; columns are labeled by size (XS, S, M, L, XL, XXL)
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: spec_sheet
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.4
@@ -667,6 +979,14 @@ Each rule entry contains:
 **Correct example:** Only the measurement chart print screen (sharp and readable) and the Excel attachment appear in the Product Dimensions Result section
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: spec_sheet
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.5
@@ -676,6 +996,14 @@ Each rule entry contains:
 **Error example:** Denim pant inspection reports 13 units measured
 **Correct example:** Denim pant inspection reports 20 units measured at sampling level S4
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: spec_sheet
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -691,6 +1019,14 @@ Each rule entry contains:
 **Correct example:** 1 photo uploaded for the Adhesive test showing the tape application
 **Severity:** `MINOR`
 
+
+```check
+data_source: in_report
+where: [checklist.color_shading_check.photo_count]
+when: null
+check: count_at_most(1)
+```
+
 ---
 
 **ID:** 5.2.2
@@ -700,6 +1036,16 @@ Each rule entry contains:
 **Error example:** Photo shows stitch density measured on the main label seam; no numeric count is stated in the comment
 **Correct example:** Photo shows stitch count on a side seam assembly; report states "42 stitches per inch"
 **Severity:** `MINOR`
+
+
+```check
+data_source: in_report
+where: [checklist.stitch_density_check.comment]
+when: null
+check:
+  - present
+  - has_number
+```
 
 ---
 
@@ -711,6 +1057,14 @@ Each rule entry contains:
 **Correct example:** 2 photos: "Ironing check — Approval Sample Checked" and "Ironing check — Bulk Sample Checked"
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.2.4
@@ -720,6 +1074,14 @@ Each rule entry contains:
 **Error example:** Inspector uses UPC 12 scanner and fails the section because a leading zero is missing; only 1 global photo uploaded despite 2 barcode types on the product
 **Correct example:** Inspector uses UPC 13 scanner; 1 photo per barcode type uploaded; missing leading zero noted as remark; section passed
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -731,6 +1093,14 @@ Each rule entry contains:
 **Correct example:** Photo shows product folded on symmetry axis or front facing laid flat; result marked Pass with comment "PASSED"
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.2.6
@@ -740,6 +1110,14 @@ Each rule entry contains:
 **Error example:** Leg twisting noted in remarks but no fit model photos are provided
 **Correct example:** Leg twisting confirmed; clear front and back fit model photos uploaded and captioned
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -752,6 +1130,14 @@ Each rule entry contains:
 **Severity:** `⚠️ TO CONFIRM`
 
 > ⚠️ TO CONFIRM: The GI states this requirement for "all products" but the Golden Report for PSI 1399166 (dress) does not show fit model photos outside of the ironing check. Confirm whether fit model photos are mandatory for all product types or only for denim leg-twisting cases.
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -766,6 +1152,14 @@ Each rule entry contains:
 **Error example:** Photo shows only 2 bulk garments hanging together; no approval sample is visible; caption reads "Approval Sample Comparison" with no identification
 **Correct example:** Photo shows bulk garment and approval sample (with green QIMA tag) side by side; caption reads "Approval Sample Comparison — left: approval sample, right: bulk"
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -783,6 +1177,14 @@ Each rule entry contains:
 **Correct example:** Starting photo shows inspector in front of a wall displaying the factory name in large characters or a logo sign
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 6.1.2
@@ -792,6 +1194,14 @@ Each rule entry contains:
 **Error example:** 3 identical photos of the same label are uploaded to the same checkpoint; photos of the factory exterior are added at the end
 **Correct example:** 1 photo per checkpoint; no duplicate or general environment photos present
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -803,6 +1213,14 @@ Each rule entry contains:
 **Correct example:** Caption reads: "Zipper test — open and close check, PASSED"
 **Severity:** `MINOR`
 
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
+
 ---
 
 **ID:** 6.1.4
@@ -812,6 +1230,14 @@ Each rule entry contains:
 **Error example:** Measurement chart screenshot is uploaded under the General Information section in addition to the Product Dimensions section
 **Correct example:** Measurement chart screenshot and Excel file appear exclusively under Product Dimensions Result
 **Severity:** `MINOR`
+
+
+```check
+data_source: external
+where: []
+when: null
+check: null
+```
 
 ---
 
@@ -832,6 +1258,14 @@ Each rule entry contains:
 **Correct example:** Report shows Critical AQL = 0, Major AQL = 2.5, Minor AQL = 4.0, Sampling Level II
 **Severity:** `BLOCKING`
 
+
+```check
+data_source: in_report
+where: [workmanship.aql_level_major]
+when: null
+check: equals(2.5)
+```
+
 ---
 
 **ID:** 7.1.2
@@ -847,6 +1281,14 @@ Each rule entry contains:
 **Error example:** Denim pant inspection reports 13 units measured at sampling level S3
 **Correct example:** Denim pant inspection reports 20 units measured at sampling level S4, AQL 4.0
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: in_report
+where: [workmanship.aql_level_minor]
+when: null
+check: equals(4.0)
+```
 
 ---
 
@@ -879,6 +1321,14 @@ Each rule entry contains:
 **Error example:** Report shows overall PASS despite a brand logo variation vs. approval sample (CRITICAL) and Major defects exceeding the AQL acceptance number
 **Correct example:** Report shows overall FAIL because 1 Critical defect (brand logo variation) was found, even though all other sections passed
 **Severity:** `BLOCKING`
+
+
+```check
+data_source: in_report
+where: [product._first.real_packed_quantity, product._first.ordered_quantity]
+when: report.overall_result equals PASS
+check: ratio_at_least(0.8)
+```
 
 ---
 

@@ -1,0 +1,103 @@
+# Claude cheat sheet — report fields
+# Give this file to Claude with the checkpoint. Pick `where` ONLY from here (or the checklist pattern).
+# If the evidence is NOT in the report, set data_source (do not invent a field).
+#
+# For checklist test names: also give Claude data/library/checklist_names/<client>.txt
+# (hints from sample reports — not a closed allowlist; runtime fuzzy-matches).
+
+# ---------------------------------------------------------------------------
+# data_source — required on every check block
+# ---------------------------------------------------------------------------
+data_sources:
+  in_report: "value is in the report or its attachments → engine will CHECK"
+  IP: "Inspection Profile / AQL / sampling plan → check if present in report, else advisory"
+  PO_booking: "PO / booking / IRF / Advice List → ADVISORY only (never auto-flag)"
+  spec_sheet: "artwork / spec / DAS / VAS / measurement chart → ADVISORY only"
+  email: "email / correspondence / override → ADVISORY only"
+  external: "SOP / SharePoint / golden report / visual standard → ADVISORY only"
+  other: "anything else not listed → ADVISORY only"
+
+scopes:
+  QUESTION: "one field / one checklist item"
+  SECTION: "cross-check within the same checklist section"
+  FULL_REPORT: "cross-check across sections, or scan the whole report"
+
+# ---------------------------------------------------------------------------
+# CORE fields — always the same across reports. Use selector as-is.
+# ---------------------------------------------------------------------------
+fields:
+
+  report.overall_result: "overall result (PASS / FAIL / PENDING / MISSING)"
+  report.inspection_type: "inspection type (e.g. Pre-Shipment Inspection)"
+  report.inspection_date: "inspection date"
+  report.planned_date: "originally planned inspection date"
+  report.days_postponed: "days postponed (+) or advanced (-) vs planned"
+  report.global_remark: "inspector global remark (first page)"
+  report.supplier_name: "supplier / responsible entity name"
+  report.factory_name: "factory / production entity name"
+  report.factory_address: "factory address on cover"
+  report.production_site: "production site address"
+  report.product_label: "product name on cover"
+  report.sku: "SKU / product reference"
+  report.po_reference: "PO reference on cover"
+  report.tests_result: "tests result summary"
+  report.destinations: "shipment destination names"
+  report.all_text: "all report text (for scan_present / scan_absent)"
+  report.all_captions: "all photo captions (for scan)"
+  report.attachment_filenames: "all attachment filenames"
+  report.defect_count: "number of workmanship defects recorded"
+  report.defects_without_photo: "count of defects with no photo (0 = all have photos)"
+
+  product._first.product_name: "first product name"
+  product._first.sku: "first product SKU"
+  product._first.po_reference: "first product PO"
+  product._first.unit: "quantity unit (Pcs / Boxes / Packs / Other)"
+  product._first.ordered_quantity: "ordered quantity"
+  product._first.real_produced_quantity: "on-site produced quantity"
+  product._first.real_packed_quantity: "on-site packed quantity"
+  product._first.expected_produced_quantity: "expected produced quantity"
+  product._first.expected_packed_quantity: "expected packed quantity"
+  product._first.shipment_date: "shipment date"
+
+  workmanship.result: "workmanship result"
+  workmanship.inspection_level: "sampling inspection level"
+  workmanship.aql_level_critical: "critical AQL level"
+  workmanship.aql_level_major: "major AQL level"
+  workmanship.aql_level_minor: "minor AQL level"
+  workmanship.max_defects_critical: "max allowed critical defects"
+  workmanship.max_defects_major: "max allowed major defects"
+  workmanship.max_defects_minor: "max allowed minor defects"
+  workmanship.found_critical: "critical defects found"
+  workmanship.found_major: "major defects found"
+  workmanship.found_minor: "minor defects found"
+  workmanship.sample_size_critical: "critical sample size"
+  workmanship.sample_size_major: "major sample size"
+  workmanship.sample_size_minor: "minor sample size"
+  workmanship.measurement_level: "measurement sampling level"
+  workmanship.measurement_aql: "measurement AQL"
+
+  custom.qsp_product_name: "QSP Product Name (custom field)"
+
+# ---------------------------------------------------------------------------
+# CHECKLIST pattern — any test name (Carton drop test, Product Details - Barcode, …)
+# Do NOT list every test. Write: checklist.<test_name>.<suffix>
+# Runtime fuzzy-matches the test name (casing / spaces OK).
+# New tests work automatically — no library update needed.
+# Prefer real names from data/library/checklist_names/<client>.txt when authoring.
+# ---------------------------------------------------------------------------
+checklist_pattern: "checklist.<test_name>.<suffix>"
+
+checklist_suffixes:
+  result: "PASS / FAIL / NOT_APPLICABLE / NO_RESULT"
+  comment: "free-text comment on that item"
+  values: "selected answers (Yes / No / OK / …)"
+  photo_count: "number of photos on that item"
+  photo_captions: "list of captions (often empty — prefer photo_count)"
+  applicable: "true if the item applies"
+  attachment_filenames: "filenames attached to that item"
+  spotlight_count: "spotlight images count"
+
+# Examples (illustrative only — any real test name from the report works):
+#   checklist.carton_drop_test.result
+#   checklist.product_details_barcode.photo_count
+#   checklist.adhesive_test.comment

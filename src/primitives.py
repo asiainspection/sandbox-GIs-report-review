@@ -21,6 +21,7 @@ PRIMITIVE_OPS = frozenset(
         "matches",
         "contains",
         "contains_number",
+        "no_language",
         "compare",
         "exists",
         "is_blank",
@@ -37,6 +38,8 @@ PRIMITIVE_OPS = frozenset(
         "false",
     }
 )
+
+_CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]")
 
 
 @dataclass
@@ -218,6 +221,15 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         text = str(actual or "")
         ok = bool(re.search(r"\d", text))
         return EvalResult(ok, f"{selector}={text[:120]}", "primitive:contains_number")
+
+    if op == "no_language":
+        language = str(node.get("language") or "chinese").lower()
+        text = str(actual or "")
+        if language == "chinese":
+            ok = _CJK_RE.search(text) is None
+        else:
+            ok = language.lower() not in text.lower()
+        return EvalResult(ok, f"{selector} has no {language} chars", "primitive:no_language")
 
     if op == "exists":
         if isinstance(actual, list):
