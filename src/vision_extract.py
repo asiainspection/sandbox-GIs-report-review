@@ -43,7 +43,7 @@ def _build_vision_prompt(items: list[VisionItem]) -> str:
         "You ground photo-content facts for a compliance engine.",
         "Answer ONLY from the attached images (and brief context if provided).",
         "Do NOT invent details not visible in the photos.",
-        'Return JSON: {"answers": [{"id": "...", "value": true|false|null, "confidence": 0.0-1.0, "evidence": "short description"}]}',
+        'Return JSON: {"answers": [{"id": "...", "value": true|false|null, "evidence": "short description"}]}',
         "value=true only when photos clearly satisfy the question; false when they clearly contradict it; null when images are missing/unreadable.",
         "",
     ]
@@ -99,19 +99,12 @@ def run_vision_batch(
         if not item:
             continue
         coerced = _coerce_value(row.get("value"), "boolean")
-        try:
-            confidence = float(row.get("confidence", 0.0 if coerced is None else 0.85))
-        except (TypeError, ValueError):
-            confidence = 0.85 if coerced is not None else 0.0
-        confidence = max(0.0, min(1.0, confidence))
         answers[item_id] = AtomAnswer(
             item_id=item_id,
             field=f"vision.{item_id}",
             value=coerced,
-            confidence=confidence,
             evidence=str(row.get("evidence", ""))[:500],
         )
-    # Missing answers → unable (null) with low confidence
     for item in items:
         if item.item_id in answers:
             continue
@@ -120,7 +113,6 @@ def run_vision_batch(
                 item_id=item.item_id,
                 field=f"vision.{item.item_id}",
                 value=None,
-                confidence=0.0,
                 evidence="No matching photos found for this checkpoint.",
             )
         else:
@@ -128,7 +120,6 @@ def run_vision_batch(
                 item_id=item.item_id,
                 field=f"vision.{item.item_id}",
                 value=None,
-                confidence=0.0,
                 evidence="Vision model did not return an answer for this id.",
             )
     return VisionBatchResult(answers=answers, usage=usage, raw_response=raw)

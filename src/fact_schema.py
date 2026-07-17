@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from semantic_report import SemanticReport, normalize_name
@@ -24,10 +25,12 @@ FACT_SELECTORS: dict[str, str] = {
     "report.tests_result": "Tests result summary",
     "report.destinations": "Shipment destination names",
     "report.all_text": "All report text (FULL_REPORT scan)",
+    "report.inspector_text": "Inspector remarks/comments/captions (scan without template titles)",
     "report.all_captions": "All photo captions (FULL_REPORT scan)",
     "report.attachment_filenames": "All attachment filenames",
     "report.defect_count": "Number of workmanship defects recorded",
     "report.defects_without_photo": "Defects with photo_count == 0",
+    "report.defects": "Workmanship defect rows (name, classification, quantity, photos)",
     "workmanship.result": "Workmanship result",
     "workmanship.aql_level_major": "Major AQL level",
     "workmanship.aql_level_minor": "Minor AQL level",
@@ -172,6 +175,8 @@ def resolve_selector(selector: str, facts: dict[str, Any], semantic: SemanticRep
         return semantic.destinations
     if selector == "report.all_text":
         return semantic.all_text
+    if selector == "report.inspector_text":
+        return semantic.inspector_text
     if selector == "report.all_captions":
         return semantic.all_captions
     if selector == "report.attachment_filenames":
@@ -208,6 +213,9 @@ def resolve_selector(selector: str, facts: dict[str, Any], semantic: SemanticRep
             return int(getattr(item, "spotlight_count", 0) or 0)
         if field == "attachment_filenames":
             return item.attachment_filenames
+        # Future processors — return sentinel so pending fields resolve to unable, not crash.
+        if field in ("attachment_content", "photo_content"):
+            return "UNPARSED"
         return getattr(item, field, None)
 
     if selector.startswith("custom."):
@@ -227,41 +235,16 @@ def bind_checklist_name(
     *,
     min_score: float = 0.45,
 ) -> str | None:
-    """Map a compiler/human checklist name to the best matching report name.
-
-    Returns the *available* name (raw), or None if below threshold.
-    Score = |intersection| / |union| of normalized tokens (Jaccard).
-    """
-    q_tokens = _token_set(query)
-    if not q_tokens:
+    """Map a compiler/human checklist name to the best matching report name."""
+    scored = [
+        (cand, _score_checklist_name(query, cand))
+        for cand in available_names
+    ]
+    scored = [(name, score) for name, score in scored if score >= min_score]
+    if not scored:
         return None
-    q_norm = normalize_name(query)
-    best_name: str | None = None
-    best_score = 0.0
-    for cand in available_names:
-        c_norm = normalize_name(cand)
-        if q_norm == c_norm:
-            return cand
-        c_tokens = _token_set(cand)
-        if not c_tokens:
-            continue
-        inter = len(q_tokens & c_tokens)
-        union = len(q_tokens | c_tokens)
-        jaccard = inter / union if union else 0.0
-        # Containment: require the query to cover most of its own tokens AND
-        # not be a tiny prefix of a much longer checklist name (truncation FPs).
-        if q_norm in c_norm or c_norm in q_norm:
-            coverage = inter / max(len(q_tokens), 1)
-            length_ratio = min(len(q_norm), len(c_norm)) / max(len(q_norm), len(c_norm), 1)
-            score = 0.85 * coverage * max(length_ratio, 0.35)
-        else:
-            score = jaccard
-        if score > best_score:
-            best_score = score
-            best_name = cand
-    if best_score < min_score:
-        return None
-    return best_name
+    scored.sort(key=lambda row: (-row[1], row[0]))
+    return scored[0][0]
 
 
 def bind_checklist_item(semantic: SemanticReport, query: str) -> Any:
@@ -282,6 +265,383 @@ def bind_checklist_item(semantic: SemanticReport, query: str) -> Any:
 def checklist_names_from_semantic(semantic: SemanticReport) -> list[str]:
     return sorted({item.item_name for item in semantic.checklist_items if item.item_name})
 
+
+_REPORT_LABELS: dict[str, str] = {
+    "report.global_remark": "Global remark",
+    "report.overall_result": "Overall result",
+    "report.factory_address": "Factory address",
+    "report.supplier_name": "Supplier name",
+    "report.factory_name": "Factory name",
+    "report.inspector_text": "Inspector text",
+    "report.all_text": "All report text",
+    "report.all_captions": "All photo captions",
+    "report.product_label": "Product label",
+}
+
+
+@dataclass
+class ResolvedField:
+    """One bound report field with a human-readable label for LLM payloads."""
+
+    kind: str  # checklist | report | custom | product | workmanship
+    name: str  # display name, e.g. "Carton Drop Test"
+    field: str  # comment | result | photo_count | …
+    value: Any
+    selector: str = ""  # canonical selector when available
+
+
+def _is_blank_value(value: Any) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, list):
+        return len(value) == 0
+    return str(value).strip() == ""
+
+
+def _checklist_field_value(item: Any, field: str) -> Any:
+    if item is None:
+        return None
+    if field == "photo_count":
+        return item.photo_count
+    if field == "caption_count":
+        return sum(1 for c in (item.photo_captions or []) if str(c).strip())
+    if field == "spotlight_count":
+        return int(getattr(item, "spotlight_count", 0) or 0)
+    if field == "attachment_filenames":
+        return item.attachment_filenames
+    if field == "photo_captions":
+        return item.photo_captions
+    if field in ("attachment_content", "photo_content"):
+        return "UNPARSED"
+    return getattr(item, field, None)
+
+
+def _score_checklist_name(query: str, cand: str) -> float:
+    q_tokens = _token_set(query)
+    if not q_tokens:
+        return 0.0
+    q_norm = normalize_name(query)
+    c_norm = normalize_name(cand)
+    if q_norm == c_norm:
+        return 1.0
+    c_tokens = _token_set(cand)
+    if not c_tokens:
+        return 0.0
+    inter = len(q_tokens & c_tokens)
+    union = len(q_tokens | c_tokens)
+    jaccard = inter / union if union else 0.0
+    if q_norm in c_norm or c_norm in q_norm:
+        coverage = inter / max(len(q_tokens), 1)
+        length_ratio = min(len(q_norm), len(c_norm)) / max(len(q_norm), len(c_norm), 1)
+        return 0.85 * coverage * max(length_ratio, 0.35)
+    return jaccard
+
+
+def bind_checklist_names_all(
+    query: str,
+    available_names: list[str],
+    *,
+    min_score: float = 0.45,
+) -> list[str]:
+    """Return all checklist names scoring at or above ``min_score``, best first."""
+    scored: list[tuple[str, float]] = []
+    for cand in available_names:
+        score = _score_checklist_name(query, cand)
+        if score >= min_score:
+            scored.append((cand, score))
+    scored.sort(key=lambda row: (-row[1], row[0]))
+    return [name for name, _ in scored]
+
+
+def parse_where_entry(entry: Any) -> dict[str, Any]:
+    """Normalize a ``where`` list entry to selector, intent, or out_of_report binding."""
+    if isinstance(entry, dict):
+        # Already-normalized bindings (from compile_block) must pass through.
+        if entry.get("type") == "unmapped" or entry.get("kind") == "unmapped":
+            return {"type": "unmapped"}
+        if entry.get("type") == "selector" and entry.get("selector"):
+            return {"type": "selector", "selector": str(entry["selector"])}
+        if entry.get("type") == "out_of_report" or (
+            entry.get("kind") == "out_of_report"
+            or str(entry.get("on") or "").strip() == "out_of_report"
+        ):
+            kind = str(entry.get("kind") or entry.get("out_of_report_kind") or "other").strip()
+            if kind == "out_of_report":
+                kind = "other"
+            return {"type": "out_of_report", "kind": kind}
+        if entry.get("type") == "intent" or entry.get("kind"):
+            kind = str(entry.get("kind") or "").strip()
+            if kind == "out_of_report":
+                return {
+                    "type": "out_of_report",
+                    "kind": str(entry.get("out_of_report_kind") or "other").strip(),
+                }
+            if kind == "unmapped":
+                return {"type": "unmapped"}
+            match = entry.get("match") or []
+            if isinstance(match, str):
+                match = [m.strip() for m in match.split(",") if m.strip()]
+            field = str(entry.get("field") or "comment").strip()
+            return {"type": "intent", "kind": kind, "match": list(match), "field": field}
+        if entry.get("selector"):
+            return {"type": "selector", "selector": str(entry["selector"])}
+    text = str(entry).strip()
+    if text == "unmapped":
+        return {"type": "unmapped"}
+    if text.startswith("out_of_report"):
+        # out_of_report or out_of_report:booking
+        parts = text.split(":", 1)
+        kind = parts[1].strip() if len(parts) > 1 and parts[1].strip() else "other"
+        return {"type": "out_of_report", "kind": kind}
+    if text.startswith("intent:"):
+        parts = text.split(":")
+        if len(parts) >= 4:
+            kind = parts[1]
+            match = [m.strip() for m in parts[2].split(",") if m.strip()]
+            field = parts[3]
+            return {"type": "intent", "kind": kind, "match": match, "field": field}
+    return {"type": "selector", "selector": text}
+
+
+def normalize_where_bindings(where: list[Any] | None) -> list[dict[str, Any]]:
+    return [parse_where_entry(entry) for entry in (where or [])]
+
+
+def _resolve_intent_binding(
+    binding: dict[str, Any],
+    facts: dict[str, Any],
+    semantic: SemanticReport | None,
+) -> list[ResolvedField]:
+    if semantic is None:
+        return []
+    kind = str(binding.get("kind") or "").strip().lower()
+    field = str(binding.get("field") or "comment").strip()
+    match_terms = [str(m).strip() for m in (binding.get("match") or []) if str(m).strip()]
+    query = " ".join(match_terms)
+
+    if kind == "section":
+        # Resolve every checklist item whose section fuzzy-matches the query,
+        # then expose the requested field on each (per-item obligation).
+        sections = sorted(
+            {item.section for item in semantic.checklist_items if str(item.section or "").strip()}
+        )
+        matched_sections = bind_checklist_names_all(query, sections) if query else []
+        wanted = set(matched_sections)
+        resolved: list[ResolvedField] = []
+        for item in semantic.checklist_items:
+            if str(item.section or "") not in wanted:
+                continue
+            value = _checklist_field_value(item, field)
+            resolved.append(
+                ResolvedField(
+                    kind="checklist",
+                    name=item.item_name or item.section,
+                    field=field,
+                    value=value,
+                    selector=checklist_selector(item.item_name or item.section, field),
+                )
+            )
+        return resolved
+
+    if kind == "checklist":
+        available = [item.item_name for item in semantic.checklist_items if item.item_name]
+        names = bind_checklist_names_all(query, available) if query else []
+        resolved: list[ResolvedField] = []
+        for name in names:
+            item = semantic.get_checklist_item(name)
+            if item is None:
+                continue
+            value = _checklist_field_value(item, field)
+            resolved.append(
+                ResolvedField(
+                    kind="checklist",
+                    name=item.item_name or name,
+                    field=field,
+                    value=value,
+                    selector=checklist_selector(name, field),
+                )
+            )
+        return resolved
+
+    if kind in ("remark", "report"):
+        selector = "report.global_remark" if field in ("remark", "global_remark") else f"report.{field}"
+        value = resolve_selector(selector, facts, semantic)
+        label = _REPORT_LABELS.get(selector, field.replace("_", " ").title())
+        return [
+            ResolvedField(
+                kind="report",
+                name=label,
+                field=field,
+                value=value,
+                selector=selector,
+            )
+        ]
+
+    if kind == "caption":
+        if match_terms and semantic.checklist_items:
+            available = [item.item_name for item in semantic.checklist_items if item.item_name]
+            names = bind_checklist_names_all(query, available)
+            resolved = []
+            for name in names:
+                item = semantic.get_checklist_item(name)
+                if item is None:
+                    continue
+                captions = [c for c in (item.photo_captions or []) if str(c).strip()]
+                resolved.append(
+                    ResolvedField(
+                        kind="checklist",
+                        name=item.item_name or name,
+                        field="photo_caption",
+                        value="\n".join(captions) if captions else None,
+                        selector=checklist_selector(name, "photo_captions"),
+                    )
+                )
+            return resolved
+        value = semantic.all_captions
+        return [
+            ResolvedField(
+                kind="report",
+                name="Photo captions",
+                field="caption",
+                value=value,
+                selector="report.all_captions",
+            )
+        ]
+
+    return []
+
+
+def _resolve_selector_binding(
+    selector: str,
+    facts: dict[str, Any],
+    semantic: SemanticReport | None,
+) -> list[ResolvedField]:
+    value = resolve_selector(selector, facts, semantic)
+    if selector.startswith("checklist."):
+        parts = selector.split(".", 2)
+        if len(parts) < 3:
+            return []
+        _, slug, field = parts
+        display = slug.replace("_", " ").title()
+        if semantic is not None:
+            item = bind_checklist_item(semantic, slug)
+            if item is not None and item.item_name:
+                display = item.item_name
+        return [
+            ResolvedField(
+                kind="checklist",
+                name=display,
+                field=field,
+                value=value,
+                selector=selector,
+            )
+        ]
+    if selector.startswith("report."):
+        field = selector.split(".", 1)[1]
+        return [
+            ResolvedField(
+                kind="report",
+                name=_REPORT_LABELS.get(selector, field.replace("_", " ").title()),
+                field=field,
+                value=value,
+                selector=selector,
+            )
+        ]
+    if selector.startswith("custom."):
+        key = selector.split(".", 1)[1]
+        return [
+            ResolvedField(
+                kind="custom",
+                name=key.replace("_", " ").title(),
+                field="value",
+                value=value,
+                selector=selector,
+            )
+        ]
+    if selector.startswith("product._first."):
+        field = selector.split(".", 2)[2]
+        return [
+            ResolvedField(
+                kind="product",
+                name="First product",
+                field=field,
+                value=value,
+                selector=selector,
+            )
+        ]
+    if selector.startswith("workmanship."):
+        field = selector.split(".", 1)[1]
+        return [
+            ResolvedField(
+                kind="workmanship",
+                name="Workmanship",
+                field=field,
+                value=value,
+                selector=selector,
+            )
+        ]
+    return [
+        ResolvedField(
+            kind="field",
+            name=selector,
+            field="value",
+            value=value,
+            selector=selector,
+        )
+    ]
+
+
+def resolve_where_bindings(
+    where: list[Any] | None,
+    facts: dict[str, Any],
+    semantic: SemanticReport | None = None,
+) -> list[ResolvedField]:
+    """Resolve ``where`` entries (selectors or intents) against one report."""
+    resolved: list[ResolvedField] = []
+    for binding in normalize_where_bindings(where):
+        if binding.get("type") in ("out_of_report", "unmapped"):
+            continue
+        if binding["type"] == "intent":
+            resolved.extend(_resolve_intent_binding(binding, facts, semantic))
+        else:
+            resolved.extend(_resolve_selector_binding(str(binding["selector"]), facts, semantic))
+    return resolved
+
+
+def _format_field_value(value: Any, *, max_len: int = 400) -> str:
+    if value is None:
+        return "(missing)"
+    if isinstance(value, list):
+        text = "\n".join(str(v) for v in value if str(v).strip())
+    else:
+        text = str(value)
+    text = text.strip()
+    if not text:
+        return "(blank)"
+    if len(text) > max_len:
+        return text[: max_len - 3] + "..."
+    return text.replace('"', "'")
+
+
+def build_evidence_payload(
+    requirement: str,
+    resolved: list[ResolvedField],
+) -> str:
+    """Structured labeled evidence for LLM atom/vision prompts."""
+    lines: list[str] = []
+    req = str(requirement or "").strip()
+    if req:
+        lines.append(f"Requirement: {req}")
+    if not resolved:
+        lines.append("(no bound fields resolved)")
+        return "\n".join(lines)[:6000]
+    for rf in resolved:
+        content = _format_field_value(rf.value)
+        lines.append("")
+        lines.append(f"[{rf.kind}] {rf.name}")
+        lines.append(f"  field: {rf.field}")
+        lines.append(f'  content: "{content}"')
+    return "\n".join(lines).strip()[:6000]
 
 
 def all_selectors() -> list[str]:

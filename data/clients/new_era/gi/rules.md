@@ -38,6 +38,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Goods are 65% packed but the report is submitted as a standard PSI with no DUPRO remark and no packed-quantity statement.
 **Correct example:** Report remark states "This is a DUPRO inspection because goods are 65% finished," with packed quantity and ratio clearly stated.
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 
 **ID:** 1.1.2
@@ -46,6 +53,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Report flags a "split warehouse" issue as a problem requiring client approval when the two sites are 3 km apart.
 **Correct example:** Report proceeds normally, noting goods are split across two nearby warehouses.
+
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does this field evidence satisfy: If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.?")
+```
 
 ---
 
@@ -60,6 +74,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Inspector's remark field is empty or generic ("Inspection completed").
 **Correct example:** "Goods were finished and packed 61,355 pcs into 1,521 cartons 90%."
 
+
+```check
+where: [product._first.real_packed_quantity]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 1.2.2
@@ -69,6 +90,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** This is the second inspection of the same order (after a prior FAIL), but no remark references the earlier report.
 **Correct example:** "This is re-inspections from R-Cloud-25083616."
 
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 1.2.3
@@ -77,6 +105,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `FULL REPORT` — cross-check against the (always-N/A) measurement section and the Measurement Defect AQL Table attachment
 **Error example:** A cap is found 0.4cm out of circumference tolerance, but this is only buried in the attached Excel file with no mention on the first page.
 **Correct example:** First-page remark states: "Note: 1 pc out of tolerance on circumference (-0.4cm), refer to attached Measurement Defect AQL Table."
+
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -93,6 +128,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** No packing list was available on-site and the report does not mention it.
 **Correct example:** Report remarks "Packing list not provided by factory on-site."
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 2.1.2
@@ -101,6 +143,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `FULL REPORT` — cross-check against Section 8 (AQL / AOQL Summary)
 **Error example:** Report uses the default 500-pcs sample size while the Advice List specifies 315 pcs for this booking.
 **Correct example:** Report's sample size (315 pcs) matches the Advice List exactly.
+
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
 
 ---
 
@@ -114,6 +163,16 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** "Approval sample comparison" checkpoint is left blank with no photos.
 **Correct example:** "Approval sample comparison — Passed — Check the dimensions, shape, style or color of the product against the approval sample — was checked" with supporting photos.
+
+
+```check
+where:
+  - kind: checklist
+    match: [approval, sample, comparison]
+    field: photo_count
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -130,6 +189,16 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** "Random carton selection" is marked Passed with no supporting detail on how cartons were chosen.
 **Correct example:** "PASSED — Supplier offers 68,173 pcs were finished production and packed 61,355 pcs into 1,521 cartons 90%. Carton sample was randomly selected 42 Cartons randomly PO and cover."
 
+
+```check
+where:
+  - kind: checklist
+    match: [random, carton, selection]
+    field: result
+when: null
+check: null
+```
+
 ---
 
 ### 3.2 PO / MI Selection
@@ -143,6 +212,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Only 15 MI covered for a workmanship sample size of 800 pcs (25 MI required).
 **Correct example:** 25 MI covered, matching the 800-pcs Recap Quotation requirement.
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 3.2.2
@@ -151,6 +227,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** Only 6 POs selected for a workmanship sample size of 750 pcs (14 POs required).
 **Correct example:** PO ref field lists 14+ distinct PO numbers, matching the 750-pcs Recap Quotation requirement.
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -170,6 +253,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Workmanship sample size is 500 pcs, but the report covers 2 MD instead of 1.
 **Correct example:** Workmanship sample size 500 pcs → 20 MI, 8 PO, 3 shapes, 1 MD — consistent with the table.
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 3.2.4
@@ -178,6 +268,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** Advice List flags NFL program, but only 3 of the 8 selected POs are NFL-related.
 **Correct example:** All 8 selected POs are confirmed NFL POs.
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: If the Advice List identifies an 'NFL' program, all 8 selected POs must come from the NFL PO list.?")
+```
 
 ---
 
@@ -188,6 +285,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Client requested specific POs but the report gives no indication these were followed or why other POs were selected.
 **Correct example:** Report remarks "Selected POs per client instruction relayed by [contact]."
 
+
+```check
+where: [report.factory_name]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 3.2.6
@@ -196,6 +300,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** Item has 10 colorways but only 3 were inspected, all from the same silhouette.
 **Correct example:** 6 colorways selected, covering every product type in the order.
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.?")
+```
 
 ---
 
@@ -212,6 +323,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Defect table lists MI 70968082 but the carton sticker's Material field shows a different number.
 **Correct example:** MI 70968082 in the defect table matches the Material field on the carton label exactly.
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 ### 4.2 Package-Induced Deformation
@@ -224,6 +342,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** A "Folding Issue" photo/remark is included in a report showing 0 workmanship defects found.
 **Correct example:** A report with workmanship defects found includes remark/photo: "Folding Issue" (ref. R-Cloud-25169067).
+
+
+```check
+where: [report.all_text]
+when: null
+check: scan_absent("Golden Sample")
+```
 
 ---
 
@@ -240,6 +365,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** A cap defect is graded using the apparel defect code list instead of the QA Manual.
 **Correct example:** Cap defects (e.g. Exposed Haircloth, Broken Stitches) are graded per the QA Manual defect list.
 
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.2
@@ -248,6 +380,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Cap defect table uses "Major / Minor" column headers.
 **Correct example:** Cap defect table uses "Critical | Non Critical" column headers.
+
+
+```check
+where: [report.defects]
+when: null
+check: extract_bool("Does this field evidence satisfy: For cap products, only two defect levels exist — 'Critical' and 'Non-Critical' — not Major/Minor as used for garments.?")
+```
 
 ---
 
@@ -258,6 +397,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** 5 of 60 caps are out of tolerance on circumference, but the defect table shows 0 Critical defects.
 **Correct example:** 5 CRITICAL defects are added to the defect table, matching the 5 out-of-tolerance caps found.
 
+
+```check
+where: [out_of_report:ip]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.4
@@ -267,6 +413,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Label is 3mm off-center but is not recorded as a defect.
 **Correct example:** Label off-center by 3mm is recorded as a MAJOR defect with a close-up photo attached.
 
+
+```check
+where: [report.defects]
+when: null
+check: extract_bool("Does this field evidence satisfy: A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached?")
+```
+
 ---
 
 **ID:** 5.1.5
@@ -275,6 +428,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** A defect found on 25 pieces is silently dropped from the AQL table pending client feedback.
 **Correct example:** The defect remains in the AQL table with its full count while back office/SIC is consulted in parallel.
+
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
 
 ---
 
@@ -289,6 +449,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Workmanship section shows 10 Major / 0 Minor defects found, but the attached Excel file totals 14 Major / 21 Minor.
 **Correct example:** Workmanship section shows 10 Major / 0 Minor; attached Excel file totals 10 Major / 0 Minor — counts match exactly.
 
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.2.2
@@ -297,6 +464,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** A row lists only "Cap, 20 pcs" with no PO number, silhouette, or MI number.
 **Correct example:** "PO#4500469738, Cap, 20 pcs" with MI style number (e.g. 12274362) populated in its own column.
+
+
+```check
+where: [report.po_reference]
+when: null
+check: present
+```
 
 ---
 
@@ -313,6 +487,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Weight Check result is marked "Pass" with a recorded weight value.
 **Correct example:** "Weight Check — 3 Pieces — N/A — no specification."
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Result must always be recorded as N/A.?")
+```
+
 ---
 
 **ID:** 6.1.2
@@ -322,6 +503,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** GSM value entered and result marked "Pass."
 **Correct example:** "Fabric Weight Test — 3 Pieces — N/A — no specification."
 
+
+```check
+where: [checklist.fabric_weight_test_gsm.result]
+when: null
+check: equals(NOT_APPLICABLE)
+```
+
 ---
 
 **ID:** 6.1.3
@@ -330,6 +518,16 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `FULL REPORT` — cross-check against Section 1 (Inspector's Remarks) and Section 5 (Workmanship)
 **Error example:** Measurement checklist result is marked "Fail" directly on that checkpoint.
 **Correct example:** "Product Dimensions Result — N/A — was checked," with any out-of-tolerance handled per Section 1.2.3 and Section 5.1.3.
+
+
+```check
+where:
+  - kind: checklist
+    match: [product, dimensions, result]
+    field: result
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -344,6 +542,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** A 59FIFTY cap is graded using the general +/-0.5cm circumference tolerance.
 **Correct example:** A 59FIFTY cap is graded against the special +/-0.3cm tolerance.
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), no?")
+```
+
 ---
 
 **ID:** 6.2.2
@@ -352,6 +557,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `SECTION`
 **Error example:** Header fields for QIMA order ref. and PO are left blank.
 **Correct example:** All 5 required header fields are populated with the correct booking information.
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -363,6 +575,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Only 30 pcs measured across 2 shapes for a cap workmanship inspection.
 **Correct example:** 60 pcs measured, covering the styles/MI present in the selected POs.
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each?")
+```
+
 ---
 
 **ID:** 6.2.4
@@ -371,6 +590,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Out-of-tolerance garment measurement is left without any comment.
 **Correct example:** Result = N/A, Comment = "Subject to Client's Evaluation."
+
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does this field evidence satisfy: When a garment measurement is out of tolerance, the result must be N/A with the comment 'Subject to Client's Evaluation.?")
+```
 
 ---
 
@@ -385,6 +611,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Moisture test performed on only 2 MI styles.
 **Correct example:** Moisture test performed on 4 MI styles covering 3+ cap styles, with results recorded in the attached Excel table.
 
+
+```check
+where: [out_of_report:ip]
+when: null
+check: null
+```
+
 ---
 
 ### 6.4 Other Tests
@@ -398,6 +631,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Report includes a completed Carton Drop Test checklist.
 **Correct example:** Carton Drop Test checkpoint is absent/not applicable.
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Must NOT be performed for New Era Cap inspections.?")
+```
+
 ---
 
 **ID:** 6.4.2
@@ -406,6 +646,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Dark-shade garment graded Dry 2.5/Wet 1.5 but result recorded as "Pass."
 **Correct example:** Dark-shade garment graded Dry 2.5/Wet 1.5 → result recorded as "FAIL," with photo attached.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: present
+```
 
 ---
 
@@ -422,6 +669,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Front page has no group photo of the inspected items.
 **Correct example:** Front page includes a group photo captioned "New Era Cap – Alpilao International sole company Ltd."
 
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: A group picture of all SKUs/items inspected must appear on the report's front page.?")
+```
+
 ---
 
 **ID:** 7.1.2
@@ -430,6 +684,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Defect Breakdown section only says "Excel attached" with no screenshot shown.
 **Correct example:** Defect Breakdown section shows the Excel table screenshot inline plus the attached file.
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -444,6 +705,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Carton Label photo is missing.
 **Correct example:** All four outer-carton photo categories are present and correctly labeled.
 
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.?")
+```
+
 ---
 
 ### 7.3 Inner Carton Photos
@@ -456,6 +724,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** "Opened Box" photo is missing.
 **Correct example:** All six inner-carton photo categories are present.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Pro?")
+```
 
 ---
 
@@ -470,6 +745,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** "Ref. Sample vs Product" comparison photo is missing.
 **Correct example:** All product photo categories present, including side-by-side reference sample comparison.
 
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (com?")
+```
+
 ---
 
 ### 7.5 Specification & Label Photos
@@ -482,6 +764,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** "Compared with Spec." photo is missing.
 **Correct example:** All six spec/label photo categories are present.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracki?")
+```
 
 ---
 
@@ -496,6 +785,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** "Shape Check" photo is missing for a cap inspection.
 **Correct example:** All six checking-process photos are present.
 
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Chec?")
+```
+
 ---
 
 ### 7.7 Moisture Checking Photos
@@ -508,6 +804,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Only 2 of the 4 moisture-check photo positions are shown.
 **Correct example:** All 4 moisture-check positions are photographed with the moisture meter reading visible.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.?")
+```
 
 ---
 
@@ -522,6 +825,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** A "Broken Stitches" defect entry has a photo but no location description.
 **Correct example:** Photo captioned "Broken Stitches" with location context visible/described (e.g. inside back sweatband area).
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 
 ### 7.9 Mandatory Attachments
@@ -534,6 +844,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `FULL REPORT` — cross-check against Section 5.2 (defect count match)
 **Error example:** No Excel file attached, only a screenshot embedded in the report body.
 **Correct example:** File "New Era Cap LLC_Measurement Defect AQL Table_2 June 2025 (1).xls" attached under Attachments → Defect Breakdown.
+
+
+```check
+where: [out_of_report:ip]
+when: null
+check: null
+```
 
 ---
 
@@ -555,6 +872,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** A cap booking uses Major AQL 2.5 (the apparel value) instead of 1.5.
 **Correct example:** Cap booking's Inspection Standards box shows "AQL 1.5" for Major defects, sampling level General II, matching the Headwear row.
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 8.1.2
@@ -563,6 +887,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `FULL REPORT`
 **Error example:** Report uses the default table's AQL even though the Advice List specifies a custom AQL for this booking.
 **Correct example:** Report's AQL matches the Advice List's custom value, not the default table.
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes pr?")
+```
 
 ---
 
@@ -577,6 +908,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** Only 55% of goods are packed, but the Quantity section is marked "Pass."
 **Correct example:** Quantity section marked "Fail," with unpacked quantity and ratio clearly stated.
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 
 **ID:** 9.1.2
@@ -586,6 +924,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Error example:** 15 Major defects found against an acceptance point of 14, but result is marked "Pass."
 **Correct example:** 10 Major defects found against an acceptance point of 14 → result correctly marked "Pass."
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 9.1.3
@@ -594,6 +939,13 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 **Scope:** `QUESTION`
 **Error example:** Report notes defective units were set aside as "samples" to send to the client instead of being repaired/replaced.
 **Correct example:** Report confirms all defective units found were repaired or replaced before packing was finalized.
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 

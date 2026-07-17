@@ -2,7 +2,7 @@
   "meta": {
     "name": "Joseph Ribkoff Inspection Report Review – Rules Reference",
     "source": "data/clients/ribkoff/gi/rules.md",
-    "generated_at": "2026-07-16T07:27:18Z",
+    "generated_at": "2026-07-17T04:40:54Z",
     "check_blocks": 56,
     "checkpoint_count": 56
   },
@@ -17,14 +17,18 @@
       "source_rule_id": "1.1.1",
       "source_lines": {
         "start": 195,
-        "end": 212
+        "end": 213
       },
       "context": "QUESTION — check the address field only",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.factory_address"
+        ],
         "when": null,
-        "check": null
+        "check": [
+          "present",
+          "no_language(chinese)"
+        ]
       }
     },
     {
@@ -36,13 +40,14 @@
       "scope_detail": "cross-check factory address against booking details",
       "source_rule_id": "1.1.2",
       "source_lines": {
-        "start": 213,
+        "start": 214,
         "end": 230
       },
       "context": "FULL REPORT — cross-check factory address against booking details",
       "check_block": {
-        "data_source": "PO_booking",
-        "where": [],
+        "where": [
+          "out_of_report:booking"
+        ],
         "when": null,
         "check": null
       }
@@ -57,11 +62,10 @@
       "source_rule_id": "1.2.1",
       "source_lines": {
         "start": 235,
-        "end": 252
+        "end": 251
       },
       "context": "FULL REPORT — cross-check defect list in remarks against defect details in the Workmanship section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.global_remark"
         ],
@@ -78,12 +82,11 @@
       "scope_detail": "check the quantity fields in the Available Quantity Check section",
       "source_rule_id": "1.3.1",
       "source_lines": {
-        "start": 257,
-        "end": 280
+        "start": 256,
+        "end": 278
       },
       "context": "QUESTION — check the quantity fields in the Available Quantity Check section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "product._first.real_packed_quantity",
           "product._first.ordered_quantity"
@@ -101,12 +104,11 @@
       "scope_detail": "cross-check ordered quantity against produced and packed quantities",
       "source_rule_id": "1.3.2",
       "source_lines": {
-        "start": 281,
-        "end": 298
+        "start": 279,
+        "end": 295
       },
       "context": "FULL REPORT — cross-check ordered quantity against produced and packed quantities",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.global_remark"
         ],
@@ -123,17 +125,16 @@
       "scope_detail": "cross-check all \"No\" responses throughout the report against the Summary Review section",
       "source_rule_id": "1.4.1",
       "source_lines": {
-        "start": 303,
-        "end": 322
+        "start": 300,
+        "end": 318
       },
       "context": "FULL REPORT — cross-check all \"No\" responses throughout the report against the Summary Review section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract(\"For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.\")"
+        "check": "extract_bool(\"For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.\")"
       }
     },
     {
@@ -145,13 +146,14 @@
       "scope_detail": "cross-check booking style number and PO number against care label, hangtag, and carton markings",
       "source_rule_id": "2.1.1",
       "source_lines": {
-        "start": 329,
-        "end": 346
+        "start": 325,
+        "end": 341
       },
       "context": "FULL REPORT — cross-check booking style number and PO number against care label, hangtag, and carton markings",
       "check_block": {
-        "data_source": "PO_booking",
-        "where": [],
+        "where": [
+          "out_of_report:booking"
+        ],
         "when": null,
         "check": null
       }
@@ -165,13 +167,14 @@
       "scope_detail": "cross-check booking color information against on-site labels and hangtags",
       "source_rule_id": "2.1.2",
       "source_lines": {
-        "start": 347,
-        "end": 364
+        "start": 342,
+        "end": 358
       },
       "context": "FULL REPORT — cross-check booking color information against on-site labels and hangtags",
       "check_block": {
-        "data_source": "PO_booking",
-        "where": [],
+        "where": [
+          "out_of_report:booking"
+        ],
         "when": null,
         "check": null
       }
@@ -185,17 +188,16 @@
       "scope_detail": "cross-check lot number across hangtag and carton within the Specifications section",
       "source_rule_id": "2.1.3",
       "source_lines": {
-        "start": 365,
-        "end": 382
+        "start": 359,
+        "end": 375
       },
       "context": "SECTION — cross-check lot number across hangtag and carton within the Specifications section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract(\"Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.\")"
+        "check": "extract_bool(\"Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.\")"
       }
     },
     {
@@ -207,12 +209,11 @@
       "scope_detail": "check the signed documents field and verify photos are present",
       "source_rule_id": "2.2.1",
       "source_lines": {
-        "start": 387,
-        "end": 404
+        "start": 380,
+        "end": 396
       },
       "context": "QUESTION — check the signed documents field and verify photos are present",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.are_the_qima_documents_signed.photo_count"
         ],
@@ -229,12 +230,11 @@
       "scope_detail": "check the random carton selection result field",
       "source_rule_id": "3.1.1",
       "source_lines": {
-        "start": 411,
-        "end": 428
+        "start": 403,
+        "end": 419
       },
       "context": "QUESTION — check the random carton selection result field",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.random_carton_selection.result"
         ],
@@ -251,15 +251,27 @@
       "scope_detail": "check the outer packing field and any associated remarks",
       "source_rule_id": "3.1.2",
       "source_lines": {
-        "start": 429,
-        "end": 446
+        "start": 420,
+        "end": 439
       },
       "context": "QUESTION — check the outer packing field and any associated remarks",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "outer",
+              "packing",
+              "shipping",
+              "marks",
+              "front",
+              "side"
+            ],
+            "field": "comment"
+          }
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
@@ -271,12 +283,11 @@
       "scope_detail": "check that the 3 required photo types are present in the Specifications section",
       "source_rule_id": "3.1.3",
       "source_lines": {
-        "start": 447,
-        "end": 464
+        "start": 440,
+        "end": 456
       },
       "context": "SECTION — check that the 3 required photo types are present in the Specifications section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.outer_packing_shipping_marks_front_side.photo_count"
         ],
@@ -293,13 +304,23 @@
       "scope_detail": "check the inner packing checkpoint result and comments",
       "source_rule_id": "3.1.4",
       "source_lines": {
-        "start": 465,
-        "end": 482
+        "start": 457,
+        "end": 476
       },
       "context": "QUESTION — check the inner packing checkpoint result and comments",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "inner",
+              "packing",
+              "unit",
+              "packing"
+            ],
+            "field": "comment"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -313,12 +334,11 @@
       "scope_detail": "cross-check inner product ID against outer carton marking",
       "source_rule_id": "3.1.5",
       "source_lines": {
-        "start": 483,
-        "end": 500
+        "start": 477,
+        "end": 493
       },
       "context": "SECTION — cross-check inner product ID against outer carton marking",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.match_packing_info.result"
         ],
@@ -335,12 +355,11 @@
       "scope_detail": "check the photo content for the carton drop test checkpoint",
       "source_rule_id": "3.1.6",
       "source_lines": {
-        "start": 501,
-        "end": 518
+        "start": 494,
+        "end": 510
       },
       "context": "QUESTION — check the photo content for the carton drop test checkpoint",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.carton_drop_test.photo_count"
         ],
@@ -357,12 +376,11 @@
       "scope_detail": "check the photo content for this checkpoint",
       "source_rule_id": "3.1.7",
       "source_lines": {
-        "start": 519,
-        "end": 536
+        "start": 511,
+        "end": 527
       },
       "context": "QUESTION — check the photo content for this checkpoint",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.outer_packing_assortment_dimensions_weight.photo_count"
         ],
@@ -379,13 +397,14 @@
       "scope_detail": "cross-check folding method against tech pack and note in remarks if different",
       "source_rule_id": "3.1.8",
       "source_lines": {
-        "start": 537,
-        "end": 554
+        "start": 528,
+        "end": 544
       },
       "context": "FULL REPORT — cross-check folding method against tech pack and note in remarks if different",
       "check_block": {
-        "data_source": "spec_sheet",
-        "where": [],
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
         "when": null,
         "check": null
       }
@@ -399,15 +418,16 @@
       "scope_detail": "check the swift attach color on serial tags",
       "source_rule_id": "3.1.9",
       "source_lines": {
-        "start": 555,
-        "end": 572
+        "start": 545,
+        "end": 561
       },
       "context": "QUESTION — check the swift attach color on serial tags",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defect_count"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
@@ -419,15 +439,16 @@
       "scope_detail": "check joker tag attachment method on denim pants only",
       "source_rule_id": "3.1.10",
       "source_lines": {
-        "start": 573,
-        "end": 590
+        "start": 562,
+        "end": 578
       },
       "context": "QUESTION — check joker tag attachment method on denim pants only",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defect_count"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
@@ -439,12 +460,11 @@
       "scope_detail": "check that all label types (main label, care label, hangtags) are present together in the same section",
       "source_rule_id": "3.2.1",
       "source_lines": {
-        "start": 595,
-        "end": 612
+        "start": 583,
+        "end": 599
       },
       "context": "SECTION — check that all label types (main label, care label, hangtags) are present together in the same section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.product_labels.photo_count"
         ],
@@ -461,13 +481,21 @@
       "scope_detail": "cross-check booking information against all 3 product identification components",
       "source_rule_id": "3.2.2",
       "source_lines": {
-        "start": 613,
-        "end": 630
+        "start": 600,
+        "end": 619
       },
       "context": "FULL REPORT — cross-check booking information against all 3 product identification components",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "labels"
+            ],
+            "field": "comment"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -481,12 +509,11 @@
       "scope_detail": "check the Product Logo result field and associated photos",
       "source_rule_id": "3.2.3",
       "source_lines": {
-        "start": 631,
-        "end": 648
+        "start": 620,
+        "end": 636
       },
       "context": "QUESTION — check the Product Logo result field and associated photos",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.product_logo.result"
         ],
@@ -503,12 +530,11 @@
       "scope_detail": "cross-check brand logo label between approval sample and bulk",
       "source_rule_id": "3.2.4",
       "source_lines": {
-        "start": 649,
-        "end": 666
+        "start": 637,
+        "end": 653
       },
       "context": "FULL REPORT — cross-check brand logo label between approval sample and bulk",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.product_style_construction.result"
         ],
@@ -525,13 +551,21 @@
       "scope_detail": "compare bulk size tab against approval sample within the Specifications section",
       "source_rule_id": "3.2.5",
       "source_lines": {
-        "start": 667,
-        "end": 684
+        "start": 654,
+        "end": 673
       },
       "context": "SECTION — compare bulk size tab against approval sample within the Specifications section",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications"
+            ],
+            "field": "comment"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -545,15 +579,16 @@
       "scope_detail": "check the care label language sequence against approval sample",
       "source_rule_id": "3.2.6",
       "source_lines": {
-        "start": 685,
-        "end": 702
+        "start": 674,
+        "end": 690
       },
       "context": "QUESTION — check the care label language sequence against approval sample",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.inspector_text"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Is the care/content label language sequence correct per the GI rule?\")"
       }
     },
     {
@@ -565,13 +600,21 @@
       "scope_detail": "check hanger specification against tech pack when shipping on hangers is required",
       "source_rule_id": "3.2.7",
       "source_lines": {
-        "start": 703,
-        "end": 720
+        "start": 691,
+        "end": 710
       },
       "context": "QUESTION — check hanger specification against tech pack when shipping on hangers is required",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications"
+            ],
+            "field": "comment"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -585,12 +628,11 @@
       "scope_detail": "check the severity assigned to each untrimmed thread defect entry",
       "source_rule_id": "4.1.1",
       "source_lines": {
-        "start": 727,
-        "end": 750
+        "start": 717,
+        "end": 739
       },
       "context": "QUESTION — check the severity assigned to each untrimmed thread defect entry",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "workmanship.found_critical",
           "workmanship.max_defects_critical"
@@ -608,15 +650,16 @@
       "scope_detail": "check the severity assigned to any dirt/stain defect entry",
       "source_rule_id": "4.1.2",
       "source_lines": {
-        "start": 751,
-        "end": 768
+        "start": 740,
+        "end": 756
       },
       "context": "QUESTION — check the severity assigned to any dirt/stain defect entry",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'dirt'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -628,15 +671,16 @@
       "scope_detail": "check the severity assigned to any stitching defect entry",
       "source_rule_id": "4.1.3",
       "source_lines": {
-        "start": 769,
-        "end": 786
+        "start": 757,
+        "end": 773
       },
       "context": "QUESTION — check the severity assigned to any stitching defect entry",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'stitch'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -648,15 +692,16 @@
       "scope_detail": "check the severity assigned to any yarn defect or hole entry",
       "source_rule_id": "4.1.4",
       "source_lines": {
-        "start": 787,
-        "end": 804
+        "start": 774,
+        "end": 790
       },
       "context": "QUESTION — check the severity assigned to any yarn defect or hole entry",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'yarn'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -668,15 +713,16 @@
       "scope_detail": "check the severity of any wrinkle or press mark defect entry",
       "source_rule_id": "4.1.5",
       "source_lines": {
-        "start": 805,
-        "end": 822
+        "start": 791,
+        "end": 807
       },
       "context": "QUESTION — check the severity of any wrinkle or press mark defect entry",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'wrinkle'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -688,15 +734,16 @@
       "scope_detail": "check the severity assigned to any seam quality defect entry",
       "source_rule_id": "4.1.6",
       "source_lines": {
-        "start": 823,
-        "end": 840
+        "start": 808,
+        "end": 824
       },
       "context": "QUESTION — check the severity assigned to any seam quality defect entry",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'pucker'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -708,13 +755,14 @@
       "scope_detail": "cross-check product form against approval sample and tech pack",
       "source_rule_id": "4.1.7",
       "source_lines": {
-        "start": 841,
-        "end": 858
+        "start": 825,
+        "end": 841
       },
       "context": "FULL REPORT — cross-check product form against approval sample and tech pack",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
         "check": null
       }
@@ -728,15 +776,16 @@
       "scope_detail": "cross-check trim installation against tech pack and approval sample",
       "source_rule_id": "4.1.8",
       "source_lines": {
-        "start": 859,
-        "end": 876
+        "start": 842,
+        "end": 858
       },
       "context": "FULL REPORT — cross-check trim installation against tech pack and approval sample",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.defects"
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all 'defect'-related defects classified as MAJOR?\")"
       }
     },
     {
@@ -748,12 +797,11 @@
       "scope_detail": "check the number of photos per defect entry in the Workmanship section",
       "source_rule_id": "4.2.1",
       "source_lines": {
-        "start": 881,
-        "end": 898
+        "start": 863,
+        "end": 879
       },
       "context": "SECTION — check the number of photos per defect entry in the Workmanship section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.defects_without_photo"
         ],
@@ -770,12 +818,11 @@
       "scope_detail": "cross-check SKU in chart against report header; check file name in Attachments",
       "source_rule_id": "5.1.1",
       "source_lines": {
-        "start": 905,
-        "end": 937
+        "start": 886,
+        "end": 917
       },
       "context": "FULL REPORT — cross-check SKU in chart against report header; check file name in Attachments",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.product_dimensions_result.attachment_filenames"
         ],
@@ -792,13 +839,14 @@
       "scope_detail": "check highlighting in the attached measurement chart and the result field",
       "source_rule_id": "5.1.2",
       "source_lines": {
-        "start": 938,
-        "end": 955
+        "start": 918,
+        "end": 934
       },
       "context": "QUESTION — check highlighting in the attached measurement chart and the result field",
       "check_block": {
-        "data_source": "spec_sheet",
-        "where": [],
+        "where": [
+          "checklist.product_dimensions_result.attachment_content"
+        ],
         "when": null,
         "check": null
       }
@@ -812,13 +860,14 @@
       "scope_detail": "check chart structure and content for completeness and accuracy",
       "source_rule_id": "5.1.3",
       "source_lines": {
-        "start": 956,
-        "end": 973
+        "start": 935,
+        "end": 951
       },
       "context": "QUESTION — check chart structure and content for completeness and accuracy",
       "check_block": {
-        "data_source": "spec_sheet",
-        "where": [],
+        "where": [
+          "checklist.product_dimensions_result.attachment_content"
+        ],
         "when": null,
         "check": null
       }
@@ -832,13 +881,14 @@
       "scope_detail": "confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
       "source_rule_id": "5.1.4",
       "source_lines": {
-        "start": 974,
-        "end": 991
+        "start": 952,
+        "end": 968
       },
       "context": "SECTION — confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
       "check_block": {
-        "data_source": "spec_sheet",
-        "where": [],
+        "where": [
+          "checklist.product_dimensions_result.attachment_filenames"
+        ],
         "when": null,
         "check": null
       }
@@ -852,13 +902,14 @@
       "scope_detail": "check total units measured for denim products",
       "source_rule_id": "5.1.5",
       "source_lines": {
-        "start": 992,
-        "end": 1009
+        "start": 969,
+        "end": 985
       },
       "context": "QUESTION — check total units measured for denim products",
       "check_block": {
-        "data_source": "spec_sheet",
-        "where": [],
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
         "when": null,
         "check": null
       }
@@ -872,14 +923,19 @@
       "scope_detail": "check the number of photos per test checkpoint",
       "source_rule_id": "5.2.1",
       "source_lines": {
-        "start": 1014,
-        "end": 1031
+        "start": 990,
+        "end": 1009
       },
       "context": "SECTION — check the number of photos per test checkpoint",
       "check_block": {
-        "data_source": "in_report",
         "where": [
-          "checklist.color_shading_check.photo_count"
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_count"
+          }
         ],
         "when": null,
         "check": "count_at_most(1)"
@@ -894,12 +950,11 @@
       "scope_detail": "check the stitch density result and photo source",
       "source_rule_id": "5.2.2",
       "source_lines": {
-        "start": 1032,
-        "end": 1051
+        "start": 1010,
+        "end": 1028
       },
       "context": "QUESTION — check the stitch density result and photo source",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "checklist.stitch_density_check.comment"
         ],
@@ -919,13 +974,23 @@
       "scope_detail": "check that both approval and bulk sample photos are present and labeled",
       "source_rule_id": "5.2.3",
       "source_lines": {
-        "start": 1052,
-        "end": 1069
+        "start": 1029,
+        "end": 1048
       },
       "context": "QUESTION — check that both approval and bulk sample photos are present and labeled",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "ironing",
+              "washing",
+              "treatment",
+              "check"
+            ],
+            "field": "photo_content"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -939,15 +1004,24 @@
       "scope_detail": "check the barcode type used, the photo count per barcode type, and the interpretation of results",
       "source_rule_id": "5.2.4",
       "source_lines": {
-        "start": 1070,
-        "end": 1087
+        "start": 1049,
+        "end": 1068
       },
       "context": "QUESTION — check the barcode type used, the photo count per barcode type, and the interpretation of results",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "barcode",
+              "scanning",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
         "when": null,
-        "check": null
+        "check": "count_at_least(1)"
       }
     },
     {
@@ -959,13 +1033,21 @@
       "scope_detail": "check the symmetry check result and supporting photo",
       "source_rule_id": "5.2.5",
       "source_lines": {
-        "start": 1088,
-        "end": 1105
+        "start": 1069,
+        "end": 1088
       },
       "context": "QUESTION — check the symmetry check result and supporting photo",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "symmetry",
+              "check"
+            ],
+            "field": "photo_count"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -979,15 +1061,16 @@
       "scope_detail": "check whether a fit model was used when leg twisting was identified",
       "source_rule_id": "5.2.6",
       "source_lines": {
-        "start": 1106,
-        "end": 1123
+        "start": 1089,
+        "end": 1105
       },
       "context": "QUESTION — check whether a fit model was used when leg twisting was identified",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.all_captions"
+        ],
         "when": null,
-        "check": null
+        "check": "present"
       }
     },
     {
@@ -999,13 +1082,20 @@
       "scope_detail": "check that fit model photos are present for the product inspected",
       "source_rule_id": "5.2.7",
       "source_lines": {
-        "start": 1124,
-        "end": 1143
+        "start": 1106,
+        "end": 1127
       },
       "context": "QUESTION — check that fit model photos are present for the product inspected",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_content"
+          }
+        ],
         "when": null,
         "check": null
       }
@@ -1019,15 +1109,24 @@
       "scope_detail": "check all approval sample comparison photos in the Specifications section",
       "source_rule_id": "5.3.1",
       "source_lines": {
-        "start": 1148,
-        "end": 1165
+        "start": 1132,
+        "end": 1151
       },
       "context": "SECTION — check all approval sample comparison photos in the Specifications section",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "approval",
+              "sample",
+              "comparison"
+            ],
+            "field": "photo_content"
+          }
+        ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
@@ -1039,12 +1138,11 @@
       "scope_detail": "check the Starting Pictures section",
       "source_rule_id": "6.1.1",
       "source_lines": {
-        "start": 1172,
-        "end": 1189
+        "start": 1158,
+        "end": 1174
       },
       "context": "QUESTION — check the Starting Pictures section",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "report.overall_result"
         ],
@@ -1061,13 +1159,14 @@
       "scope_detail": "review all photo placements and counts throughout the report",
       "source_rule_id": "6.1.2",
       "source_lines": {
-        "start": 1190,
-        "end": 1207
+        "start": 1175,
+        "end": 1191
       },
       "context": "FULL REPORT — review all photo placements and counts throughout the report",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.attachment_filenames"
+        ],
         "when": null,
         "check": null
       }
@@ -1081,13 +1180,14 @@
       "scope_detail": "check that every photo in the report is accompanied by a caption",
       "source_rule_id": "6.1.3",
       "source_lines": {
-        "start": 1208,
-        "end": 1225
+        "start": 1192,
+        "end": 1208
       },
       "context": "FULL REPORT — check that every photo in the report is accompanied by a caption",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "report.all_captions"
+        ],
         "when": null,
         "check": null
       }
@@ -1101,13 +1201,14 @@
       "scope_detail": "confirm measurement chart content appears only in the Product Dimensions Result section",
       "source_rule_id": "6.1.4",
       "source_lines": {
-        "start": 1226,
-        "end": 1243
+        "start": 1209,
+        "end": 1225
       },
       "context": "FULL REPORT — confirm measurement chart content appears only in the Product Dimensions Result section",
       "check_block": {
-        "data_source": "external",
-        "where": [],
+        "where": [
+          "checklist.product_dimensions_result.attachment_filenames"
+        ],
         "when": null,
         "check": null
       }
@@ -1121,12 +1222,11 @@
       "scope_detail": "cross-check the AQL values displayed in the Workmanship section header against the above",
       "source_rule_id": "7.1.1",
       "source_lines": {
-        "start": 1248,
-        "end": 1270
+        "start": 1230,
+        "end": 1251
       },
       "context": "FULL REPORT — cross-check the AQL values displayed in the Workmanship section header against the above",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "workmanship.aql_level_major"
         ],
@@ -1143,12 +1243,11 @@
       "scope_detail": "cross-check measurement sampling level and unit count against the above requirements",
       "source_rule_id": "7.1.2",
       "source_lines": {
-        "start": 1271,
-        "end": 1294
+        "start": 1252,
+        "end": 1274
       },
       "context": "FULL REPORT — cross-check measurement sampling level and unit count against the above requirements",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "workmanship.aql_level_minor"
         ],
@@ -1165,12 +1264,11 @@
       "scope_detail": "cross-check overall result against all section results and defect counts",
       "source_rule_id": "8.1.1",
       "source_lines": {
-        "start": 1299,
-        "end": 1374
+        "start": 1279,
+        "end": 1353
       },
       "context": "FULL REPORT — cross-check overall result against all section results and defect counts",
       "check_block": {
-        "data_source": "in_report",
         "where": [
           "product._first.real_packed_quantity",
           "product._first.ordered_quantity"

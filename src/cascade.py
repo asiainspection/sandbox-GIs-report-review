@@ -1,4 +1,8 @@
-"""Confidence / disagreement cascade: escalate missing or disagreeing atom answers."""
+"""Null-only retry: re-ask the same extractor when a leaf returned no value.
+
+No LLM self-scored confidence. No second-model judge. Keep it simple:
+value present -> use it; value null -> one retry; still null -> unable.
+"""
 
 from __future__ import annotations
 
@@ -11,8 +15,9 @@ from google import genai
 from fact_extractor import AtomAnswer, ExtractItem, run_extract_atom, run_extract_batch
 from gi_review import UsageStats
 
-DEFAULT_CONFIDENCE_THRESHOLD = 0.75
 DEFAULT_CASCADE_WORKERS = 4
+# Kept for import compatibility with older call sites.
+DEFAULT_CONFIDENCE_THRESHOLD = 0.0
 
 
 @dataclass
@@ -23,55 +28,12 @@ class CascadeResult:
     usage: UsageStats = field(default_factory=UsageStats)
 
 
-def _boolish(value: Any) -> bool | None:
-    if value is None:
-        return None
-    if isinstance(value, bool):
-        return value
-    text = str(value).strip().lower()
-    if text in ("true", "yes", "1"):
-        return True
-    if text in ("false", "no", "0"):
-        return False
-    return None
-
-
-def needs_escalation(answer: AtomAnswer, *, threshold: float = DEFAULT_CONFIDENCE_THRESHOLD) -> bool:
-    """Escalate on abstention, or low confidence (kept as coarse gate only)."""
-    if answer.value is None:
-        return True
-    if _boolish(answer.value) is None:
-        return True
-    return answer.confidence < threshold
-
-
-def _merge_judge_answer(
-    item_id: str,
-    initial: dict[str, AtomAnswer],
-    retry: AtomAnswer | None,
-    *,
-    double_sample: bool,
-) -> tuple[AtomAnswer | None, bool]:
-    """Return (updated answer or None to keep original, disagreed?)."""
-    if retry is None:
-        return None, False
-    first = initial.get(item_id)
-    first_b = _boolish(first.value) if first else None
-    second_b = _boolish(retry.value)
-    if double_sample and first_b is not None and second_b is not None and first_b != second_b:
-        return (
-            AtomAnswer(
-                item_id=item_id,
-                field=retry.field,
-                value=None,
-                confidence=0.0,
-                evidence=(
-                    f"disagreement: extract={first_b} vs judge={second_b}; {retry.evidence}"
-                )[:500],
-            ),
-            True,
-        )
-    return retry, False
+def needs_escalation(answer: AtomAnswer, *, threshold: float = 0.0) -> bool:
+    """Retry only when the leaf has no usable value."""
+    _ = threshold
+    return answer.value is None or (
+        isinstance(answer.value, str) and not str(answer.value).strip()
+    )
 
 
 def run_cascade(
@@ -81,18 +43,13 @@ def run_cascade(
     initial: dict[str, AtomAnswer],
     *,
     threshold: float = DEFAULT_CONFIDENCE_THRESHOLD,
-    double_sample: bool = True,
+    double_sample: bool = False,
     max_workers: int = DEFAULT_CASCADE_WORKERS,
 ) -> CascadeResult:
-    """Escalate missing/low-confidence atoms via batched/parallel judge calls.
-
-    Disagreement policy: if extract and judge disagree on the boolean, set value=None
-    (unable) rather than trusting either — confidence self-grades are biased.
-    """
+    """Re-extract null leaves with the same extractor model (no confidence, no judge)."""
+    _ = double_sample
     by_id = {item.item_id: item for item in items}
     out = dict(initial)
-    escalated: list[str] = []
-    disagreed: list[str] = []
     usage = UsageStats()
 
     candidates = [
@@ -104,67 +61,45 @@ def run_cascade(
         return CascadeResult(answers=out)
 
     cand_items = [by_id[i] for i in candidates]
-    escalated.extend(candidates)
+    extractor = judge_model  # same model; call site may still pass judge_model for compat
 
-    # Prefer one batched judge call when many candidates; parallel singles as fallback chunks.
     if len(cand_items) >= 2:
-        batch = run_extract_batch(client, judge_model, cand_items)
+        batch = run_extract_batch(client, extractor, cand_items)
         usage.add_usage(batch.usage)
         for item_id in candidates:
-            updated, was_dis = _merge_judge_answer(
-                item_id, initial, batch.answers.get(item_id), double_sample=double_sample
-            )
-            if was_dis:
-                disagreed.append(item_id)
-            if updated is not None:
-                out[item_id] = updated
+            retry = batch.answers.get(item_id)
+            if retry is not None and retry.value is not None:
+                out[item_id] = retry
             elif item_id not in batch.answers:
-                # Missing from batch — single retry
-                item = by_id[item_id]
-                retry = run_extract_atom(client, judge_model, item)
-                usage.add_usage(retry.usage)
-                updated, was_dis = _merge_judge_answer(
-                    item_id, initial, retry.answer, double_sample=double_sample
-                )
-                if was_dis:
-                    disagreed.append(item_id)
-                if updated is not None:
-                    out[item_id] = updated
+                single = run_extract_atom(client, extractor, by_id[item_id])
+                usage.add_usage(single.usage)
+                if single.answer is not None and single.answer.value is not None:
+                    out[item_id] = single.answer
     else:
         workers = max(1, min(max_workers, len(cand_items)))
         if workers == 1:
             for item_id in candidates:
-                retry = run_extract_atom(client, judge_model, by_id[item_id])
+                retry = run_extract_atom(client, extractor, by_id[item_id])
                 usage.add_usage(retry.usage)
-                updated, was_dis = _merge_judge_answer(
-                    item_id, initial, retry.answer, double_sample=double_sample
-                )
-                if was_dis:
-                    disagreed.append(item_id)
-                if updated is not None:
-                    out[item_id] = updated
+                if retry.answer is not None and retry.answer.value is not None:
+                    out[item_id] = retry.answer
         else:
             with ThreadPoolExecutor(max_workers=workers) as pool:
                 futures = {
-                    pool.submit(run_extract_atom, client, judge_model, by_id[item_id]): item_id
+                    pool.submit(run_extract_atom, client, extractor, by_id[item_id]): item_id
                     for item_id in candidates
                 }
                 for fut in as_completed(futures):
                     item_id = futures[fut]
                     retry = fut.result()
                     usage.add_usage(retry.usage)
-                    updated, was_dis = _merge_judge_answer(
-                        item_id, initial, retry.answer, double_sample=double_sample
-                    )
-                    if was_dis:
-                        disagreed.append(item_id)
-                    if updated is not None:
-                        out[item_id] = updated
+                    if retry.answer is not None and retry.answer.value is not None:
+                        out[item_id] = retry.answer
 
     return CascadeResult(
         answers=out,
-        escalated_ids=escalated,
-        disagreed_ids=disagreed,
+        escalated_ids=candidates,
+        disagreed_ids=[],
         usage=usage,
     )
 

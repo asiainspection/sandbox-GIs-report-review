@@ -30,6 +30,13 @@ Each rule entry contains:
 **Error example:** Inspector starts the inspection without reviewing the uploaded artwork and later misses a color specification requirement.
 **Correct example:** Inspector reviews all uploaded files beforehand and attaches a dated screenshot of the supplier's message confirming a specification point.
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 1.1.2
@@ -38,6 +45,13 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check that each SKU's findings reference the corresponding specification sheet
 **Error example:** Report has no reference to the client's artwork/specification for the SKU inspected.
 **Correct example:** Report states which specification sheet was used for each SKU inspected.
+
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for eac?")
+```
 
 ---
 
@@ -52,6 +66,13 @@ Each rule entry contains:
 **Error example:** Front page field left as "N/A" although the inspection was performed 3 days after the planned date.
 **Correct example:** Front page states "Inspection performed 3 days after the planned date of [date]."
 
+
+```check
+where: [report.days_postponed]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 1.2.2
@@ -60,6 +81,13 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** Factory address recorded only in Chinese characters.
 **Correct example:** Factory address recorded in English (Chinese characters removed/translated), e.g. "Yedi Eylül Mah. Ümit Tunçağ Cad. No:3, Torbalı/İzmir, Turkey."
+
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
 
 ---
 
@@ -70,6 +98,16 @@ Each rule entry contains:
 **Error example:** Report contains no photo of the production line.
 **Correct example:** Report includes at least one dated photo of the production line in operation.
 
+
+```check
+where:
+  - kind: checklist
+    match: [production, line]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
 ---
 
 **ID:** 1.2.4
@@ -78,6 +116,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — check final file size against all embedded images
 **Error example:** A 22MB PDF is sent to the client without any compression.
 **Correct example:** Pictures are compressed, the PDF is regenerated at 12MB, and then sent to the client.
+
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
 
 ---
 
@@ -92,6 +137,13 @@ Each rule entry contains:
 **Error example:** Inspector proceeds at a second site 20 minutes away without notifying the back office or reflecting the location in the report.
 **Correct example:** Inspector confirms the second site is a 10-minute walk, notifies the back office, and records the site address in the report.
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 1.3.2
@@ -100,6 +152,16 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check quantity available on-site against the pass/fail/missed decision
 **Error example:** No product is available on-site, yet the inspector marks the inspection "Pass" with a remark "product not ready."
 **Correct example:** No product available on-site → inspector issues a MISSED REPORT.
+
+
+```check
+where:
+  - kind: checklist
+    match: [available, quantity, details]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -110,6 +172,13 @@ Each rule entry contains:
 **Error example:** Inspection proceeds in a third-party logistics warehouse with no contact made to the quality team.
 **Correct example:** Inspector identifies that the warehouse doesn't belong to the factory/supplier, contacts the quality team, and documents the confirmation before proceeding.
 
+
+```check
+where: [report.supplier_name]
+when: null
+check: extract_bool("Does this field evidence satisfy: If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must con?")
+```
+
 ---
 
 **ID:** 1.3.4
@@ -118,6 +187,13 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** Inspector leaves at 11:00 AM and issues a missing report without waiting until 2:00 PM or notifying SIC.
 **Correct example:** Inspector waits until 2:00 PM, keeps SIC/back office informed throughout, and only then issues the missing report.
+
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
 
 ---
 
@@ -132,6 +208,13 @@ Each rule entry contains:
 > ⚠️ TO CONFIRM: The GI text only states "See QIMA's SOP" / "Follow QIMA Standard procedure" without specifying concrete sampling steps for Cemaco; confirm whether Cemaco requires anything beyond the generic QIMA SOP.
 **Error example:** Cartons are selected by the factory rather than randomly by the inspector.
 **Correct example:** Inspector personally selects cartons at random from multiple pallet locations, documented with before/after photos.
+
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
 
 ---
 
@@ -148,6 +231,16 @@ Each rule entry contains:
 **Error example:** No approval sample on-site; inspector writes "Checked and found the same as expected" for a plug type that does not actually match the booking spec's UL requirement.
 **Correct example:** No approval sample on-site; inspector compares plug type, markings, and packaging directly against the booking specification file, and reports any deviation found.
 
+
+```check
+where:
+  - kind: checklist
+    match: [approval, sample, comparison]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 ### 2.2 Hangtag / label / barcode verification
@@ -161,6 +254,13 @@ Each rule entry contains:
 **Error example:** A chair is found wearing the hangtag intended for a different chair model/color; the report result still shows PASS.
 **Correct example:** The hangtag text matches the product's SKU and specification exactly; any mismatch is reported as a defect and the checkpoint result is FAIL.
 
+
+```check
+where: [report.all_text]
+when: null
+check: scan_absent("Golden Sample")
+```
+
 ---
 
 **ID:** 2.2.2
@@ -170,6 +270,16 @@ Each rule entry contains:
 **Error example:** The barcode on the product's hangtag differs from the barcode listed in the packing file, and the mismatch is not reported.
 **Correct example:** Barcode on product, hangtag, and packing file are compared side by side; any mismatch, even a single digit, is flagged and reported.
 
+
+```check
+where:
+  - kind: checklist
+    match: [product, style, construction]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 2.2.3
@@ -178,6 +288,13 @@ Each rule entry contains:
 **Scope:** `SECTION`
 **Error example:** Report states "Barcodes are scannable" with no scan-result photo or per-SKU detail.
 **Correct example:** Report includes, for each SKU, a photo of the barcode label plus a photo/screenshot of a successful scan result.
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
 
 ---
 
@@ -191,6 +308,13 @@ Each rule entry contains:
 **Scope:** `SECTION`
 **Error example:** Photos for two different SKUs are mixed under a single generic caption with no SKU reference.
 **Correct example:** Each photo is tagged with its SKU number using the QIMAone TAG feature.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: present
+```
 
 ---
 
@@ -207,6 +331,16 @@ Each rule entry contains:
 **Error example:** Carton for a given SKU is marked "400" while the order file specifies 136; the inspector's remark states "if no mention, we consider there is no problem" and does not report the discrepancy.
 **Correct example:** Carton marking matches the order file quantity exactly for the SKU inspected; any different marking is reported as a discrepancy regardless of whether the client commented on it.
 
+
+```check
+where:
+  - kind: checklist
+    match: [outer, packing, shipping, marks, front, side]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.1.2
@@ -215,6 +349,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check plug type/certification against booking specification
 **Error example:** A product is fitted with a 2-pin EU-type plug while the booking specification requires a UL-certified plug; the issue is not mentioned and the report shows PASS.
 **Correct example:** Plug fitted matches the UL certification and pin type required by the booking specification; the certification marking is photographed and confirmed.
+
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
 
 ---
 
@@ -225,6 +366,13 @@ Each rule entry contains:
 **Error example:** A yellow ENERGYGUIDE sticker is visibly present on units for a market that does not require it; not reported by the inspector.
 **Correct example:** No ENERGYGUIDE sticker is present, consistent with the market requirement; if present, it is reported as a deviation.
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.1.4
@@ -233,6 +381,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check printed packaging text against booking specification
 **Error example:** Packaging states "6 PCS LED LIGHT" while the booking specification requires "10PCS LED LIGHT"; the discrepancy is not mentioned in the report.
 **Correct example:** Packaging states "10PCS LED LIGHT," matching the booking specification; any different count is reported.
+
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
 
 ---
 
@@ -247,6 +402,16 @@ Each rule entry contains:
 **Error example:** Warning sticker on inner packaging is loose with visibly lifted edges; not reported.
 **Correct example:** Warning sticker is firmly adhered with no lifting edges, positioned per the packing manual, at the specified dimensions.
 
+
+```check
+where:
+  - kind: checklist
+    match: [inner, packing, unit, packing]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 ### 3.3 Color boxes / insert cards
@@ -260,6 +425,13 @@ Each rule entry contains:
 **Error example:** The factory produces the insert card in at least 3 different background color shades; none is compared against the Pantone number stated in the artwork.
 **Correct example:** The insert card color is compared against the Pantone reference stated in the artwork, with a comparison photo; any color variation found is reported.
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.3.2
@@ -268,6 +440,13 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** Only 2 of 6 surfaces of a color box are photographed.
 **Correct example:** All 6 surfaces of the color box are individually photographed and compared against the enlarged artwork.
+
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork s?")
+```
 
 ---
 
@@ -284,6 +463,13 @@ Each rule entry contains:
 **Error example:** A major defect is recorded without a corresponding photo or SKU reference.
 **Correct example:** Each defect entry includes the SKU, a description, a classification (critical/major/minor), and a supporting photo.
 
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
+
 ---
 
 ### 4.2 Color shade consistency
@@ -296,6 +482,16 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check color consistency across all units/colors of the same item inspected
 **Error example:** An item is inspected in 2 colors, but the color-shade test is only performed and reported for one color; the other color later shows a wide shade variation (e.g., from white to green-blue) once on the shelf, undetected by the report.
 **Correct example:** Color shade is tested and reported for every color of the item selected for inspection, so shade variation within the same color is caught before shipment.
+
+
+```check
+where:
+  - kind: checklist
+    match: [product, color, specification, check]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -310,6 +506,16 @@ Each rule entry contains:
 **Error example:** Rusted screws found on a metal product frame are not mentioned in the report.
 **Correct example:** Moisture level is measured and recorded, and screws/parts are confirmed free of rust, with supporting photos.
 
+
+```check
+where:
+  - kind: checklist
+    match: [end, workmanship]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 ### 4.4 General dimension / weight check
@@ -322,6 +528,16 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** No dimension check is performed because "there is no client specification," and the checkpoint is left blank.
 **Correct example:** General dimensions and weight are measured and recorded on 5 pieces per item even without a client specification.
+
+
+```check
+where:
+  - kind: checklist
+    match: [product, dimensions, result]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -338,6 +554,16 @@ Each rule entry contains:
 **Error example:** Report applies a General Level II sampling plan when the IP specifies General Level III.
 **Correct example:** Report applies the sampling level and AQL exactly as defined in the IP for the order.
 
+
+```check
+where:
+  - kind: checklist
+    match: [end, workmanship]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 ### 5.2 Product measurements / POM reference
@@ -350,6 +576,16 @@ Each rule entry contains:
 **Scope:** `SECTION`
 **Error example:** Measurements are recorded only as photos of a tape measure with no corresponding entry in the client's measurement template.
 **Correct example:** Every measurement taken is entered into the Cemaco measurement template (by item/sample) and attached to the report.
+
+
+```check
+where:
+  - kind: checklist
+    match: [product, dimensions, result]
+    field: attachment_filenames
+when: null
+check: null
+```
 
 ---
 
@@ -364,6 +600,16 @@ Each rule entry contains:
 **Error example:** Only the assembled pillow weight is recorded; the filling weight is missing.
 **Correct example:** Both the filling weight and the total pillow weight are recorded and reported separately.
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.3.2
@@ -373,6 +619,16 @@ Each rule entry contains:
 **Error example:** Inspector spends time re-checking product workmanship during a CLC instead of focusing on container/loading condition.
 **Correct example:** Inspector focuses on container condition and confirms horizontal pallet loading, contacting SIC with any loading questions.
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.3.3
@@ -381,6 +637,16 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** A cushion inspection report has no metal detection test result.
 **Correct example:** Metal detection test is performed and its result (pass/fail) is recorded for the cushion inspection.
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -397,6 +663,13 @@ Each rule entry contains:
 **Error example:** A report covering 20 SKUs shows only 5 SKUs combined in the main photo; the rest are missing.
 **Correct example:** All 20 SKUs inspected appear together in a single photo on the first page, plus one dedicated photo per SKU/color further in the report.
 
+
+```check
+where: [report.all_captions]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 6.1.2
@@ -405,6 +678,13 @@ Each rule entry contains:
 **Scope:** `QUESTION`
 **Error example:** Only a side/angled view of the product is shown on the main page.
 **Correct example:** A clear front view of the product is shown on the main page.
+
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: The front view of the product must always be included and placed on the main page for each SKU.?")
+```
 
 ---
 
@@ -418,6 +698,16 @@ Each rule entry contains:
 **Scope:** `SECTION`
 **Error example:** Carton weight is stated in text but no photo of the scale reading is included.
 **Correct example:** Each measurement (dimension, weight) has a corresponding photo (e.g., tape measure or scale reading) alongside the text result.
+
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: photo_count
+when: null
+check: null
+```
 
 ---
 
@@ -437,6 +727,13 @@ Each rule entry contains:
 > ⚠️ TO CONFIRM: The GI text only states "Follow IP" for both Workmanship and Measurement; no channel-specific AQL/AOQL table (by market/destination) was provided for Cemaco. Confirm with the client whether channel-specific AQL tables exist.
 **Error example:** Report uses AQL 4.0/2.5/0 for Minor/Major/Critical without confirming this matches the order's IP.
 **Correct example:** Report's AQL and sample size are confirmed to match the IP configured for that specific order.
+
+
+```check
+where: [out_of_report:ip]
+when: null
+check: null
+```
 
 ---
 
@@ -461,6 +758,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check overall result against all checkpoint findings in the report
 **Error example:** A wrong (non-UL) plug type is found on-site for an SKU, yet the report's overall result and first-page summary show "Pass" with no mention of the issue.
 **Correct example:** The plug mismatch is reported on the relevant checkpoint AND reflected in the overall result as FAIL, clearly visible on the report's first page.
+
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
 
 ---
 

@@ -10,6 +10,7 @@ from obligation import ObligationSpec, collect_all_leaves
 from primitives import EvalContext, EvalResult, eval_predicate
 from semantic_report import SemanticReport
 from symbolic_eval import MATCH_CLEAR, MATCH_CLEAR_UNMATCH, MATCH_UNABLE, SymbolicVerdict
+from fact_schema import _is_blank_value, resolve_where_bindings
 
 
 @dataclass
@@ -42,11 +43,42 @@ def evaluate_obligation(
     *,
     semantic: SemanticReport | None = None,
     atom_answers: dict[str, AtomAnswer] | None = None,
-    confidence_threshold: float = 0.75,
+    confidence_threshold: float = 0.0,
 ) -> ObligationVerdict:
+    _ = confidence_threshold
     data = spec.to_dict() if isinstance(spec, ObligationSpec) else spec
-    if data.get("status_class") == "advisory" or str(data.get("source") or "") == "advisory":
-        ds = str(data.get("data_source") or "external")
+    status_class = str(data.get("status_class") or "")
+    source = str(data.get("source") or "")
+
+    if status_class == "pending" or source == "pending":
+        processor = str(data.get("pending_processor") or "processor")
+        ds = str(data.get("data_source") or "report_content")
+        return ObligationVerdict(
+            status="advisory",
+            match=MATCH_CLEAR,
+            reason=f"In report ({ds}); needs {processor} (not built yet).",
+            evidence="",
+            source="obligation:pending",
+        )
+    if status_class == "unauthored" or source == "unauthored":
+        ds = str(data.get("data_source") or "report_content")
+        return ObligationVerdict(
+            status="advisory",
+            match=MATCH_CLEAR,
+            reason=f"In report ({ds}); check not authored yet.",
+            evidence="",
+            source="obligation:unauthored",
+        )
+    if status_class == "unmapped" or source == "unmapped":
+        return ObligationVerdict(
+            status="advisory",
+            match=MATCH_CLEAR,
+            reason="Where not grounded to a real report field yet (unmapped).",
+            evidence="",
+            source="obligation:unmapped",
+        )
+    if status_class == "advisory" or source == "advisory":
+        ds = str(data.get("data_source") or "out_of_report")
         return ObligationVerdict(
             status="advisory",
             match=MATCH_CLEAR,
@@ -54,7 +86,7 @@ def evaluate_obligation(
             evidence="",
             source="obligation:advisory",
         )
-    if str(data.get("source") or "") == "missing_block":
+    if source == "missing_block":
         return ObligationVerdict(
             status="advisory",
             match=MATCH_CLEAR,
@@ -66,7 +98,6 @@ def evaluate_obligation(
         facts=facts,
         semantic=semantic,
         atom_answers=atom_answers,
-        confidence_threshold=confidence_threshold,
     )
 
     when = data.get("when")
@@ -151,7 +182,7 @@ def evaluate_obligation_symbolic(
     *,
     semantic: SemanticReport | None = None,
     atom_answers: dict[str, AtomAnswer] | None = None,
-    confidence_threshold: float = 0.75,
+    confidence_threshold: float = 0.0,
 ) -> SymbolicVerdict:
     return _to_symbolic(
         evaluate_obligation(
@@ -204,4 +235,16 @@ def leaves_for_extraction(
     applies = when_applies_json_only(spec, facts, semantic=semantic)
     if applies is False:
         return []
-    return [leaf for leaf in collect_all_leaves(spec) if leaf.get("op") in ("atom", "vision")]
+    data = spec.to_dict() if isinstance(spec, ObligationSpec) else spec
+    where_bindings = list(data.get("where_bindings") or [])
+    out: list[dict[str, Any]] = []
+    for leaf in collect_all_leaves(spec):
+        if leaf.get("op") not in ("atom", "vision"):
+            continue
+        requires = list(leaf.get("requires_fields") or where_bindings)
+        if requires:
+            resolved = resolve_where_bindings(requires, facts, semantic)
+            if not any(not _is_blank_value(rf.value) for rf in resolved):
+                continue
+        out.append(leaf)
+    return out

@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from check_block import compile_block, extract_check_blocks, validate_block  # noqa: E402
+from check_block import compile_block, extract_check_blocks, parse_check_block_text, validate_block  # noqa: E402
 from compiler import compile_checkpoint  # noqa: E402
 from fact_index import build_fact_index  # noqa: E402
 from gi_review import load_checkpoints  # noqa: E402
@@ -74,7 +74,40 @@ class CheckBlockCompilerTests(unittest.TestCase):
             errors = validate_checkspec(spec)
             self.assertEqual(errors, [], f"{cp_id}: {errors}")
 
-    def test_vocab_bounded(self) -> None:
+    def test_extract_quote_plus_matches(self) -> None:
+        block = {
+            "data_source": "in_report",
+            "where": ["checklist.adhesive_test.comment"],
+            "when": None,
+            "check": [
+                'extract("Quote the tape model stated in this comment, or null")',
+                'matches("3M ?(500|600P|810)")',
+            ],
+        }
+        cp = {"id": "5_4_2", "severity": "BLOCKING", "requirement": "tape model"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["tier"], "atoms")
+        then = spec["then"]
+        self.assertEqual(then["op"], "all_of")
+        quote = then["items"][0]
+        consume = then["items"][1]
+        self.assertEqual(quote["role"], "quote")
+        self.assertEqual(quote["value_type"], "string")
+        self.assertEqual(consume["op"], "matches")
+        self.assertEqual(consume["selector"], f"atom.{quote['id']}")
+
+    def test_extract_bool_is_required_true(self) -> None:
+        block = {
+            "data_source": "in_report",
+            "where": ["checklist.adhesive_test.comment"],
+            "when": None,
+            "check": 'extract_bool("Does this comment name a 3M tape model?")',
+        }
+        cp = {"id": "5_4_2b", "severity": "BLOCKING", "requirement": "tape"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["then"]["role"], "required_true")
+        self.assertEqual(spec["then"]["value_type"], "boolean")
+
         used_ops: set[str] = set()
 
         def walk(node: dict | None) -> None:
@@ -95,6 +128,128 @@ class CheckBlockCompilerTests(unittest.TestCase):
             for part in ("when", "unless", "then"):
                 walk(spec.get(part))
         self.assertTrue(used_ops <= PRIMITIVE_OPS)
+
+    def test_vague_extract_bool_becomes_advisory(self) -> None:
+        block = {
+            "data_source": "in_report",
+            "where": ["checklist.adhesive_test.comment"],
+            "when": None,
+            "check": 'extract_bool("Is this checklist item correctly filled for the rule requirement?")',
+        }
+        cp = {"id": "x_1", "severity": "BLOCKING", "requirement": "test"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec.get("status_class"), "advisory")
+        self.assertEqual(spec.get("advisory_reason"), "vague_llm_question")
+
+    def test_intent_where_parses_and_compiles(self) -> None:
+        text = """data_source: in_report
+where:
+  - kind: checklist
+    match: [adhesive, rubbing]
+    field: comment
+when: null
+check: extract("Quote the tape model, or null")
+"""
+        block = parse_check_block_text(text)
+        self.assertIsInstance(block["where"][0], dict)
+        cp = {"id": "5_4_2", "severity": "BLOCKING", "requirement": "tape model"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec.get("tier"), "atoms")
+        self.assertIn("where_bindings", spec)
+        then = spec["then"]
+        quote = then["items"][0] if then.get("op") == "all_of" else then
+        self.assertEqual(quote["role"], "quote")
+        self.assertIn("requires_fields", quote)
+
+    def test_validate_rejects_vague_question(self) -> None:
+        block = {
+            "data_source": "in_report",
+            "where": ["report.global_remark"],
+            "when": None,
+            "check": 'extract_bool("Does the remark contain the evidence this rule requires?")',
+        }
+        errors = validate_block(block, checkpoint_id="1_1")
+        self.assertTrue(any("vague" in e["message"].lower() for e in errors))
+
+    def test_build_evidence_payload_uses_real_names(self) -> None:
+        from fact_schema import ResolvedField, build_evidence_payload
+
+        payload = build_evidence_payload(
+            "Tape model required",
+            [
+                ResolvedField(
+                    kind="checklist",
+                    name="Adhesive Rubbing Test",
+                    field="comment",
+                    value="3M 810 applied",
+                    selector="checklist.adhesive_rubbing_test.comment",
+                )
+            ],
+        )
+        self.assertIn("[checklist] Adhesive Rubbing Test", payload)
+        self.assertIn('field: comment', payload)
+        self.assertIn("3M 810 applied", payload)
+        self.assertNotIn("checklist.adhesive_rubbing_test", payload)
+
+    def test_data_source_derived_from_attachment_field(self) -> None:
+        block = {
+            "where": ["checklist.product_dimensions_result.attachment_filenames"],
+            "when": None,
+            "check": 'filename_matches("Measurement Chart-*.xlsx")',
+        }
+        cp = {"id": "5_1_1", "severity": "BLOCKING", "requirement": "chart name"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["status_class"], "checkable")
+        self.assertEqual(spec["data_source"], "report_attachments")
+
+    def test_unauthored_in_report_is_not_advisory(self) -> None:
+        block = {
+            "where": ["report.attachment_filenames"],
+            "when": None,
+            "check": None,
+        }
+        cp = {"id": "x_att", "severity": "MINOR", "requirement": "file must be attached"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["status_class"], "unauthored")
+        self.assertEqual(spec["data_source"], "report_attachments")
+        verdict = evaluate_obligation(spec, {}, atom_answers={})
+        self.assertEqual(verdict.status, "advisory")
+        self.assertEqual(verdict.source, "obligation:unauthored")
+
+    def test_pending_photo_content(self) -> None:
+        block = {
+            "where": ["checklist.carton_drop_test.photo_content"],
+            "when": None,
+            "check": None,
+        }
+        cp = {"id": "x_vis", "severity": "MINOR", "requirement": "photo must show"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["status_class"], "pending")
+        self.assertEqual(spec["data_source"], "report_images")
+        self.assertEqual(spec["pending_processor"], "vision")
+        verdict = evaluate_obligation(spec, {}, atom_answers={})
+        self.assertEqual(verdict.status, "advisory")
+        self.assertEqual(verdict.source, "obligation:pending")
+
+    def test_out_of_report_marker(self) -> None:
+        block = {
+            "where": ["out_of_report:booking"],
+            "when": None,
+            "check": None,
+        }
+        cp = {"id": "1_1_2", "severity": "BLOCKING", "requirement": "booking"}
+        spec = compile_block(cp, block)
+        self.assertEqual(spec["status_class"], "advisory")
+        self.assertEqual(spec["data_source"], "out_of_report")
+
+    def test_validate_allows_missing_data_source(self) -> None:
+        block = {
+            "where": ["report.factory_address"],
+            "when": None,
+            "check": "no_language(chinese)",
+        }
+        errors = validate_block(block, checkpoint_id="1_1")
+        self.assertEqual(errors, [])
 
 
 if __name__ == "__main__":

@@ -40,9 +40,10 @@ def evaluate_atoms(
     atoms: list[dict[str, Any]],
     answers: dict[str, AtomAnswer],
     *,
-    confidence_threshold: float = 0.75,
+    confidence_threshold: float = 0.0,
 ) -> SymbolicVerdict:
     """Apply PolicyGuard-style logic: violation atom + optional excuse atoms."""
+    _ = confidence_threshold
     violation_id = f"{checkpoint_id}_violation"
     violation = answers.get(violation_id)
     v_val = _bool_value(violation)
@@ -51,7 +52,7 @@ def evaluate_atoms(
     excuse_hits: list[str] = []
     for eid in excuse_ids:
         ans = answers.get(eid)
-        if ans and _bool_value(ans) is True and ans.confidence >= confidence_threshold:
+        if ans and _bool_value(ans) is True:
             excuse_hits.append(eid)
 
     if excuse_hits:
@@ -71,14 +72,6 @@ def evaluate_atoms(
             reason="Insufficient evidence to determine whether the requirement is violated.",
             evidence=violation.evidence if violation else "",
             source="symbolic:unknown",
-        )
-
-    if violation.confidence < confidence_threshold:
-        return SymbolicVerdict(
-            match=MATCH_UNABLE,
-            reason=f"Violation atom confidence too low ({violation.confidence:.2f}).",
-            evidence=violation.evidence,
-            source="symbolic:low_confidence",
         )
 
     if v_val is True:

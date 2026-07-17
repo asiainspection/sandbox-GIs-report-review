@@ -1,0 +1,544 @@
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+Model: gemini-3.1-flash-lite
+Clients: ['cemaco', 'dfi', 'hallmark', 'new_era', 'ribkoff', 'tpw']
+Vision: off
+
+========================================================================
+CEMACO — 4/37 authored (10.8%)
+========================================================================
+  [corrected] Q2519476686 …
+[pipeline] 1/6 parse: report=Q2519476686.json
+[pipeline] 1/6 parse: facts=834 checklist_items=57 ir_nodes=57
+[pipeline] 2/6 compile: checkpoints=cemaco_checkpoints.json
+[pipeline] 2/6 compile: specs=37 tiers={'deterministic': 37} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 35, 'violates': 0, 'unable': 2} det=37 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2601959645 …
+[pipeline] 1/6 parse: report=Q2601959645.json
+[pipeline] 1/6 parse: facts=904 checklist_items=62 ir_nodes=62
+[pipeline] 2/6 compile: checkpoints=cemaco_checkpoints.json
+[pipeline] 2/6 compile: specs=37 tiers={'deterministic': 37} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 35, 'violates': 0, 'unable': 2} det=37 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2605650175 …
+[pipeline] 1/6 parse: report=Q2605650175.json
+[pipeline] 1/6 parse: facts=820 checklist_items=56 ir_nodes=56
+[pipeline] 2/6 compile: checkpoints=cemaco_checkpoints.json
+[pipeline] 2/6 compile: specs=37 tiers={'deterministic': 37} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 35, 'violates': 0, 'unable': 2} det=37 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2610766318 …
+[pipeline] 1/6 parse: report=Q2610766318.json
+[pipeline] 1/6 parse: facts=904 checklist_items=62 ir_nodes=62
+[pipeline] 2/6 compile: checkpoints=cemaco_checkpoints.json
+[pipeline] 2/6 compile: specs=37 tiers={'deterministic': 37} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 35, 'violates': 0, 'unable': 2} det=37 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [flawed] SKIP Q2519476686_flawed: no authored labels
+  [flawed] SKIP Q2601959645_flawed: no authored labels
+  [flawed] SKIP Q2605650175_flawed: no authored labels
+  [flawed] SKIP Q2610766318_flawed: no authored labels
+
+========================================================================
+DFI — 11/50 authored (22.0%)
+========================================================================
+  [corrected] Q2614313993 …
+[pipeline] 1/6 parse: report=Q2614313993.json
+[pipeline] 1/6 parse: facts=498 checklist_items=33 ir_nodes=33
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 44, 'violates': 1, 'unable': 5} det=48 atoms=2 vision=0
+    blocking FPs (authored)=1 flags=['1_1_2']
+  [corrected] Q2615301660 …
+[pipeline] 1/6 parse: report=Q2615301660.json
+[pipeline] 1/6 parse: facts=512 checklist_items=34 ir_nodes=34
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 44, 'violates': 1, 'unable': 5} det=48 atoms=2 vision=0
+    blocking FPs (authored)=1 flags=['1_1_2']
+  [corrected] Q2616195180 …
+[pipeline] 1/6 parse: report=Q2616195180.json
+[pipeline] 1/6 parse: facts=512 checklist_items=34 ir_nodes=34
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=1 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 43, 'violates': 1, 'unable': 6} det=48 atoms=2 vision=0
+    blocking FPs (authored)=1 flags=['1_1_2']
+  [corrected] dfi_correct …
+[pipeline] 1/6 parse: report=dfi_correct.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 42, 'violates': 1, 'unable': 7} det=48 atoms=2 vision=0
+    blocking FPs (authored)=1 flags=['1_1_2']
+  [flawed] Q2614313993_flawed …
+[pipeline] 1/6 parse: report=Q2614313993_flawed.json
+[pipeline] 1/6 parse: facts=498 checklist_items=33 ir_nodes=33
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 43, 'violates': 2, 'unable': 5} det=48 atoms=2 vision=0
+    P=0.50 R=1.00 caught=['2_2_2'] missed=[] extra=['1_1_2']
+  [flawed] Q2615301660_flawed …
+[pipeline] 1/6 parse: report=Q2615301660_flawed.json
+[pipeline] 1/6 parse: facts=512 checklist_items=34 ir_nodes=34
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=1 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 42, 'violates': 2, 'unable': 6} det=48 atoms=2 vision=0
+    P=0.50 R=0.50 caught=['2_2_2'] missed=['5_4_2'] extra=['1_1_2']
+  [flawed] Q2616195180_flawed …
+[pipeline] 1/6 parse: report=Q2616195180_flawed.json
+[pipeline] 1/6 parse: facts=512 checklist_items=34 ir_nodes=34
+[pipeline] 2/6 compile: checkpoints=dfi_checkpoints.json
+[pipeline] 2/6 compile: specs=50 tiers={'deterministic': 48, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=2 cache_hits=0 misses=2 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=2 unable_or_abstain=1 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 42, 'violates': 2, 'unable': 6} det=48 atoms=2 vision=0
+    P=0.50 R=1.00 caught=['2_2_2'] missed=[] extra=['1_1_2']
+  [flawed] SKIP dfi_flawed: no authored labels
+  -> dfi macro P=0.500 R=0.833 | corrected FPs=4
+
+========================================================================
+HALLMARK — 13/166 authored (7.8%)
+========================================================================
+  [corrected] 1HGO3708 …
+[pipeline] 1/6 parse: report=1HGO3708.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 162, 'violates': 1, 'unable': 3} det=163 atoms=2 vision=1
+    blocking FPs (authored)=1 flags=['spec_6_27']
+  [corrected] 1SOX2223 …
+[pipeline] 1/6 parse: report=1SOX2223.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 163, 'violates': 0, 'unable': 3} det=163 atoms=2 vision=1
+    blocking FPs (authored)=0 flags=[]
+  [corrected] 5QGO2803 …
+[pipeline] 1/6 parse: report=5QGO2803.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 162, 'violates': 1, 'unable': 3} det=163 atoms=2 vision=1
+    blocking FPs (authored)=1 flags=['spec_6_27']
+  [flawed] 1HGO3708_flawed …
+[pipeline] 1/6 parse: report=1HGO3708_flawed.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 160, 'violates': 3, 'unable': 3} det=163 atoms=2 vision=1
+    P=0.67 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=['spec_6_27']
+  [flawed] 1SOX2223_flawed …
+[pipeline] 1/6 parse: report=1SOX2223_flawed.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 161, 'violates': 2, 'unable': 3} det=163 atoms=2 vision=1
+    P=1.00 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=[]
+  [flawed] 5QGO2803_flawed …
+[pipeline] 1/6 parse: report=5QGO2803_flawed.json
+[pipeline] 1/6 parse: facts=722 checklist_items=49 ir_nodes=49
+[pipeline] 2/6 compile: checkpoints=hallmark_checkpoints.json
+[pipeline] 2/6 compile: specs=166 tiers={'deterministic': 163, 'vision': 1, 'atoms': 2} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=1 cache_hits=0 misses=1 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=1 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 160, 'violates': 3, 'unable': 3} det=163 atoms=2 vision=1
+    P=0.67 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=['spec_6_27']
+  -> hallmark macro P=0.778 R=1.000 | corrected FPs=2
+
+========================================================================
+NEW_ERA — 3/49 authored (6.1%)
+========================================================================
+  [corrected] Q2616171227 …
+[pipeline] 1/6 parse: report=Q2616171227.json
+[pipeline] 1/6 parse: facts=274 checklist_items=17 ir_nodes=17
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 48, 'violates': 0, 'unable': 1} det=49 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2616262288 …
+[pipeline] 1/6 parse: report=Q2616262288.json
+[pipeline] 1/6 parse: facts=274 checklist_items=17 ir_nodes=17
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 48, 'violates': 0, 'unable': 1} det=49 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2616292623 …
+[pipeline] 1/6 parse: report=Q2616292623.json
+[pipeline] 1/6 parse: facts=680 checklist_items=46 ir_nodes=46
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 48, 'violates': 0, 'unable': 1} det=49 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [flawed] Q2616171227_flawed …
+[pipeline] 1/6 parse: report=Q2616171227_flawed.json
+[pipeline] 1/6 parse: facts=274 checklist_items=17 ir_nodes=17
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 47, 'violates': 1, 'unable': 1} det=49 atoms=0 vision=0
+    P=1.00 R=1.00 caught=['6_1_2'] missed=[] extra=[]
+  [flawed] Q2616262288_flawed …
+[pipeline] 1/6 parse: report=Q2616262288_flawed.json
+[pipeline] 1/6 parse: facts=274 checklist_items=17 ir_nodes=17
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 47, 'violates': 1, 'unable': 1} det=49 atoms=0 vision=0
+    P=1.00 R=1.00 caught=['6_1_2'] missed=[] extra=[]
+  [flawed] Q2616292623_flawed …
+[pipeline] 1/6 parse: report=Q2616292623_flawed.json
+[pipeline] 1/6 parse: facts=680 checklist_items=46 ir_nodes=46
+[pipeline] 2/6 compile: checkpoints=new_era_checkpoints.json
+[pipeline] 2/6 compile: specs=49 tiers={'deterministic': 49} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 47, 'violates': 1, 'unable': 1} det=49 atoms=0 vision=0
+    P=1.00 R=1.00 caught=['6_1_2'] missed=[] extra=[]
+  -> new_era macro P=1.000 R=1.000 | corrected FPs=0
+
+========================================================================
+RIBKOFF — 23/56 authored (41.1%)
+========================================================================
+  [corrected] Q2613916538_Jun29 …
+[pipeline] 1/6 parse: report=Q2613916538_Jun29.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 53, 'violates': 1, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=1 flags=['3_2_3']
+  [corrected] Q2614146161 …
+[pipeline] 1/6 parse: report=Q2614146161.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 54, 'violates': 0, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2614154465_Jun29 …
+[pipeline] 1/6 parse: report=Q2614154465_Jun29.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=3 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 53, 'violates': 1, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=0 flags=['1_3_2']
+  [corrected] Q2614157738_271904 …
+[pipeline] 1/6 parse: report=Q2614157738_271904.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 54, 'violates': 0, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2614430288 …
+[pipeline] 1/6 parse: report=Q2614430288.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 53, 'violates': 2, 'unable': 1} det=52 atoms=4 vision=0
+    blocking FPs (authored)=1 flags=['1_3_2', '3_2_3']
+  [corrected] Q2614430689 …
+[pipeline] 1/6 parse: report=Q2614430689.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 53, 'violates': 1, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=1 flags=['3_2_3']
+  [corrected] Q2614489409 …
+[pipeline] 1/6 parse: report=Q2614489409.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 53, 'violates': 1, 'unable': 2} det=52 atoms=4 vision=0
+    blocking FPs (authored)=1 flags=['3_2_3']
+  [flawed] Q2613916538_Jun29_flawed …
+[pipeline] 1/6 parse: report=Q2613916538_Jun29_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 51, 'violates': 3, 'unable': 2} det=52 atoms=4 vision=0
+    P=1.00 R=1.00 caught=['3_1_6', '3_2_3', '5_2_2'] missed=[] extra=[]
+  [flawed] Q2614146161_flawed …
+[pipeline] 1/6 parse: report=Q2614146161_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 48, 'violates': 6, 'unable': 2} det=52 atoms=4 vision=0
+    P=1.00 R=1.00 caught=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] missed=[] extra=[]
+  [flawed] Q2614154465_Jun29_flawed …
+[pipeline] 1/6 parse: report=Q2614154465_Jun29_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=3 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 50, 'violates': 4, 'unable': 2} det=52 atoms=4 vision=0
+    P=0.75 R=1.00 caught=['3_1_7', '3_2_3', '5_2_1'] missed=[] extra=['1_3_2']
+  [flawed] Q2614157738_271904_flawed …
+[pipeline] 1/6 parse: report=Q2614157738_271904_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=4 cache_hits=0 misses=4 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+[pipeline] 4/6 ground_atoms: answers=4 unable_or_abstain=2 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 51, 'violates': 3, 'unable': 2} det=52 atoms=4 vision=0
+    P=1.00 R=1.00 caught=['3_1_7', '5_1_1', '5_2_1'] missed=[] extra=[]
+  [flawed] Q2614430288_flawed …
+[pipeline] 1/6 parse: report=Q2614430288_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 49, 'violates': 5, 'unable': 2} det=52 atoms=4 vision=0
+    P=0.60 R=1.00 caught=['1_3_2', '3_1_7', '5_1_1'] missed=[] extra=['1_2_1', '3_2_3']
+  [flawed] Q2614430689_flawed …
+[pipeline] 1/6 parse: report=Q2614430689_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 47, 'violates': 7, 'unable': 2} det=52 atoms=4 vision=0
+    P=0.86 R=1.00 caught=['1_2_1', '1_3_2', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] missed=[] extra=['3_2_3']
+  [flawed] Q2614489409_flawed …
+[pipeline] 1/6 parse: report=Q2614489409_flawed.json
+[pipeline] 1/6 parse: facts=666 checklist_items=45 ir_nodes=45
+[pipeline] 2/6 compile: checkpoints=ribkoff_checkpoints.json
+[pipeline] 2/6 compile: specs=56 tiers={'deterministic': 52, 'atoms': 4} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 49, 'violates': 5, 'unable': 2} det=52 atoms=4 vision=0
+    P=0.60 R=1.00 caught=['1_3_2', '3_1_6', '5_2_2'] missed=[] extra=['1_2_1', '3_2_3']
+  -> ribkoff macro P=0.830 R=1.000 | corrected FPs=4
+
+========================================================================
+TPW — 3/41 authored (7.3%)
+========================================================================
+  [corrected] Q2611142925 …
+[pipeline] 1/6 parse: report=Q2611142925.json
+[pipeline] 1/6 parse: facts=996 checklist_items=67 ir_nodes=67
+[pipeline] 2/6 compile: checkpoints=tpw_checkpoints.json
+[pipeline] 2/6 compile: specs=41 tiers={'deterministic': 41} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 39, 'violates': 0, 'unable': 2} det=41 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2614472847_2 …
+[pipeline] 1/6 parse: report=Q2614472847_2.json
+[pipeline] 1/6 parse: facts=1138 checklist_items=79 ir_nodes=79
+[pipeline] 2/6 compile: checkpoints=tpw_checkpoints.json
+[pipeline] 2/6 compile: specs=41 tiers={'deterministic': 41} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 39, 'violates': 0, 'unable': 2} det=41 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [corrected] Q2614472847_4 …
+[pipeline] 1/6 parse: report=Q2614472847_4.json
+[pipeline] 1/6 parse: facts=1138 checklist_items=79 ir_nodes=79
+[pipeline] 2/6 compile: checkpoints=tpw_checkpoints.json
+[pipeline] 2/6 compile: specs=41 tiers={'deterministic': 41} cache=hit
+[pipeline] 4/6 ground_atoms: atom_leaves=0 cache_hits=0 misses=0 model=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: enable_vision=False (overlapped with atoms)
+[pipeline] 4/6 ground_atoms: answers=0 unable_or_abstain=0 cascade_judge=gemini-3.1-flash-lite
+[pipeline] 5/6 ground_vision: skipped (no photo index)
+[pipeline] 6/6 evaluate: counts={'clear': 39, 'violates': 0, 'unable': 2} det=41 atoms=0 vision=0
+    blocking FPs (authored)=0 flags=[]
+  [flawed] SKIP Q2611142925_flawed: no authored labels
+  [flawed] SKIP Q2614472847_2_flawed: no authored labels
+  [flawed] SKIP Q2614472847_4_flawed: no authored labels
+
+Wrote /Users/williambrun/Documents/test_GI_reports/data/pipeline/eval/online_authored_results.json
+GLOBAL authored-only: P=0.780 R=0.975 corrected accuracy=0.993 FPs=10
+Wrote plot /Users/williambrun/Documents/test_GI_reports/data/pipeline/eval/online_authored_pr.png

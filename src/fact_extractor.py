@@ -30,7 +30,6 @@ class AtomAnswer:
     item_id: str
     field: str
     value: Any
-    confidence: float
     evidence: str
 
 
@@ -235,15 +234,20 @@ def _coerce_value(raw: Any, value_type: str) -> Any:
             return int(float(raw))
         except (TypeError, ValueError):
             return None
-    return str(raw).strip()
+    text = str(raw).strip()
+    if text.lower() in {"null", "none", "n/a", "na", ""}:
+        return None
+    return text
 
 
 def _build_extract_prompt(items: list[ExtractItem]) -> str:
     lines = [
         "You ground atomic facts for a compliance engine. Answer ONLY from the evidence shown.",
         "Do NOT decide pass/fail or violations — only extract factual values.",
-        'Return JSON: {"answers": [{"id": "...", "value": ..., "confidence": 0.0-1.0, "evidence": "short quote"}]}',
-        "Use null for value when not found. confidence=0 when absent.",
+        'Return JSON: {"answers": [{"id": "...", "value": ..., "evidence": "short quote"}]}',
+        "Use null for value when not found.",
+        "For boolean questions return true or false.",
+        "For string questions return the quoted text (or null).",
         "",
     ]
     for item in items:
@@ -272,17 +276,11 @@ def _rows_to_answers(
         if not item:
             continue
         coerced = _coerce_value(row.get("value"), item.value_type)
-        try:
-            confidence = float(row.get("confidence", 0.0 if coerced is None else 0.85))
-        except (TypeError, ValueError):
-            confidence = 0.85 if coerced is not None else 0.0
-        confidence = max(0.0, min(1.0, confidence))
         evidence = str(row.get("evidence", ""))[:500]
         atom = AtomAnswer(
             item_id=item_id,
             field=item.field,
             value=coerced,
-            confidence=confidence,
             evidence=evidence,
         )
         answers[item_id] = atom

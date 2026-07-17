@@ -112,6 +112,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Packing list attached and consistent with booking.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: attachment_filenames
+when: null
+check: null
+```
+
 ---
 **ID:** 1.1.2
 **Field / Location:** Attachments — Techpack / factory location
@@ -120,6 +130,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Factory address in the report differs from the IRF, with no remark or escalation.
 **Correct example:** Techpack matches booking; factory location matches IRF or is remarked upon if different, with quality team informed.
 **Severity:** `BLOCKING`
+
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
 
 ---
 
@@ -138,6 +155,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Inspection aborted and quality team informed when both thresholds fall below the minimums above.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: checklist
+    match: [product, dimensions, details]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 2.1.2
 **Field / Location:** Inspector's remark / Summary review — partial packed/produced quantity mismatch (e.g. booked 80% PSI, actual 20%)
@@ -147,6 +174,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Remark present, quantity checkpoint marked Fail, sample drawn only from finished/packed stock.
 **Severity:** `BLOCKING`
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 **ID:** 2.1.3
 **Field / Location:** Inspector's remark — no product available on arrival
@@ -155,6 +189,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** No remark despite the inspection start time being delayed to the afternoon.
 **Correct example:** Remark states no product on arrival, inspection proceeded once product arrived before noon.
 **Severity:** `MINOR`
+
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -169,6 +210,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example (per GI illustration):** "For item CRC69AT8, the logo on shipping mark is different from spec."
 **Severity:** `MINOR`
 
+
+```check
+where: [report.defect_count]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 **ID:** 3.1.2
 **Field / Location:** Attachments — small parts photos (screws, bolts, discs)
@@ -177,6 +225,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Six separate photos, one per screw/bolt/disc type.
 **Correct example:** One single photo showing all small parts laid out together.
 **Severity:** `MINOR`
+
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
 
 ---
 
@@ -191,6 +246,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Approval sample present and identified by signature/seal/comparison photo/marking; if absent, a clear remark is added and inspection proceeds.
 **Severity:** `BLOCKING` if absent with no remark; `MINOR` if present but identification incomplete.
 
+
+```check
+where:
+  - kind: section
+    match: [product, specifications]
+    field: photo_count
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 **ID:** 4.1.2
 **Field / Location:** Specifications — Packaging and shipping marks
@@ -199,6 +264,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Shipping mark checked only against the standard IP when the booking specified a client-specific requirement.
 **Correct example:** Packaging/shipping marks verified per booking-specified requirement, or per standard IP when booking is silent.
 **Severity:** `MINOR`
+
+
+```check
+where:
+  - kind: section
+    match: [product, specifications]
+    field: attachment_filenames
+when: null
+check: null
+```
 
 ---
 
@@ -213,6 +288,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Mandatory Excel measurement file attached and completed; factory packaging forms attached where provided in booking.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: checklist
+    match: [product, and, carton, weight, check]
+    field: attachment_filenames
+when: null
+check: null
+```
+
 ---
 **ID:** 5.1.2
 **Field / Location:** Measurement file — Carton measurement sequence
@@ -221,6 +306,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Carton recorded as "40 x 45 x 32" in Width x Length x Height order.
 **Correct example:** Carton recorded strictly as L x W x H, e.g. "45 x 40 x 32."
 **Severity:** `MINOR`
+
+
+```check
+where: [report.all_text]
+when: null
+check: scan_absent("Golden Sample")
+```
 
 ---
 **ID:** 5.1.3
@@ -236,6 +328,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Product recorded strictly as H x W x D, consistent with the reference diagram for that furniture type.
 **Severity:** `MINOR`
 
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
+
 ---
 **ID:** 5.1.4
 **Field / Location:** Measurement file — tolerance thresholds
@@ -244,6 +343,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** A 25mm deviation logged as "minor" instead of "major."
 **Correct example:** Deviation severities assigned strictly per the thresholds above.
 **Severity:** `BLOCKING`
+
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
 
 ---
 
@@ -258,6 +364,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Rust defect classified as Critical.
 **Severity:** `BLOCKING`
 
+
+```check
+where: [report.defects]
+when: null
+check: extract_bool("Are all 'rust'-related defects classified as Critical?")
+```
+
 ---
 **ID:** 6.1.2
 **Field / Location:** Workmanship — defect list / manually added defects
@@ -266,6 +379,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** A defect visible in a photo has no corresponding defect entry because it wasn't on the predefined list.
 **Correct example:** Defect manually added with description, quantity, and severity even though not on the standard list.
 **Severity:** `BLOCKING`
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -282,6 +402,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** All tests applicable to dining chairs are also conducted for dining benches and barstools.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.1.2
 **Field / Location:** Tests & checkpoints — photo requirements for all tests
@@ -290,6 +420,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example (per GI illustration of what NOT to do):** A test photo showing only a weight on a table with no model number, test name, weight, or remarks stated.
 **Correct example (per GI illustration):** "Model number: SBSKDOK / Test: Static loading test / Weight applied: 160 kg / Remarks: Passed."
 **Severity:** `MINOR`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_captions
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 **ID:** 7.1.3
@@ -300,6 +440,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Test conducted exactly per the specified load, distance, and surface-area parameters, with the result documented.
 **Severity:** `BLOCKING`
 
+
+```check
+where: [product._first.unit]
+when: null
+check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?")
+```
+
 ---
 **ID:** 7.1.4
 **Field / Location:** Tests & checkpoints — Stability test weight placement/photo
@@ -308,6 +455,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example (per GI illustration):** Stability test photo submitted with no description of the weight applied.
 **Correct example (per GI illustration):** Photo submitted with weight and placement clearly described, e.g. "40kg added on top of the product."
 **Severity:** `MINOR`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_count
+when: null
+check: null
+```
 
 ---
 **ID:** 7.1.5
@@ -318,6 +475,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example (per GI illustration):** Comment states model number and weight; photo shows "loading test on the arm with 80 kg" applied to one arm only.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: checklist
+    match: [static, loading, test]
+    field: photo_count
+when: null
+check: count_at_most(0)
+```
+
 ---
 **ID:** 7.1.6
 **Field / Location:** Tests & checkpoints — Assembly
@@ -326,6 +493,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Non-recommended tool used for assembly with no note.
 **Correct example:** Assembly performed using only the tools specified in the assembly instructions.
 **Severity:** `MINOR`
+
+
+```check
+where:
+  - kind: checklist
+    match: [assembly, check]
+    field: comment
+when: null
+check: null
+```
 
 ---
 **ID:** 7.1.7
@@ -338,6 +515,16 @@ to at least one rule, checklist row, or documented exclusion below.
 
 ### 7.2 Carton drop test
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.1
 **Field / Location:** Tests & checkpoints — Drop test standard selection
@@ -346,6 +533,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** A non-metal dining chair tested under ISTA 2C Level 3 instead of ISTA 3A.
 **Correct example:** Drop test standard applied matches the product-type table (or general category rule if no specific list was attached).
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
 
 ---
 **ID:** 7.2.2
@@ -356,6 +553,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Steps performed exactly match the box type per the mapping above.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.3
 **Field / Location:** Tests & checkpoints — Drop height by weight class
@@ -364,6 +571,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** A 20kg item tested at 300mm drop height instead of 460mm (ISTA 3A) or 610mm (ISTA 2C Level 2).
 **Correct example:** Drop height used matches the correct weight-class/level row of the applicable table.
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
 
 ---
 **ID:** 7.2.3b
@@ -374,6 +591,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Every edge/corner/face caption matches the numbering convention and the physical location shown in the photo.
 **Severity:** `MINOR`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_captions
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.3c
 **Field / Location:** Tests & checkpoints — Drop-by-drop impact section verification
@@ -382,6 +609,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Drop 4 captioned "Edge 3-4" instead of "Corner 3-4-6."
 **Correct example:** Each drop number's caption matches exactly the impact section defined for that drop number.
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_captions
+when: null
+check: null
+```
 
 ---
 **ID:** 7.2.3d
@@ -395,6 +632,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Setup parameters (prop height, lift height, hazard block weight/height, bridging) match those specified above.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.3e
 **Field / Location:** Tests & checkpoints — Step 5b naming inconsistency between GI sources
@@ -405,6 +652,16 @@ to at least one rule, checklist row, or documented exclusion below.
 > ⚠️ TO CONFIRM: Two GI source documents give different names to the same test. Confirm with the client/quality team which name is authoritative for report labeling going forward.
 **Severity:** `TO CONFIRM`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.4
 **Field / Location:** Tests & checkpoints — Drop test photo count and captioning
@@ -413,6 +670,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example (real, PSI 1955928):** Step 1&2 marked Fail with 17 flagged, meaning the required photo count/format for that step was not met as specified.
 **Correct example:** Full photo count met for each step, each photo captioned with step name and drop number, e.g. "Step 1 & 2: Shock Drop Test / Drop 6: Edge Drop Test (2-3)."
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_captions
+when: null
+check: count_at_least(1)
+```
 
 ---
 **ID:** 7.2.5
@@ -423,6 +690,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Pass/fail clearly stated per item and, where required, separately for inner and outer cartons.
 **Severity:** `MINOR`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.6
 **Field / Location:** Tests & checkpoints — Carton performance standard
@@ -431,6 +708,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Single-wall carton used with no documented T&W approval.
 **Correct example:** Carton is Double Wall Corrugated, B/C Flute, minimum 275 lb/in² burst strength, or an approved/justified alternative is on file.
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
 
 ---
 **ID:** 7.2.7
@@ -441,6 +728,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Only approved fibre-based materials used, full coverage of corners/edges, product immobilized.
 **Severity:** `MINOR`
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.8
 **Field / Location:** Tests & checkpoints — Internal packaging (hardware, plastic bag safety)
@@ -449,6 +746,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Large poly bag with no suffocation warning label, or a children's product bag with no ventilation holes.
 **Correct example:** Hardware bagged/labelled/sealed in Box 1; suffocation warning present on qualifying bags; ventilation holes present for children's products under 36 months.
 **Severity:** `BLOCKING` for missing suffocation warning or ventilation holes on a children's product; `MINOR` for other internal packaging deviations.
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
 
 ---
 **ID:** 7.2.9
@@ -459,6 +766,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Result marked Pass only when packaging shows no/minor damage AND the product shows no damage; any other combination is Fail.
 **Severity:** `BLOCKING`
 
+
+```check
+where:
+  - kind: checklist
+    match: [carton, drop, test]
+    field: comment
+when: null
+check: null
+```
+
 ---
 **ID:** 7.2.10
 **Field / Location:** Tests & checkpoints — Carton condition & product condition photo after drop test
@@ -467,6 +784,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** No dedicated after-test photo showing the product crack described in the comment.
 **Correct example:** Photo clearly shows both the damaged/undamaged carton and the damaged/undamaged product, matching the comment.
 **Severity:** `MINOR`
+
+
+```check
+where:
+  - kind: checklist
+    match: [carton, condition, product, after, the, drop]
+    field: photo_count
+when: null
+check: null
+```
 
 ---
 
@@ -481,6 +808,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Selection method follows QIMA SOP.
 **Severity:** `MINOR`
 
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
 ---
 **ID:** 8.1.2
 **Field / Location:** Factory review — IPC Check Points
@@ -489,6 +823,16 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Sample failed a checklist point but was still sealed/signed off, or passed points have no evidence shown.
 **Correct example:** Failed checklist points documented with evidence; passed points also documented with evidence; sign-off/seal applied only when all points pass.
 **Severity:** `BLOCKING`
+
+
+```check
+where:
+  - kind: section
+    match: [factory, review]
+    field: attachment_filenames
+when: null
+check: null
+```
 
 ---
 **ID:** 8.1.3
@@ -500,6 +844,13 @@ to at least one rule, checklist row, or documented exclusion below.
 > ⚠️ TO CONFIRM: FAQ #3 and #4 appear to duplicate/conflict in the source GI text — likely a copy-paste error in the client's document. Confirm with the quality team which answer is authoritative.
 **Severity:** `TO CONFIRM`
 
+
+```check
+where: [report.factory_name]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 **ID:** 8.1.4
 **Field / Location:** Inspector's remark / Summary review — No support from factory
@@ -509,6 +860,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Correct example:** Remark documents lack of factory support, overall result Fail, quality team informed.
 **Severity:** `BLOCKING`
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 **ID:** 8.1.5
 **Field / Location:** Acknowledgments & signatures — Draft report signature refusal
@@ -517,6 +875,13 @@ to at least one rule, checklist row, or documented exclusion below.
 **Error example:** Draft report unsigned by factory with no remark or quality escalation documented.
 **Correct example:** Remark documents the refusal and reason; quality team informed; official email requested if a client representative made the request on site.
 **Severity:** `BLOCKING`
+
+
+```check
+where: [report.factory_name]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 

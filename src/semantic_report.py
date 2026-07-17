@@ -219,14 +219,16 @@ class SemanticReport:
                 ]
             )
         for item in self.checklist_items:
+            # Omit item_name: platform checklist titles often contain words like
+            # "Sample" that are not inspector-authored content (scan FPs).
             parts.extend(
                 [
-                    item.item_name,
                     item.result,
                     item.comment,
                     item.instruction,
                     " ".join(item.values or []),
                     " ".join(item.attachment_filenames or []),
+                    " ".join(c for c in (item.photo_captions or []) if str(c).strip()),
                 ]
             )
         for defect in self.defects:
@@ -249,6 +251,28 @@ class SemanticReport:
                 c for c in (defect.get("photo_captions") or []) if str(c).strip()
             )
         return "\n".join(captions)
+
+    @property
+    def inspector_text(self) -> str:
+        """Inspector-authored text only (remarks, comments, captions).
+
+        Excludes checklist item titles and QIMA instruction templates, which
+        often contain words like "Sample" and would false-positive scan ops.
+        """
+        parts: list[str] = [
+            self.global_remark,
+            self.product_label,
+        ]
+        for item in self.checklist_items:
+            parts.append(item.comment)
+            parts.extend(c for c in (item.photo_captions or []) if str(c).strip())
+        for defect in self.defects:
+            parts.append(str(defect.get("name") or ""))
+            parts.append(str(defect.get("classification") or ""))
+            parts.extend(
+                c for c in (defect.get("photo_captions") or []) if str(c).strip()
+            )
+        return "\n".join(p for p in parts if str(p).strip())
 
     @property
     def attachment_filenames(self) -> list[str]:

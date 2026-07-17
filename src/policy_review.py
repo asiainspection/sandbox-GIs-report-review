@@ -33,7 +33,7 @@ from gi_review import (
     strict_blocking_enabled,
 )
 from google import genai
-from fact_schema import resolve_selector
+from fact_schema import build_evidence_payload, resolve_where_bindings
 from obligation_eval import evaluate_obligation_symbolic, leaves_for_extraction, when_applies_json_only
 from photo_store import ensure_report_photos, photos_for_checkpoint
 from report_to_ir import build_ir, render_context
@@ -73,13 +73,11 @@ def _context_from_where(
     semantic,
     checkpoint: dict[str, Any],
 ) -> str:
-    lines = [str(checkpoint.get("requirement") or "")]
+    requirement = str(checkpoint.get("requirement") or "")
     block = checkpoint.get("check_block") or {}
-    for sel in block.get("where") or []:
-        val = resolve_selector(str(sel), facts, semantic)
-        preview = str(val)[:400] if val is not None else "(missing)"
-        lines.append(f"{sel}: {preview}")
-    return "\n".join(lines)[:6000]
+    where = spec.get("where_bindings") or block.get("where") or []
+    resolved = resolve_where_bindings(where, facts, semantic)
+    return build_evidence_payload(requirement, resolved)
 
 
 def _build_obligation_extract_items(
@@ -116,7 +114,7 @@ def _build_obligation_extract_items(
                     checkpoint_id=cp_id,
                     field=f"{ground}.{lid}",
                     question=str(leaf.get("question") or ""),
-                    value_type="boolean",
+                    value_type=str(leaf.get("value_type") or ("boolean" if leaf.get("role") == "quote" else "boolean")),
                     context=_context_from_where(spec, facts, semantic, cp),
                 )
             )
@@ -261,10 +259,9 @@ def run_policy_review(
             local_answers.update(batch.answers)
         cascade = run_cascade(
             client,
-            judge,
+            extractor,  # same model; null-only retry, no judge
             atom_items,
             local_answers,
-            threshold=cascade_threshold,
         )
         local_usage.add_usage(cascade.usage)
         local_answers = cascade.answers

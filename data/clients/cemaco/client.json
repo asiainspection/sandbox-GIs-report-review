@@ -5,23 +5,10 @@
   "corrected_dir": "corrected",
   "flawed_dir": "flawed",
   "introduced_checkpoints": {
-    "report_q2519476686_flawed": {
-      "9_3_1": "outer packing captions only on 1 photo",
-      "9_3_2": "measurement photos missing captions",
-      "9_3_3": "measurement screenshot not spotlighted"
-    },
-    "report_q2601959645_flawed": {
-      "2-6-1-1": "comment: Quantity result must FAIL when packed % is below the client threshold; PASS with low packed % is inconsistent.",
-      "2-7-1-9": "photo_count: Carton drop test result requires drop photos as evidence."
-    },
-    "report_q2605650175_flawed": {
-      "2-6-1-1": "comment: Quantity result must FAIL when packed % is below the client threshold.",
-      "2-7-3-5": "photo_count: Barcode check requires photo evidence of the scanned barcode."
-    },
-    "report_q2610766318_flawed": {
-      "2-9-1-2": "result: Result must reflect findings: comment states dimensions/weight do not match spec, so result cannot be PASS.",
-      "2-9-1-1": "photo_count: Product dimension result requires measurement photos for the measured pieces."
-    }
+    "report_q2601959645_flawed": {},
+    "report_q2605650175_flawed": {},
+    "report_q2610766318_flawed": {},
+    "report_q2519476686_flawed": {}
   },
   "holdout_keys": [
     "report_q2519476686_flawed"

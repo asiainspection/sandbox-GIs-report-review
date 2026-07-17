@@ -67,7 +67,6 @@ def apply_cache_to_items(
             item_id=item.item_id,
             field=item.field,
             value=row.get("value"),
-            confidence=float(row.get("confidence") or 0.0),
             evidence=str(row.get("evidence") or "atom_cache"),
         )
     return misses, hits
@@ -87,7 +86,6 @@ def merge_answers_into_cache(
         out[_leaf_key(item)] = {
             "item_id": item_id,
             "value": answer.value,
-            "confidence": answer.confidence,
             "evidence": answer.evidence,
         }
     return out

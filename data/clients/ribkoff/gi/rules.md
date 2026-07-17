@@ -202,10 +202,11 @@ Each rule entry contains:
 
 
 ```check
-data_source: external
-where: []
+where: [report.factory_address]
 when: null
-check: null
+check: 
+  - present
+  - no_language(chinese)
 ```
 
 ---
@@ -220,8 +221,7 @@ check: null
 
 
 ```check
-data_source: PO_booking
-where: []
+where: [out_of_report:booking]
 when: null
 check: null
 ```
@@ -242,7 +242,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [report.global_remark]
 when: null
 check: extract("Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.")
@@ -270,7 +269,6 @@ check: extract("Does the inspector remark list defects broken down by PO number 
 
 
 ```check
-data_source: in_report
 where: [product._first.real_packed_quantity, product._first.ordered_quantity]
 when: null
 check: ratio_at_least(0.8)
@@ -288,7 +286,6 @@ check: ratio_at_least(0.8)
 
 
 ```check
-data_source: in_report
 where: [report.global_remark]
 when: product._first.real_packed_quantity != product._first.ordered_quantity
 check: extract("Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.")
@@ -312,10 +309,9 @@ check: extract("Quote the sentence explaining the quantity shortage or overage v
 
 
 ```check
-data_source: in_report
 where: [report.global_remark]
 when: null
-check: extract("For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.")
+check: extract_bool("For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.")
 ```
 
 ---
@@ -336,8 +332,7 @@ check: extract("For every 'No' answer recorded in inspection details, is there a
 
 
 ```check
-data_source: PO_booking
-where: []
+where: [out_of_report:booking]
 when: null
 check: null
 ```
@@ -354,8 +349,7 @@ check: null
 
 
 ```check
-data_source: PO_booking
-where: []
+where: [out_of_report:booking]
 when: null
 check: null
 ```
@@ -372,10 +366,9 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [report.global_remark]
 when: null
-check: extract("Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.")
+check: extract_bool("Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.")
 ```
 
 ---
@@ -394,7 +387,6 @@ check: extract("Do the lot numbers on hangtags match the lot numbers on shipping
 
 
 ```check
-data_source: in_report
 where: [checklist.are_the_qima_documents_signed.photo_count]
 when: null
 check: count_at_least(3)
@@ -418,7 +410,6 @@ check: count_at_least(3)
 
 
 ```check
-data_source: in_report
 where: [checklist.random_carton_selection.result]
 when: null
 check: in_set(PASS, FAIL)
@@ -436,10 +427,12 @@ check: in_set(PASS, FAIL)
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [outer, packing, shipping, marks, front, side]
+    field: comment
 when: null
-check: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```
 
 ---
@@ -454,7 +447,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [checklist.outer_packing_shipping_marks_front_side.photo_count]
 when: null
 check: count_at_least(3)
@@ -472,8 +464,10 @@ check: count_at_least(3)
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [inner, packing, unit, packing]
+    field: comment
 when: null
 check: null
 ```
@@ -490,7 +484,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [checklist.match_packing_info.result]
 when: null
 check: equals(PASS)
@@ -508,7 +501,6 @@ check: equals(PASS)
 
 
 ```check
-data_source: in_report
 where: [checklist.carton_drop_test.photo_count]
 when: checklist.carton_drop_test.result equals PASS
 check: count_at_most(0)
@@ -526,7 +518,6 @@ check: count_at_most(0)
 
 
 ```check
-data_source: in_report
 where: [checklist.outer_packing_assortment_dimensions_weight.photo_count]
 when: null
 check: count_at_most(0)
@@ -544,8 +535,7 @@ check: count_at_most(0)
 
 
 ```check
-data_source: spec_sheet
-where: []
+where: [out_of_report:spec_sheet]
 when: null
 check: null
 ```
@@ -562,10 +552,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defect_count]
 when: null
-check: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```
 
 ---
@@ -580,10 +569,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defect_count]
 when: null
-check: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```
 
 ---
@@ -602,7 +590,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [checklist.product_labels.photo_count]
 when: null
 check: count_at_least(1)
@@ -620,8 +607,10 @@ check: count_at_least(1)
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [product, labels]
+    field: comment
 when: null
 check: null
 ```
@@ -638,7 +627,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [checklist.product_logo.result]
 when: null
 check: checklist.product_logo.result != NOT_APPLICABLE
@@ -656,7 +644,6 @@ check: checklist.product_logo.result != NOT_APPLICABLE
 
 
 ```check
-data_source: in_report
 where: [checklist.product_style_construction.result]
 when: null
 check: equals(PASS)
@@ -674,8 +661,10 @@ check: equals(PASS)
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: section
+    match: [product, specifications]
+    field: comment
 when: null
 check: null
 ```
@@ -692,10 +681,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.inspector_text]
 when: null
-check: null
+check: extract_bool("Is the care/content label language sequence correct per the GI rule?")
 ```
 
 ---
@@ -710,8 +698,10 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: section
+    match: [product, specifications]
+    field: comment
 when: null
 check: null
 ```
@@ -740,7 +730,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [workmanship.found_critical, workmanship.max_defects_critical]
 when: null
 check: workmanship.found_critical <= workmanship.max_defects_critical
@@ -758,10 +747,9 @@ check: workmanship.found_critical <= workmanship.max_defects_critical
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'dirt'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -776,10 +764,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'stitch'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -794,10 +781,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'yarn'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -812,10 +798,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'wrinkle'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -830,10 +815,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'pucker'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -848,8 +832,7 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
 check: null
 ```
@@ -866,10 +849,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.defects]
 when: null
-check: null
+check: extract_bool("Are all 'defect'-related defects classified as MAJOR?")
 ```
 
 ---
@@ -888,7 +870,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [report.defects_without_photo]
 when: null
 check: equals(0)
@@ -927,7 +908,6 @@ check: equals(0)
 
 
 ```check
-data_source: in_report
 where: [checklist.product_dimensions_result.attachment_filenames]
 when: null
 check: filename_matches("Measurement Chart-*.xlsx")
@@ -945,8 +925,7 @@ check: filename_matches("Measurement Chart-*.xlsx")
 
 
 ```check
-data_source: spec_sheet
-where: []
+where: [checklist.product_dimensions_result.attachment_content]
 when: null
 check: null
 ```
@@ -963,8 +942,7 @@ check: null
 
 
 ```check
-data_source: spec_sheet
-where: []
+where: [checklist.product_dimensions_result.attachment_content]
 when: null
 check: null
 ```
@@ -981,8 +959,7 @@ check: null
 
 
 ```check
-data_source: spec_sheet
-where: []
+where: [checklist.product_dimensions_result.attachment_filenames]
 when: null
 check: null
 ```
@@ -999,8 +976,7 @@ check: null
 
 
 ```check
-data_source: spec_sheet
-where: []
+where: [out_of_report:spec_sheet]
 when: null
 check: null
 ```
@@ -1021,8 +997,10 @@ check: null
 
 
 ```check
-data_source: in_report
-where: [checklist.color_shading_check.photo_count]
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_count
 when: null
 check: count_at_most(1)
 ```
@@ -1039,7 +1017,6 @@ check: count_at_most(1)
 
 
 ```check
-data_source: in_report
 where: [checklist.stitch_density_check.comment]
 when: null
 check:
@@ -1059,8 +1036,10 @@ check:
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [ironing, washing, treatment, check]
+    field: photo_content
 when: null
 check: null
 ```
@@ -1077,10 +1056,12 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [barcode, scanning, test]
+    field: photo_count
 when: null
-check: null
+check: count_at_least(1)
 ```
 
 ---
@@ -1095,8 +1076,10 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [symmetry, check]
+    field: photo_count
 when: null
 check: null
 ```
@@ -1113,10 +1096,9 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.all_captions]
 when: null
-check: null
+check: present
 ```
 
 ---
@@ -1133,8 +1115,10 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_content
 when: null
 check: null
 ```
@@ -1155,10 +1139,12 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where:
+  - kind: checklist
+    match: [approval, sample, comparison]
+    field: photo_content
 when: null
-check: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```
 
 ---
@@ -1179,7 +1165,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [report.overall_result]
 when: null
 check: in_set(PASS, FAIL, PENDING)
@@ -1197,8 +1182,7 @@ check: in_set(PASS, FAIL, PENDING)
 
 
 ```check
-data_source: external
-where: []
+where: [report.attachment_filenames]
 when: null
 check: null
 ```
@@ -1215,8 +1199,7 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [report.all_captions]
 when: null
 check: null
 ```
@@ -1233,8 +1216,7 @@ check: null
 
 
 ```check
-data_source: external
-where: []
+where: [checklist.product_dimensions_result.attachment_filenames]
 when: null
 check: null
 ```
@@ -1260,7 +1242,6 @@ check: null
 
 
 ```check
-data_source: in_report
 where: [workmanship.aql_level_major]
 when: null
 check: equals(2.5)
@@ -1284,7 +1265,6 @@ check: equals(2.5)
 
 
 ```check
-data_source: in_report
 where: [workmanship.aql_level_minor]
 when: null
 check: equals(4.0)
@@ -1324,7 +1304,6 @@ check: equals(4.0)
 
 
 ```check
-data_source: in_report
 where: [product._first.real_packed_quantity, product._first.ordered_quantity]
 when: report.overall_result equals PASS
 check: ratio_at_least(0.8)

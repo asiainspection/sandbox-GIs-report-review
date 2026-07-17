@@ -1,21 +1,29 @@
-# Claude cheat sheet — report fields
-# Give this file to Claude with the checkpoint. Pick `where` ONLY from here (or the checklist pattern).
-# If the evidence is NOT in the report, set data_source (do not invent a field).
+# Claude / ops cheat sheet — report fields
+# Give with check_format.yaml + operators.yaml
 #
-# For checklist test names: also give Claude data/library/checklist_names/<client>.txt
-# (hints from sample reports — not a closed allowlist; runtime fuzzy-matches).
+# Pick `where` ONLY from here (or checklist.<name>.<suffix> / intent binding).
+# If evidence is NOT in the report → where: [out_of_report:<kind>], check: null.
+#
+# Binding rules (2026 — see check_format.yaml):
+#   - Photo / barcode / front-view rules → photo_count | photo_captions | photo_content
+#     NEVER report.product_label / report.sku for photo obligations
+#   - Mandatory remark with Correct-example sentence → that item's .comment
+#     (+ contains("exact sentence")), not section-wide comments
+#   - Cover scalars (PO, overall, unit, address) → exact report.* / product.* below
+#   - data_source is DERIVED — do not hand-author it
+#
+# Checklist items: use intent bindings with keywords from Field/Location prose.
+#   kind: checklist / match: [barcode, scanning] / field: photo_count
+# Runtime fuzzy-matches against whatever items exist in that report.
 
 # ---------------------------------------------------------------------------
-# data_source — required on every check block
+# Derived data_source buckets (from field registry)
 # ---------------------------------------------------------------------------
 data_sources:
-  in_report: "value is in the report or its attachments → engine will CHECK"
-  IP: "Inspection Profile / AQL / sampling plan → check if present in report, else advisory"
-  PO_booking: "PO / booking / IRF / Advice List → ADVISORY only (never auto-flag)"
-  spec_sheet: "artwork / spec / DAS / VAS / measurement chart → ADVISORY only"
-  email: "email / correspondence / override → ADVISORY only"
-  external: "SOP / SharePoint / golden report / visual standard → ADVISORY only"
-  other: "anything else not listed → ADVISORY only"
+  report_content: "text, enums, counts, structured scalars → checkable now"
+  report_images: "photo CONTENT (vision) → pending until vision processor"
+  report_attachments: "filenames now; Excel/PDF content → pending until xlsx reader"
+  out_of_report: "PO / booking / email / SOP / SharePoint → advisory only"
 
 scopes:
   QUESTION: "one field / one checklist item"
@@ -24,78 +32,90 @@ scopes:
 
 # ---------------------------------------------------------------------------
 # CORE fields — always the same across reports. Use selector as-is.
+# modality / processor / feasible annotated for authoring guidance.
 # ---------------------------------------------------------------------------
 fields:
 
-  report.overall_result: "overall result (PASS / FAIL / PENDING / MISSING)"
-  report.inspection_type: "inspection type (e.g. Pre-Shipment Inspection)"
-  report.inspection_date: "inspection date"
-  report.planned_date: "originally planned inspection date"
-  report.days_postponed: "days postponed (+) or advanced (-) vs planned"
-  report.global_remark: "inspector global remark (first page)"
-  report.supplier_name: "supplier / responsible entity name"
-  report.factory_name: "factory / production entity name"
-  report.factory_address: "factory address on cover"
-  report.production_site: "production site address"
-  report.product_label: "product name on cover"
-  report.sku: "SKU / product reference"
-  report.po_reference: "PO reference on cover"
-  report.tests_result: "tests result summary"
-  report.destinations: "shipment destination names"
-  report.all_text: "all report text (for scan_present / scan_absent)"
-  report.all_captions: "all photo captions (for scan)"
-  report.attachment_filenames: "all attachment filenames"
-  report.defect_count: "number of workmanship defects recorded"
-  report.defects_without_photo: "count of defects with no photo (0 = all have photos)"
+  report.overall_result: "overall result (PASS / FAIL / PENDING / MISSING) [enum|structured|now]"
+  report.inspection_type: "inspection type (e.g. Pre-Shipment Inspection) [text|structured|now]"
+  report.inspection_date: "inspection date [text|structured|now]"
+  report.planned_date: "originally planned inspection date [text|structured|now]"
+  report.days_postponed: "days postponed (+) or advanced (-) vs planned [number|structured|now]"
+  report.global_remark: "inspector global remark (first page) [text|text|now]"
+  report.supplier_name: "supplier / responsible entity name [text|text|now]"
+  report.factory_name: "factory / production entity name [text|text|now]"
+  report.factory_address: "factory address on cover [text|text|now]"
+  report.production_site: "production site address [text|text|now]"
+  report.product_label: "product name on cover [text|text|now]"
+  report.sku: "SKU / product reference [text|structured|now]"
+  report.po_reference: "PO reference on cover [text|structured|now]"
+  report.tests_result: "tests result summary [enum|structured|now]"
+  report.destinations: "shipment destination names [text|structured|now]"
+  report.all_text: "all report text including templates (prefer report.inspector_text for banned-term scans) [text|text|now]"
+  report.inspector_text: "inspector remarks, comments, captions only (use for scan_absent / scan_present) [text|text|now]"
+  report.all_captions: "all photo captions (for scan) [text|text|now]"
+  report.attachment_filenames: "all attachment filenames [filename|file|now]"
+  report.defect_count: "number of workmanship defects recorded [number|structured|now]"
+  report.defects_without_photo: "count of defects with no photo (0 = all have photos) [number|structured|now]"
 
-  product._first.product_name: "first product name"
-  product._first.sku: "first product SKU"
-  product._first.po_reference: "first product PO"
-  product._first.unit: "quantity unit (Pcs / Boxes / Packs / Other)"
-  product._first.ordered_quantity: "ordered quantity"
-  product._first.real_produced_quantity: "on-site produced quantity"
-  product._first.real_packed_quantity: "on-site packed quantity"
-  product._first.expected_produced_quantity: "expected produced quantity"
-  product._first.expected_packed_quantity: "expected packed quantity"
-  product._first.shipment_date: "shipment date"
+  product._first.product_name: "first product name [text|text|now]"
+  product._first.sku: "first product SKU [text|structured|now]"
+  product._first.po_reference: "first product PO [text|structured|now]"
+  product._first.unit: "quantity unit (Pcs / Boxes / Packs / Other) [text|structured|now]"
+  product._first.ordered_quantity: "ordered quantity [number|structured|now]"
+  product._first.real_produced_quantity: "on-site produced quantity [number|structured|now]"
+  product._first.real_packed_quantity: "on-site packed quantity [number|structured|now]"
+  product._first.expected_produced_quantity: "expected produced quantity [number|structured|now]"
+  product._first.expected_packed_quantity: "expected packed quantity [number|structured|now]"
+  product._first.shipment_date: "shipment date [text|structured|now]"
 
-  workmanship.result: "workmanship result"
-  workmanship.inspection_level: "sampling inspection level"
-  workmanship.aql_level_critical: "critical AQL level"
-  workmanship.aql_level_major: "major AQL level"
-  workmanship.aql_level_minor: "minor AQL level"
-  workmanship.max_defects_critical: "max allowed critical defects"
-  workmanship.max_defects_major: "max allowed major defects"
-  workmanship.max_defects_minor: "max allowed minor defects"
-  workmanship.found_critical: "critical defects found"
-  workmanship.found_major: "major defects found"
-  workmanship.found_minor: "minor defects found"
-  workmanship.sample_size_critical: "critical sample size"
-  workmanship.sample_size_major: "major sample size"
-  workmanship.sample_size_minor: "minor sample size"
-  workmanship.measurement_level: "measurement sampling level"
-  workmanship.measurement_aql: "measurement AQL"
+  workmanship.result: "workmanship result [enum|structured|now]"
+  workmanship.inspection_level: "sampling inspection level [text|structured|now]"
+  workmanship.aql_level_critical: "critical AQL level [number|structured|now]"
+  workmanship.aql_level_major: "major AQL level [number|structured|now]"
+  workmanship.aql_level_minor: "minor AQL level [number|structured|now]"
+  workmanship.max_defects_critical: "max allowed critical defects [number|structured|now]"
+  workmanship.max_defects_major: "max allowed major defects [number|structured|now]"
+  workmanship.max_defects_minor: "max allowed minor defects [number|structured|now]"
+  workmanship.found_critical: "critical defects found [number|structured|now]"
+  workmanship.found_major: "major defects found [number|structured|now]"
+  workmanship.found_minor: "minor defects found [number|structured|now]"
+  workmanship.sample_size_critical: "critical sample size [number|structured|now]"
+  workmanship.sample_size_major: "major sample size [number|structured|now]"
+  workmanship.sample_size_minor: "minor sample size [number|structured|now]"
+  workmanship.measurement_level: "measurement sampling level [text|structured|now]"
+  workmanship.measurement_aql: "measurement AQL [number|structured|now]"
 
-  custom.qsp_product_name: "QSP Product Name (custom field)"
+  custom.qsp_product_name: "QSP Product Name (custom field) [text|text|now]"
 
 # ---------------------------------------------------------------------------
 # CHECKLIST pattern — any test name (Carton drop test, Product Details - Barcode, …)
 # Do NOT list every test. Write: checklist.<test_name>.<suffix>
 # Runtime fuzzy-matches the test name (casing / spaces OK).
 # New tests work automatically — no library update needed.
-# Prefer real names from data/library/checklist_names/<client>.txt when authoring.
+# Prefer intent match tokens from Field/Location prose when authoring.
 # ---------------------------------------------------------------------------
 checklist_pattern: "checklist.<test_name>.<suffix>"
 
 checklist_suffixes:
-  result: "PASS / FAIL / NOT_APPLICABLE / NO_RESULT"
-  comment: "free-text comment on that item"
-  values: "selected answers (Yes / No / OK / …)"
-  photo_count: "number of photos on that item"
-  photo_captions: "list of captions (often empty — prefer photo_count)"
-  applicable: "true if the item applies"
-  attachment_filenames: "filenames attached to that item"
-  spotlight_count: "spotlight images count"
+  result: "PASS / FAIL / NOT_APPLICABLE / NO_RESULT [enum|structured|now → report_content]"
+  comment: "free-text comment on that item [text|text|now → report_content]"
+  values: "selected answers (Yes / No / OK / …) [enum|structured|now → report_content]"
+  photo_count: "number of photos on that item [number|structured|now → report_content]"
+  photo_captions: "list of captions (often empty — prefer photo_count) [text|text|now → report_content]"
+  applicable: "true if the item applies [enum|structured|now → report_content]"
+  attachment_filenames: "filenames attached to that item [filename|file|now → report_attachments]"
+  spotlight_count: "spotlight images count [number|structured|now → report_content]"
+  attachment_content: "Excel/PDF body (NOT parsed yet) [file_content|file|pending:xlsx → report_attachments]"
+  photo_content: "what the photo shows (NOT parsed yet) [image|vision|pending:vision → report_images]"
+
+# Out-of-report markers (use as where entries):
+#   out_of_report:booking
+#   out_of_report:spec_sheet
+#   out_of_report:email
+#   out_of_report:sop
+#   out_of_report:ip
+#   out_of_report:other
 
 # Examples (illustrative only — any real test name from the report works):
 #   checklist.carton_drop_test.result

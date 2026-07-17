@@ -126,16 +126,27 @@ def validate_predicate(node: dict[str, Any] | None, errors: list[str], path: str
             has_two = bool(node.get("left") and node.get("right"))
             has_const = bool(node.get("selector") and (node.get("value") is not None or node.get("right")))
             has_left_const = bool(node.get("left") and node.get("value") is not None)
-            if not (has_two or has_const or has_left_const or node.get("selector")):
+            has_binding = bool(node.get("binding"))
+            if not (has_two or has_const or has_left_const or node.get("selector") or has_binding):
                 errors.append(f"{path}: compare needs selector+value or left+right")
         elif op == "filename_matches":
-            if not node.get("selector"):
+            if not node.get("selector") and not node.get("binding"):
                 errors.append(f"{path}: filename_matches missing selector")
         elif op not in ("all_of", "any_of", "not", "atom", "vision", "true", "false"):
-            if not node.get("selector") and op not in ("atom", "vision"):
-                if op in ("equals", "in_set", "contains", "contains_number", "count_at_most", "count_at_least", "exists", "is_blank", "matches"):
-                    if not node.get("selector"):
-                        errors.append(f"{path}: {op} missing selector")
+            # Intent bindings are a valid alternative to frozen selectors.
+            if not node.get("selector") and not node.get("binding"):
+                if op in (
+                    "equals",
+                    "in_set",
+                    "contains",
+                    "contains_number",
+                    "count_at_most",
+                    "count_at_least",
+                    "exists",
+                    "is_blank",
+                    "matches",
+                ):
+                    errors.append(f"{path}: {op} missing selector")
 
 
 def validate_checkspec(spec: dict[str, Any] | ObligationSpec) -> list[str]:
@@ -153,7 +164,16 @@ def validate_checkspec(spec: dict[str, Any] | ObligationSpec) -> list[str]:
     errors: list[str] = []
     if not data.get("checkpoint_id"):
         errors.append("missing checkpoint_id")
-    if data.get("status_class") == "advisory" or str(data.get("source") or "") in ("advisory", "missing_block"):
+    status = str(data.get("status_class") or "")
+    source = str(data.get("source") or "")
+    # Non-checkable specs have no then — that's intentional.
+    if status in ("advisory", "pending", "unauthored", "unmapped") or source in (
+        "advisory",
+        "pending",
+        "unauthored",
+        "unmapped",
+        "missing_block",
+    ):
         return errors
     if not data.get("then"):
         errors.append("missing then obligation")

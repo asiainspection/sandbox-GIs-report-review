@@ -1,102 +1,238 @@
-# Check-block format — append ONE block at the end of each checkpoint in rules.md
+# Check-block format — schema_version: 1
+# Audience: Claude + ops authoring ```check``` blocks for GI rules.
 #
-# Keep the human prose (ID, Field/Location, What to check, Scope, examples) unchanged.
-# Claude fills only this machine block.
+# ===========================================================================
+# PASTE THIS BUNDLE TO THE AUTHOR (in this order)
+# ===========================================================================
+#   1. this file (check_format.yaml)          ← contract + prompt rules
+#   2. operators.yaml                        ← closed op list
+#   3. report_fields.yaml                    ← closed field list
+#   4. ONE checkpoint's human prose only
+#      (ID, Field/Location, What to check, Scope, Error/Correct examples)
 #
-# Give Claude:
-#   - operators.yaml
-#   - report_fields.yaml
-#   - checklist_names/<client>.txt
-#   - this file
+# Checklist names are NOT a separate file. Copy keywords from Field/Location
+# into intent match tokens (see HOW TO BIND `where` below). Runtime fuzzy-matches
+# those tokens against whatever checklist items exist in that report.
+#
+# Output: ONLY the ```check``` fence. Never rewrite the human prose.
 
 # ===========================================================================
-# GENERAL STRUCTURE
+# 2026 AUTHORING CONTRACT (why this exists)
 # ===========================================================================
 #
-# Every GI rule is:  WHEN <trigger>  THEN <check on where>
-#                    (unless evidence is outside the report → advisory)
+# Production LLM practice (2026): treat model output as a DATA CONTRACT, not
+# creative judgment. Split work:
 #
-# Four keys only:
+#   LLM  = ground ONE fact from ONE bound field (quote or tiny yes/no)
+#   Python = decide clear / violates / unable using operators
 #
-#   data_source  where does the evidence live?
-#                in_report | IP | PO_booking | spec_sheet | email | external | other
-#                in_report / IP → engine checks
-#                anything else  → ADVISORY only (never auto-flag), check: null
+# Do NOT ask the model to "satisfy the GI requirement", "check if correct",
+# or grade the whole rule. That is a judge prompt. Judges destroy precision.
 #
-#   where        list of fields from report_fields.yaml (or checklist.<name>.<suffix>)
-#                empty [] when data_source ≠ in_report
-#
-#   when         optional TRIGGER — same compact style as check, or null if always-on
-#                if false at runtime → rule does not apply (clear, not a flag)
-#
-#   check        the OBLIGATION — one compact op call (or a list = all must hold)
-#                null only when data_source ≠ in_report
-#
-# Runtime: Python decides clear / violates / unable / advisory.
-# extract / vision only QUOTE facts — they do not grade.
+# Anthropic / industry defaults that map to this file:
+#   - Quote / extract before decide (ground in evidence first)
+#   - One atom per question; field-local; explicit null when absent
+#   - Positive AND negative constraints ("do X" + "never do Y")
+#   - Prefer machine-checkable ops over free-form LLM judgment
+#   - If you cannot write a checkable op yet → where set, check: null
+#     (honest unauthored) — NEVER invent a vague extract_bool
 
-# ---------------------------------------------------------------------------
-# TEMPLATE
-# ---------------------------------------------------------------------------
+# ===========================================================================
+# STABILITY CONTRACT
+# ===========================================================================
+#   - Authored keys are ONLY: where / when / check. Never add more keys.
+#   - data_source / status_class are DERIVED by the compiler. Do not author them.
+#   - Ops ONLY from operators.yaml. Fields ONLY from report_fields.yaml
+#     or checklist.<real_name>.<suffix> / intent bindings.
+#   - Growth = new registry rows or operators. Additive only.
+
+# ===========================================================================
+# THE ONLY SHAPE
+# ===========================================================================
+#
+# Every GI rule is:  WHEN <trigger>  THEN <obligation on where>
+#
+#   where   evidence locus (selectors | intents | out_of_report:<kind>)
+#   when    optional applicability trigger, or null
+#           false at runtime → clear (rule does not apply) — NOT a flag
+#   check   obligation (one op, or list = all must hold), or null
+#
+# Runtime statuses (derived):
+#   checkable | pending | unauthored | advisory
+#   (do not leave where empty / unmapped)
+
+# ===========================================================================
+# HARD BANS — reject your own draft if any appear
+# ===========================================================================
+#
+# FORBIDDEN in extract(...) / extract_bool(...) / vision(...) questions:
+#   - "satisfy the GI requirement"
+#   - "satisfy the GI"
+#   - "Does this field evidence satisfy"
+#   - "Does the bound remark/comment satisfy"
+#   - "correctly filled" / "is this correct" / "does this pass"
+#   - "according to the rule" / "per the requirement" / "as required"
+#   - pasting the full What-to-check paragraph
+#   - asking about photos/vision while where is text-only (product_label, etc.)
+#   - asking about booking/spec/email while where is in-report
+#
+# FORBIDDEN where patterns:
+#   - where: [unmapped]
+#   - where: [out_of_report:other] as a junk drawer for "I don't know"
+#   - binding a PHOTO rule to report.product_label / report.sku
+#   - binding a BARCODE/PHOTO rule to report.inspector_text by default
+#   - section-wide match when Field/Location names ONE checklist item
+#
+# FORBIDDEN check patterns:
+#   - check: extract_bool("…") as the ONLY line when Correct example
+#     gives an exact mandatory phrase → use contains / extract+contains
+#   - check: null with where: [out_of_report:…] when evidence is clearly
+#     in the report (remark, photo_count, result, attachment name)
+
+# ===========================================================================
+# AUTHORING PRIORITY (pick the highest that fits)
+# ===========================================================================
+#
+# 1. DETERMINISTIC (no LLM) — structured facts already in the report
+#      photo_count, result, AQL numbers, blank/present, filenames, forbidden terms
+#      → count_*, equals, in_set, present, contains, matches, scan_absent,
+#        no_language, filename_matches, ratio_at_least
+#
+# 2. QUOTE + PYTHON (preferred LLM mode — 2026 default)
+#      LLM quotes ONE short string from the bound field; Python checks it.
+#      check:
+#        - extract("Quote the <specific thing> from this field, or null")
+#        - contains("exact phrase from Correct example")
+#      or: matches("regex"), in_set(...), equals(...)
+#
+# 3. extract_bool — ONLY when the atom is truly boolean AND field-local
+#      Good:  extract_bool("Does this comment name a 3M tape model?")
+#      Bad:   extract_bool("Does the remark satisfy the GI requirement?")
+#      Rule of thumb: if Correct example has a fixed sentence → NOT extract_bool
+#
+# 4. vision — ONLY when the obligation is about image pixels
+#      where must use *.photo_content (pending until vision is on) or captions
+#      Never vision() on product_label / inspector_text
+#
+# 5. If still stuck: where = best real field, check: null
+#      → unauthored backlog. Better than a fake judge.
+
+# ===========================================================================
+# HOW TO BIND `where` (grounding)
+# ===========================================================================
+#
+# Read Field / Location first, then What to check.
+#
+# A) Named checklist item (e.g. "Adhesive test remark — test checklist")
+#      Prefer intent (scales to any client — names vary per report):
+#        where:
+#          - kind: checklist
+#            match: [adhesive, test]
+#            field: comment
+#      Or exact selector only when you know the report slug:
+#        where: [checklist.adhesive_test.comment]
+#
+# B) Cover / report scalars (PO, overall, unit, factory address, …)
+#      Use exact selectors from report_fields.yaml
+#
+# C) Defect severity / workmanship defect rows
+#      where: [report.defects]
+#
+# D) Truly external (booking email, IRF as source of truth, tech pack compare)
+#      where: [out_of_report:booking] | :spec_sheet | :email | :sop | :ip
+#      check: null
+#
+# E) Section-wide ONLY when the GI explicitly says every test / all checkpoints
+#      where:
+#        - kind: section
+#          match: [checkpoints]
+#          field: photo_count
+#
+# NEVER widen to section/inspector_text because fuzzy match failed.
+# Prefer check: null on the closest real field over a vague locus.
+
+# ===========================================================================
+# HOW TO WRITE LLM QUESTIONS (extract / extract_bool / vision)
+# ===========================================================================
+#
+# Template for extract (quote):
+#   extract("Quote the <X> stated in this <field>, or null if absent.")
+#   - <X> = the noun from Correct example (tape model, exemption remark, …)
+#   - Always allow null
+#   - Max ~120 chars. No GI essay.
+#
+# Template for extract_bool (rare):
+#   extract_bool("Does this <field> <observable fact>?")
+#   - Answerable from the bound field alone
+#   - Yes/no about a FACT, not about compliance
+#
+# Template for vision:
+#   vision("Does the photo show <visible thing>?")
+#   - Pixels only. No policy language.
+#
+# Self-check before shipping:
+#   [ ] Could a junior ops person answer from ONLY the bound field?
+#   [ ] Does Correct example give an exact phrase? → contains/matches that phrase
+#   [ ] Is when used for "if applicable" instead of asking the LLM?
+
+# ===========================================================================
+# WHEN vs CHECK (applicability)
+# ===========================================================================
+#
+# "If exemption applies…" / "When result is PASS…" belongs in `when`, not in
+# the LLM question.
+#
+#   when: checklist.adhesive_test.result equals PASS
+#   check: count_at_most(0)
+#
+# If applicability needs external product lists you do not have in the report:
+#   where: [out_of_report:spec_sheet]   # or leave when: null and check: null
+# Do NOT ask extract_bool("Does the exemption apply and is the remark present?").
+
+# ===========================================================================
+# GOLD EXAMPLES (copy these shapes)
+# ===========================================================================
+
+# --- A) Exact mandatory remark (DFI adhesive date-code exemption) ---
+# Field: Adhesive test remark — exemption products
+# Correct example: "Adhesive test on the date code waived due to limitation of the can and ink."
 #
 # ```check
-# data_source: in_report
-# where: [report.factory_address]
+# where: [checklist.adhesive_test.comment]
 # when: null
-# check: no_language(chinese)
+# check:
+#   - extract("Quote the date-code exemption remark from this comment, or null")
+#   - contains("Adhesive test on the date code waived due to limitation of the can and ink")
+# ```
+#
+# BAD (never ship):
+# ```check
+# where:
+#   - kind: section
+#     match: [checkpoints]
+#     field: comment
+# when: null
+# check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 # ```
 
-# ---------------------------------------------------------------------------
-# HOW TO WRITE `check` / `when` (compact calls)
-# ---------------------------------------------------------------------------
-#
-# Ops apply to `where` by default. Args go in parentheses.
-# Multi-field where: name the field inside the call when needed.
-#
-#   present
-#   equals(PENDING)
-#   in_set(YES, NO)
-#   matches("\\d+%")
-#   no_language(chinese)
-#   contains("not ok")
-#   has_number
-#   compare(>=, 1)                          # where[0] compared to a constant
-#   compare(product._first.ordered_quantity, !=)   # where[0] vs another field
-#   count_at_least(1)
-#   count_at_most(0)
-#   ratio_at_least(0.8)                     # where = [numerator, denominator]
-#   scan_present("GSS")
-#   scan_absent("Golden Sample")
-#   filename_matches("Measurement Chart-*.xlsx")
-#   extract("Quote the sentence that …, or null if absent.")
-#   vision("Does the photo show …?")
-#
-# Several checks at once (implicit AND):
-#   check:
-#     - present
-#     - no_language(chinese)
-#
-# Prefer deterministic ops. Use extract / vision only when judgment is needed.
-
-# ---------------------------------------------------------------------------
-# RULES FOR CLAUDE
-# ---------------------------------------------------------------------------
-# 1. Pick fields ONLY from report_fields.yaml (or checklist.<name>.<suffix>).
-#    Use checklist_names/<client>.txt as real-name hints.
-# 2. Pick ops ONLY from operators.yaml — write them in the compact form above.
-# 3. Prefer deterministic ops. extract / vision = let LLM decide.
-# 4. Evidence outside the report → data_source ≠ in_report, where: [], check: null.
-# 5. Never invent a selector.
-# 6. Captions are often empty — prefer photo_count.
-# 7. One ```check block per checkpoint. Do not rewrite the human prose above it.
-
-# ---------------------------------------------------------------------------
-# EXAMPLES
-# ---------------------------------------------------------------------------
-
-# 1) Factory address in English (always-on)
+# --- B) Deterministic photo count ---
 # ```check
-# data_source: in_report
+# where: [checklist.carton_drop_test.photo_count]
+# when: checklist.carton_drop_test.result equals PASS
+# check: count_at_most(0)
+# ```
+
+# --- C) Quote + regex ---
+# ```check
+# where: [checklist.adhesive_test.comment]
+# when: null
+# check:
+#   - extract("Quote the tape model stated in this comment, or null")
+#   - matches("3M ?(500|600P|810)")
+# ```
+
+# --- D) Cover field English ---
+# ```check
 # where: [report.factory_address]
 # when: null
 # check:
@@ -104,58 +240,56 @@
 #   - no_language(chinese)
 # ```
 
-# 2) If adhesive failed → overall must be PENDING
+# --- E) External evidence ---
 # ```check
-# data_source: in_report
-# where: [checklist.adhesive_test.result, report.overall_result]
-# when: checklist.adhesive_test.result contains "not ok"
-# check: report.overall_result equals PENDING
-# ```
-
-# 3) Photos required on carton drop test
-# ```check
-# data_source: in_report
-# where: [checklist.carton_drop_test.photo_count]
-# when: null
-# check: count_at_least(1)
-# ```
-
-# 4) Forbidden term anywhere in the report
-# ```check
-# data_source: in_report
-# where: [report.all_text]
-# when: null
-# check: scan_absent("Golden Sample")
-# ```
-
-# 5) Packed qty >= 80% of ordered
-# ```check
-# data_source: in_report
-# where: [product._first.real_packed_quantity, product._first.ordered_quantity]
-# when: null
-# check: ratio_at_least(0.8)
-# ```
-
-# 6) Remark must explain quantity discrepancy (let LLM decide)
-# ```check
-# data_source: in_report
-# where: [report.global_remark]
-# when: product._first.real_packed_quantity != product._first.ordered_quantity
-# check: extract("Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.")
-# ```
-
-# 7) Needs PO / booking — cannot check from report
-# ```check
-# data_source: PO_booking
-# where: []
+# where: [out_of_report:booking]
 # when: null
 # check: null
 # ```
 
-# 8) Photo must show X (vision — last resort)
+# --- F) Honest backlog (in report, check not ready) ---
 # ```check
-# data_source: in_report
-# where: [checklist.carton_drop_test.photo_count]
+# where: [checklist.adhesive_test.comment]
 # when: null
-# check: vision("Does the photo set include a clear after-drop view of both carton exterior and product interior?")
+# check: null
 # ```
+
+# --- G) Compact ops cheat ---
+# present | equals(PENDING) | in_set(PASS, FAIL) | matches("\\d+%")
+# no_language(chinese) | contains("not ok") | has_number
+# count_at_least(1) | count_at_most(0) | ratio_at_least(0.8)
+# scan_absent("Golden Sample") | filename_matches("Measurement Chart-*.xlsx")
+# extract("Quote …, or null") | extract_bool("Does this field …?") | vision("…")
+
+# ===========================================================================
+# OPS / CLAUDE ONE-PAGE SYSTEM PROMPT (copy below the line into chat)
+# ===========================================================================
+#
+# --- BEGIN SYSTEM PROMPT ---
+# You author GI check blocks. Output ONLY a ```check fence with keys:
+# where / when / check. Nothing else.
+#
+# Role split (mandatory):
+#   - You ground facts or pick deterministic ops.
+#   - Python decides pass/fail. You never grade the whole GI.
+#
+# Priority: deterministic → extract+contains/matches → extract_bool (rare) →
+# vision → check:null with real where.
+#
+# Banned phrases in any LLM question:
+#   satisfy the GI / satisfy the requirement / correctly / does this pass /
+#   according to the rule / Does the bound remark/comment satisfy /
+#   Does this field evidence satisfy
+#
+# If Correct example has an exact mandatory sentence, you MUST use
+# contains("that exact sentence") or extract+contains — never extract_bool.
+#
+# Bind where to the Field/Location item (checklist.<name>.comment etc.),
+# not to a whole section, unless the GI says "every test / all checkpoints".
+#
+# Photo rules → photo_count or photo_captions or photo_content — never product_label.
+# External booking/spec/email → out_of_report:<kind>, check: null.
+# If unsure: set where to the closest real field and check: null.
+#
+# Use only operators.yaml ops and report_fields.yaml selectors / intent bindings.
+# --- END SYSTEM PROMPT ---

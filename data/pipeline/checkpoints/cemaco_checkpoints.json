@@ -1,134 +1,904 @@
 {
   "meta": {
-    "name": "cemaco",
-    "source": "data/GI/cemaco_review_rules.md",
-    "generated_at": "2026-07-14T15:10:50"
+    "name": "Cemaco Inspection Report Review – Rules Reference",
+    "source": "data/clients/cemaco/gi/rules.md",
+    "generated_at": "2026-07-17T04:40:54Z",
+    "check_blocks": 37,
+    "checkpoint_count": 37
   },
   "checkpoints": [
     {
-      "id": "9_3_1",
-      "section": "report_writing_photo_metadata",
-      "requirement": "Outer Packing & Shipping Marks: Front & Side — Tests checklist / report photos — Add captions to all outer packing photos as per GI (TAG / SKU captions), not just on 1 photo. Every uploaded outer-packing photo must have a non-blank caption.",
+      "id": "1_1_1",
+      "section": "general_report_setup",
+      "requirement": "Inspection product list (client-uploaded files) — Verify that all client-uploaded inspection files (artwork, specifications, etc.) have been reviewed before starting the inspection. If the supplier offers any conversation record relevant to the inspection, a dated screenshot must be included in the report.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check photo captions on Outer Packing & Shipping Marks: Front & Side",
-      "focus_terms": [
-        "Outer Packing & Shipping Marks: Front & Side",
-        "Tests checklist",
-        "report photos"
-      ],
-      "md_sections": [
-        "Outer Packing & Shipping Marks: Front & Side",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "47 outer packing photos uploaded but only 1 has a caption/TAG",
-        "Report does not satisfy: Add captions to all outer packing photos as per GI (TAG / SKU captions), not just on 1 photo. Every uploaded outer-packing photo must have a non-blank caption."
-      ],
-      "source_rule_id": "9.3.1",
+      "scope_detail": "check only that the uploaded files were reviewed and any supplier conversation record is captured",
+      "source_rule_id": "1.1.1",
       "source_lines": {
-        "start": 12,
-        "end": 21
+        "start": 26,
+        "end": 41
       },
-      "context": "QUESTION — check photo captions on Outer Packing & Shipping Marks: Front & Side",
-      "examples": {
-        "pass": [
-          "Every outer packing photo has a SKU/TAG caption"
+      "context": "QUESTION — check only that the uploaded files were reviewed and any supplier conversation record is captured",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
         ],
-        "fail": [
-          "47 outer packing photos uploaded but only 1 has a caption/TAG"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "9_3_2",
-      "section": "report_writing_photo_metadata",
-      "requirement": "Product Dimensions Result — Tests checklist / report photos — Measurement photos also need captions as per GI. Every uploaded measurement / product-dimensions photo must have a non-blank caption.",
+      "id": "1_1_2",
+      "section": "general_report_setup",
+      "requirement": "Specification sheets — Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for each SKU inspected.",
       "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check photo captions on Product Dimensions Result",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "Tests checklist",
-        "report photos",
-        "photo captions on product dimensions"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Measurement photos uploaded with blank captions",
-        "Report does not satisfy: Measurement photos also need captions as per GI. Every uploaded measurement / product-dimensions photo must have a non-blank caption."
-      ],
-      "source_rule_id": "9.3.2",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check that each SKU's findings reference the corresponding specification sheet",
+      "source_rule_id": "1.1.2",
       "source_lines": {
-        "start": 22,
-        "end": 31
+        "start": 42,
+        "end": 57
       },
-      "context": "QUESTION — check photo captions on Product Dimensions Result",
-      "examples": {
-        "pass": [
-          "Every measurement photo has a descriptive caption (e.g. size check / SKU)"
+      "context": "SECTION — cross-check that each SKU's findings reference the corresponding specification sheet",
+      "check_block": {
+        "where": [
+          "report.product_label"
         ],
-        "fail": [
-          "Measurement photos uploaded with blank captions"
-        ]
-      },
-      "photo_check": "metadata"
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for eac?\")"
+      }
     },
     {
-      "id": "9_3_3",
-      "section": "report_writing_photo_metadata",
-      "requirement": "Product Dimensions Result — Tests checklist / report photos — Spotlight the measurement screenshot instead of leaving measurement images without spotlight. When measurement photos are present, at least one must be marked as spotlight.",
+      "id": "1_2_1",
+      "section": "general_report_setup",
+      "requirement": "Report front page — inspection date fields — The number of days the inspection was postponed or advanced versus the originally planned date must always be stated. \"N/A\" is not accepted, even for a missing report.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check spotlight flag on Product Dimensions Result photos",
-      "focus_terms": [
-        "Product Dimensions Result",
-        "Tests checklist",
-        "report photos",
-        "spotlight flag on product dimensions"
-      ],
-      "md_sections": [
-        "Product Dimensions Result",
-        "Tests",
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields",
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Measurement screenshot present but none marked spotlight",
-        "Report does not satisfy: Spotlight the measurement screenshot instead of leaving measurement images without spotlight. When measurement photos are present, at least one must be marked as spotlight."
-      ],
-      "source_rule_id": "9.3.3",
+      "scope_detail": "",
+      "source_rule_id": "1.2.1",
       "source_lines": {
-        "start": 32,
-        "end": 40
+        "start": 62,
+        "end": 77
       },
-      "context": "QUESTION — check spotlight flag on Product Dimensions Result photos",
-      "examples": {
-        "pass": [
-          "Measurement screenshot is spotlighted in Product Dimensions Result"
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.days_postponed"
         ],
-        "fail": [
-          "Measurement screenshot present but none marked spotlight"
-        ]
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "1_2_2",
+      "section": "general_report_setup",
+      "requirement": "Report front page — Factory / Vendor details — Factory name, address, and site representative must be recorded in English, even if the factory only confirmed them in Chinese. Vendor details must also be completed.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "1.2.2",
+      "source_lines": {
+        "start": 78,
+        "end": 93
       },
-      "photo_check": "content"
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "1_2_3",
+      "section": "general_report_setup",
+      "requirement": "Report — production line photo — A picture of the factory's production line must be included in the report.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "1.2.3",
+      "source_lines": {
+        "start": 94,
+        "end": 112
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "production",
+              "line"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "1_2_4",
+      "section": "general_report_setup",
+      "requirement": "Final PDF file — The PDF report sent to the client must be under 15MB. If it exceeds this, pictures must be compressed and the PDF regenerated; if still over 15MB, the QIMA quality team must be notified.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "check final file size against all embedded images",
+      "source_rule_id": "1.2.4",
+      "source_lines": {
+        "start": 113,
+        "end": 128
+      },
+      "context": "FULL REPORT — check final file size against all embedded images",
+      "check_block": {
+        "where": [
+          "report.attachment_filenames"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "1_3_1",
+      "section": "general_report_setup",
+      "requirement": "Inspection site / availability remark — If goods belonging to the supplier are at another location no more than a 5–15 minute walk away, the inspection may proceed; the location must be reflected in the report and the back office notified. For new suppliers in China, the inspection address must be reconfirmed by e-mail beforehand.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "1.3.1",
+      "source_lines": {
+        "start": 133,
+        "end": 148
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "1_3_2",
+      "section": "general_report_setup",
+      "requirement": "Available Quantity Check — If products are not ready for inspection, the inspector must check available/semi-finished product, request packing material from the factory if available, and mark the inspection FAILED. If nothing is available at all, a MISSED REPORT must be issued instead.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check quantity available on-site against the pass/fail/missed decision",
+      "source_rule_id": "1.3.2",
+      "source_lines": {
+        "start": 149,
+        "end": 167
+      },
+      "context": "FULL REPORT — cross-check quantity available on-site against the pass/fail/missed decision",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "available",
+              "quantity",
+              "details"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "1_3_3",
+      "section": "general_report_setup",
+      "requirement": "Inspection coordination note — If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must contact the QIMA quality team before proceeding.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "1.3.3",
+      "source_lines": {
+        "start": 168,
+        "end": 183
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.supplier_name"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must con?\")"
+      }
+    },
+    {
+      "id": "1_3_4",
+      "section": "general_report_setup",
+      "requirement": "Inspection start time / remark — If goods are not ready when the inspector arrives, the inspector must wait until at least part of the goods are available, notify the back office and SIC, and wait until 2:00 PM local time before issuing a missing inspection report if goods remain unavailable.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "1.3.4",
+      "source_lines": {
+        "start": 184,
+        "end": 199
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "1_4_1",
+      "section": "general_report_setup",
+      "requirement": "Random carton selection / Selected cartons — Carton and product selection must follow QIMA's Standard Operating Process (SOP) for random sampling.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "1.4.1",
+      "source_lines": {
+        "start": 204,
+        "end": 220
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "2_1_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Approval Sample Comparison — When no approval sample is provided by the factory (standard for Cemaco), the inspector must verify that all on-site findings (product, plug type, packaging) are fully aligned with the specification file, with no assumptions or interpretation.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check product/plug/packaging findings against the booking specification file",
+      "source_rule_id": "2.1.1",
+      "source_lines": {
+        "start": 227,
+        "end": 245
+      },
+      "context": "FULL REPORT — cross-check product/plug/packaging findings against the booking specification file",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "approval",
+              "sample",
+              "comparison"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "2_2_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Product Style & Construction — hangtag — The hangtag physically attached to each product must match that exact product's SKU, description, and specification exactly — hangtags must never be mixed between products or SKUs.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check hangtag content against product SKU and specification file",
+      "source_rule_id": "2.2.1",
+      "source_lines": {
+        "start": 250,
+        "end": 265
+      },
+      "context": "FULL REPORT — cross-check hangtag content against product SKU and specification file",
+      "check_block": {
+        "where": [
+          "report.all_text"
+        ],
+        "when": null,
+        "check": "scan_absent(\"Golden Sample\")"
+      }
+    },
+    {
+      "id": "2_2_2",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Product Style & Construction — barcode — The barcode printed on the product must be verified against both the hangtag barcode and the packing list/file; any discrepancy between the three must be reported.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check barcode on product, hangtag, and packing file",
+      "source_rule_id": "2.2.2",
+      "source_lines": {
+        "start": 266,
+        "end": 284
+      },
+      "context": "FULL REPORT — cross-check barcode on product, hangtag, and packing file",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "style",
+              "construction"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "2_2_3",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Product Labels / Product Details – Barcode — Barcode scanning result must be recorded for each SKU, with a photo of both the barcode label and the scan result.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "2.2.3",
+      "source_lines": {
+        "start": 285,
+        "end": 300
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
+      }
+    },
+    {
+      "id": "2_3_1",
+      "section": "documents_recorded_in_the_report",
+      "requirement": "Photo captions / TAG feature (QIMAone) — Photos must be organized and captioned by SKU using the TAG feature in QIMAone; photo captions must always reflect the correct SKU.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "2.3.1",
+      "source_lines": {
+        "start": 305,
+        "end": 320
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "report.all_captions"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "3_1_1",
+      "section": "packaging",
+      "requirement": "Outer Packing & Shipping Marks: Front & Side — carton quantity marking — The quantity marked on the outer carton must match the quantity specified in the client's order file for that SKU exactly.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check carton marking against order file quantity",
+      "source_rule_id": "3.1.1",
+      "source_lines": {
+        "start": 327,
+        "end": 345
+      },
+      "context": "FULL REPORT — cross-check carton marking against order file quantity",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "outer",
+              "packing",
+              "shipping",
+              "marks",
+              "front",
+              "side"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_1_2",
+      "section": "packaging",
+      "requirement": "Outer Packing & Shipping Marks — plug type / certification (E&E products) — Plug type and certification markings on the product/adaptor must match the certification required in the booking specification (e.g., UL vs. EU plug).",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check plug type/certification against booking specification",
+      "source_rule_id": "3.1.2",
+      "source_lines": {
+        "start": 346,
+        "end": 361
+      },
+      "context": "FULL REPORT — cross-check plug type/certification against booking specification",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_1_3",
+      "section": "packaging",
+      "requirement": "Outer Packing & Shipping Marks — market-specific labels — Labels not required for the client's destination market (e.g., a yellow ENERGYGUIDE sticker for a market that doesn't require it) must not be present on the product/packaging; if found, it must be reported as a deviation from the approved artwork.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check labels present against market requirements in the booking specification",
+      "source_rule_id": "3.1.3",
+      "source_lines": {
+        "start": 362,
+        "end": 377
+      },
+      "context": "FULL REPORT — cross-check labels present against market requirements in the booking specification",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_1_4",
+      "section": "packaging",
+      "requirement": "Outer Packing & Shipping Marks — printed component/feature count — Any printed specification on the product packaging (e.g., LED light count, piece count) must match the booking specification exactly.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check printed packaging text against booking specification",
+      "source_rule_id": "3.1.4",
+      "source_lines": {
+        "start": 378,
+        "end": 393
+      },
+      "context": "FULL REPORT — cross-check printed packaging text against booking specification",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_2_1",
+      "section": "packaging",
+      "requirement": "Inner Packing & Unit Packing — warning sticker — Warning/advisory stickers on inner or unit packaging must be firmly adhered with no lifting edges, positioned as specified in the packing manual, and match the required dimensions.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "3.2.1",
+      "source_lines": {
+        "start": 398,
+        "end": 416
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "inner",
+              "packing",
+              "unit",
+              "packing"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_3_1",
+      "section": "packaging",
+      "requirement": "Product Color Specification Check / insert card — The color of any insert card, color box, or gift box must be compared against the Pantone reference stated in the client's artwork, with a photo of the comparison. If TCX/TPG Pantone references are unavailable, use the STD Pantone.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check insert card/color box color against the artwork's Pantone reference",
+      "source_rule_id": "3.3.1",
+      "source_lines": {
+        "start": 421,
+        "end": 436
+      },
+      "context": "FULL REPORT — cross-check insert card/color box color against the artwork's Pantone reference",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_3_2",
+      "section": "packaging",
+      "requirement": "Color boxes — photography — For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork should be enlarged for detailed comparison.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "3.3.2",
+      "source_lines": {
+        "start": 437,
+        "end": 452
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.all_captions"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork s?\")"
+      }
+    },
+    {
+      "id": "4_1_1",
+      "section": "workmanship",
+      "requirement": "Defects checklist — Every defect must be recorded by SKU, with a supporting photo for each defect found; factory and vendor information must be completed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "4.1.1",
+      "source_lines": {
+        "start": 459,
+        "end": 474
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "4_2_1",
+      "section": "workmanship",
+      "requirement": "Product Color Specification Check — Color shade must be checked and compared across all inspected items/colors selected for the inspection — not only one representative color per SKU or series.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check color consistency across all units/colors of the same item inspected",
+      "source_rule_id": "4.2.1",
+      "source_lines": {
+        "start": 479,
+        "end": 497
+      },
+      "context": "FULL REPORT — cross-check color consistency across all units/colors of the same item inspected",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "color",
+              "specification",
+              "check"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "4_3_1",
+      "section": "workmanship",
+      "requirement": "Workmanship — metal items — For all-metal items, moisture level must be checked to assess the potential for rust or mildew; screws (if assembled) or loose parts/components (if not assembled) must be checked for rust.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "4.3.1",
+      "source_lines": {
+        "start": 502,
+        "end": 520
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "end",
+              "workmanship"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "4_4_1",
+      "section": "workmanship",
+      "requirement": "Product Dimensions Result / Product Weights Result — When the client provides no specific dimension specification, the general dimension and weight of the product must still be checked, on 5 pieces per item.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "4.4.1",
+      "source_lines": {
+        "start": 525,
+        "end": 543
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_1_1",
+      "section": "tests_and_measurements",
+      "requirement": "Inspection standards — Workmanship / Measurement sampling — Workmanship and measurement sampling must follow the Inspection Profile (IP) defined for the order; no separate Cemaco-specific AQL table exists beyond the IP.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check sample size/AQL applied in the report against the IP",
+      "source_rule_id": "5.1.1",
+      "source_lines": {
+        "start": 550,
+        "end": 568
+      },
+      "context": "FULL REPORT — cross-check sample size/AQL applied in the report against the IP",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "end",
+              "workmanship"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_2_1",
+      "section": "tests_and_measurements",
+      "requirement": "Product Dimensions Result — measurement chart — All measurements taken during inspection must be recorded in the client's official measurement chart ([Cemaco Nuevos Almacenes] [Measurements Template]).",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "5.2.1",
+      "source_lines": {
+        "start": 573,
+        "end": 591
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_3_1",
+      "section": "tests_and_measurements",
+      "requirement": "Tests checklist — memory foam pillow — For memory foam pillow products, both the filling and the assembled pillow must be weighed separately.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.3.1",
+      "source_lines": {
+        "start": 596,
+        "end": 614
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_3_2",
+      "section": "tests_and_measurements",
+      "requirement": "Tests checklist — Container Load Check (CLC) — For CLC inspections, no product quality checks are required; the inspector should instead focus on the container's condition and confirm pallets are loaded horizontally.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.3.2",
+      "source_lines": {
+        "start": 615,
+        "end": 633
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_3_3",
+      "section": "tests_and_measurements",
+      "requirement": "Tests checklist — Metal Detection Test — The Metal Detection Test is mandatory for all tablecloth and cushion product inspections.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.3.3",
+      "source_lines": {
+        "start": 634,
+        "end": 652
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "6_1_1",
+      "section": "report_photos",
+      "requirement": "Product Style & Construction (main page) — One product photo per SKU is required; if an SKU has multiple colors, a separate photo is required for each color, with all SKUs combined into a single photo on the first page of the report.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "6.1.1",
+      "source_lines": {
+        "start": 659,
+        "end": 674
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          "report.all_captions"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "6_1_2",
+      "section": "report_photos",
+      "requirement": "General photo requirement — The front view of the product must always be included and placed on the main page for each SKU.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.1.2",
+      "source_lines": {
+        "start": 675,
+        "end": 690
+      },
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.product_label"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: The front view of the product must always be included and placed on the main page for each SKU.?\")"
+      }
+    },
+    {
+      "id": "6_2_1",
+      "section": "report_photos",
+      "requirement": "General cosmetics — measurement/carton/packing photos — Each SKU section must include: product measurement photos, carton box size/weight photos (with a carton photo even when no SKU marking appears on the carton), packing photos, and shipping mark photos.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "",
+      "source_rule_id": "6.2.1",
+      "source_lines": {
+        "start": 695,
+        "end": 713
+      },
+      "context": "SECTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "packing",
+              "packaging"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_1_1",
+      "section": "aql_aoql_summary",
+      "requirement": "Inspection type / sampling level field (report header) — Verify the sampling level and AQL used in the report match the Inspection Profile (IP) defined for the order.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check applied AQL/sample size against the order's IP",
+      "source_rule_id": "7.1.1",
+      "source_lines": {
+        "start": 718,
+        "end": 739
+      },
+      "context": "FULL REPORT — cross-check applied AQL/sample size against the order's IP",
+      "check_block": {
+        "where": [
+          "out_of_report:ip"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "8_1_1",
+      "section": "pass_fail_decision_logic",
+      "requirement": "Overall result (report header) — Overall result must be PASS only if ALL conditions below are met. If any single condition fails, overall result must be FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check overall result against all checkpoint findings in the report",
+      "source_rule_id": "8.1.1",
+      "source_lines": {
+        "start": 744,
+        "end": 776
+      },
+      "context": "FULL REPORT — cross-check overall result against all checkpoint findings in the report",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
     }
   ]
 }

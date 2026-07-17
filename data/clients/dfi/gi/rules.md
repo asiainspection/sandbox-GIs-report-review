@@ -30,6 +30,15 @@ Each rule entry contains:
 **Error example:** Supplier Name = "Ruby Beauty Corporation Limited" / Factory Name = "ZHEJIANG YASILI COSMETICS CO., LTD" filled as two separate entries, or one field left blank
 **Correct example:** Both fields read "Ruby Beauty Corporation Limited (ZHEJIANG YASILI COSMETICS CO., LTD)"
 
+
+```check
+where: [report.supplier_name, report.factory_name]
+when: null
+check: 
+  - present
+  - no_language(chinese)
+```
+
 ---
 
 **ID:** 1.1.2
@@ -38,6 +47,13 @@ Each rule entry contains:
 **Scope:** `SECTION` — verify the same product name is consistent between cover and POs section
 **Error example:** Name field reads "1_4894514123593 [Q2608117119_1]" (SKU string left unreplaced)
 **Correct example:** Name field reads "Mannings Guardian Honey Moisturising Lip Balm 4.5g"
+
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Is the product name a real product name (not a SKU/barcode string)?")
+```
 
 ---
 
@@ -48,6 +64,13 @@ Each rule entry contains:
 **Error example:** PO field is blank, or reads "N/A — no PO available on site"
 **Correct example:** PO field reads "N/A"
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 
 **ID:** 1.1.4
@@ -56,6 +79,13 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check with Date Code Check section to confirm codes are recorded there
 **Error example:** MFG Date = N/A, EXP Date = N/A, Batch Code = N/A, and no replacement sentence present
 **Correct example:** All three fields replaced with "Refer to the individual batch/date code in the date code check section", and codes are filled in the Date Code Check checklist
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?")
+```
 
 ---
 
@@ -66,6 +96,15 @@ Each rule entry contains:
 **Error example:** Location reads "浙江省义乌市稠江街道" or a mix of Chinese and English
 **Correct example:** Location reads "NO.163 CHOUYI WEST ROAD, YITING TOWN, YIWU CITY, China"
 
+
+```check
+where: [report.production_site]
+when: null
+check: 
+  - present
+  - no_language(chinese)
+```
+
 ---
 
 **ID:** 1.1.6
@@ -74,6 +113,13 @@ Each rule entry contains:
 **Scope:** `QUESTION` — verify field value only
 **Error example:** Unit = "Other"
 **Correct example:** Unit = "Pcs" or "Boxes"
+
+
+```check
+where: [product._first.unit]
+when: null
+check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?")
+```
 
 ---
 
@@ -88,6 +134,13 @@ Each rule entry contains:
 **Error example:** Overall result = PASS but adhesive test is recorded as failed (printing unreadable)
 **Correct example:** Overall result = PENDING when adhesive test failed, with corresponding remark explaining the reason
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 1.2.2
@@ -97,6 +150,13 @@ Each rule entry contains:
 **Error example:** Report is Pending due to adhesive test failure, but Inspector's Remark only states "All defective items have been presented to the factory" with no explanation of the reason
 **Correct example:** "The inspection result is Pending due to the adhesive test failed: 1 of the 8 samples was unreadable after the adhesive test. All defective items and failure findings are presented to the factory."
 
+
+```check
+where: [report.overall_result]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 1.2.3
@@ -105,6 +165,13 @@ Each rule entry contains:
 **Scope:** `QUESTION` — verify language of remark text
 **Error example:** Remark contains a sentence written in Chinese describing a finding
 **Correct example:** All remark text in English; a date code printed as "生产日期: 2026/01/12" may appear as-is if recorded from the product
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -121,6 +188,13 @@ Each rule entry contains:
 **Error example:** Attachment absent, or filename reads "DFI测量表_20260402.xlsx"
 **Correct example:** Attachment present with filename "DFI Sampling Plan R-Cloud-Q2603753830 sample.xlsx"
 
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
+
 ---
 
 ### 2.2 GSS (Green Seal Sample) Status
@@ -134,6 +208,13 @@ Each rule entry contains:
 **Error example:** GSS field = "No — GSS not available" but overall result = PASS
 **Correct example:** GSS field = "Yes" for a PASS report; GSS field = "No" with a Pending overall result and remark explaining the situation
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 2.2.2
@@ -143,6 +224,13 @@ Each rule entry contains:
 **Error example:** Photo caption reads "Approved Sample vs Production" or remark states "compared with Golden Sample"
 **Correct example:** All references use "GSS" — e.g. photo caption "GSS vs Actual Product"
 
+
+```check
+where: [checklist.green_seal_sample_gss.comment]
+when: null
+check: scan_absent("sample")
+```
+
 ---
 
 **ID:** 2.2.3
@@ -151,6 +239,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check re-seal photo against GSS comparison photos (if comparison was done, re-seal must follow)
 **Error example:** GSS comparison photos are present but no re-sealed GSS photo is uploaded
 **Correct example:** Re-sealed GSS photo shows polybag sealed with QIMA sticker, sticker is signed, date and order number visible
+
+
+```check
+where:
+  - kind: checklist
+    match: [re, sealed, green, seal, sample, re]
+    field: photo_count
+when: null
+check: null
+```
 
 ---
 
@@ -167,6 +265,16 @@ Each rule entry contains:
 **Error example:** Only one shipping mark photo showing the front face; side face photo absent
 **Correct example:** Two shipping mark photos: one of the front face, one of the side face
 
+
+```check
+where:
+  - kind: checklist
+    match: [carton, shipping, mark]
+    field: photo_count
+when: null
+check: null
+```
+
 ---
 
 **ID:** 3.1.2
@@ -175,6 +283,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check recorded values against remark; verify remark is present when a difference exists
 **Error example:** Actual carton size = 420×265×150mm but printed spec = 420×265×145mm, and no remark describing the difference
 **Correct example:** Remark states: "Actual carton size is 420×265×150mm vs printed spec 420×265×145mm on shipping mark."
+
+
+```check
+where:
+  - kind: checklist
+    match: [carton, check, dimensions, and, weight]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -188,6 +306,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check table presence against product structure visible in photos and POs section
 **Error example:** Individual Pack AQL table is present but all photos show products with no individual packaging layer
 **Correct example:** Individual Pack AQL table present and photos confirm a separate individual pack layer exists inside the consumer pack
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -204,6 +329,13 @@ Each rule entry contains:
 **Error example:** Only one combined AQL table covers all packing levels; or Individual Pack table uses Level II instead of S3/S4
 **Correct example:** Three separate tables with sampling levels: Consumer Pack Level II, Individual Pack S3, Destructive Sample S1
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 4.1.2
@@ -212,6 +344,13 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check Checked, Max, and lot size within the same section
 **Error example:** Destructive sample size = 8 but lot size = 40,000 (should be 13); or sample size 13 with Max = 0/0/0 (should be 0/0/1)
 **Correct example:** Lot size 32,064 → destructive sample size = 8 → Max = 0/0/0
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -222,6 +361,13 @@ Each rule entry contains:
 **Error example:** Protection Mask product report shows AQL = Not Allowed / 1.5 / 4.0 instead of the percentage-based values from the Sampling Plan
 **Correct example:** General product report shows AQL = Not Allowed / 1.5 / 4.0 across all three packing levels
 
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
 ---
 
 **ID:** 4.1.4
@@ -230,6 +376,13 @@ Each rule entry contains:
 **Scope:** `QUESTION` — verify result value
 **Error example:** Colors, Labels, Artworks result = "N/A" with no corresponding finding or explanation
 **Correct example:** Colors, Labels, Artworks result = "OK" with remark "Conform with approval samples."
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -244,6 +397,13 @@ Each rule entry contains:
 **Error example:** 3 defects recorded but only 1 photo uploaded with no arrows; or defect section is blank with no "No Defects Found" text
 **Correct example:** "No Defects Found" text present when no defects; or each defect has a labeled photo with visible arrow or QIMA sticker
 
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
+
 ---
 
 **ID:** 4.2.2
@@ -253,6 +413,13 @@ Each rule entry contains:
 **Error example:** AQL table shows 3 Minor defects on the same sample but the remark only says "Found dirt mark and scratch mark" with no indication of which was counted
 **Correct example:** "Found 1 pc with multiple defects: Dirt mark (counted into AQL) + Shadow Mark (excluded from AQL), see defect pictures below, all defects are arrowed."
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
 ---
 
 **ID:** 4.2.3
@@ -261,6 +428,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check remark against AQL table entries and overall result
 **Error example:** Defect found during quantity check is added directly to the workmanship AQL table without any remark
 **Correct example:** AQL table unchanged; remark states "Found additional 1 MIN defect on 1 pc Consumer Pack during Quantity Check of Dimension section"; overall result = Pending
+
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
 
 ---
 
@@ -277,6 +451,16 @@ Each rule entry contains:
 **Error example:** GSS shows MFG Date format "12/01/2026" (DD/MM/YYYY) but Actual Product records it as "2026/01/12" (YYYY/MM/DD)
 **Correct example:** Both GSS and Actual Product rows show the same format "12/01/2026" with the same field positions; values may differ
 
+
+```check
+where:
+  - kind: checklist
+    match: [date, code, check]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.2
@@ -285,6 +469,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check against overall result if all codes are N/A
 **Error example:** All three fields (MFG, EXP, Batch) are blank for actual product rather than filled with "N/A"
 **Correct example:** MFG Date = "N/A", EXP Date = "12/01/2029", Batch Code = "26011"
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?")
+```
 
 ---
 
@@ -295,6 +486,16 @@ Each rule entry contains:
 **Error example:** Travel set with shampoo and conditioner, all date codes listed in one cell as "Shampoo 001 Conditioner 002 07/09/2023"
 **Correct example:** Separate rows: "Shampoo (batch 001): MFG 07/09/2023" / "Conditioner (batch 001): MFG 17/08/2023"
 
+
+```check
+where:
+  - kind: checklist
+    match: [date, code, check]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.1.4
@@ -303,6 +504,16 @@ Each rule entry contains:
 **Scope:** `QUESTION` — verify all three barcode fields are filled
 **Error example:** Individual Pack barcode field is blank; Consumer Pack = "4894514109108"; Outer Carton = "04894514125986"
 **Correct example:** Individual Pack = "N/A"; Consumer Pack = "4894514109108"; Outer Carton = "04894514125986"
+
+
+```check
+where:
+  - kind: checklist
+    match: [barcode, details]
+    field: result
+when: null
+check: null
+```
 
 ---
 
@@ -317,6 +528,16 @@ Each rule entry contains:
 **Error example:** Report measures carton dimensions even though no carton dimension spec is claimed on the label, while the claimed volume (500 ml) is left unmeasured
 **Correct example:** Only the specs printed on the packaging are measured: quantity (30 pcs), volume (500 ml), dimension (if claimed)
 
+
+```check
+where:
+  - kind: section
+    match: [dfi, product, dimensions, weights]
+    field: comment
+when: null
+check: null
+```
+
 ---
 
 **ID:** 5.2.2
@@ -325,6 +546,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check recorded values against pass/fail result and label claim
 **Error example:** Product net weight label claim = 4.500g; actual measured = 4.480g; result recorded as PASS
 **Correct example:** Product net weight = 4.480g < 4.500g label claim → result = FAIL
+
+
+```check
+where:
+  - kind: section
+    match: [dfi, product, dimensions, weights]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -335,6 +566,16 @@ Each rule entry contains:
 **Error example:** Dimension measured and result = PASS but remark only says "Checked OK" with no tolerance range stated
 **Correct example:** "Checked OK, the tolerance range of dimension is 17.5cm – 18.5cm."
 
+
+```check
+where:
+  - kind: section
+    match: [dfi, product, dimensions, weights]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 5.2.4
@@ -343,6 +584,16 @@ Each rule entry contains:
 **Scope:** `QUESTION` — scan all measurement columns for uniform values
 **Error example:** Product weight: S1=0.705, S2=0.705, S3=0.705, S4=0.705, S5=0.705, S6=0.705, S7=0.705, S8=0.705
 **Correct example:** Product weight values vary across samples: S1=10.730, S2=10.740, S3=N/A, S4=10.710, S5=10.730, S6=10.680, S7=10.710, S8=10.750
+
+
+```check
+where:
+  - kind: section
+    match: [dfi, product, dimensions, weights]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -353,6 +604,13 @@ Each rule entry contains:
 **Error example:** Protection Mask report with no product net weight row in the measurement table
 **Correct example:** Measurement table includes "Product net weight" row filled for all 8 (or 13) destructive samples
 
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: For Protection Mask products, the individual mask net weight must always be measured and recorded, even if no weight spe?")
+```
+
 ---
 
 **ID:** 5.2.6
@@ -361,6 +619,13 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check NIP label visible in photos against measurement rows
 **Error example:** NIP states "Serving size: 1 capsule (1.043g)" but measurement table only records total net weight, no capsule weight row
 **Correct example:** Measurement table has both "Product net weight" row and "Serving weight (1 capsule)" row, both filled for all 8 samples
+
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: For health products (identified by a Nutrition Information Panel on the label), both total net weight and individual ser?")
+```
 
 ---
 
@@ -375,6 +640,16 @@ Each rule entry contains:
 **Error example:** Remark states "carton was broken at drop 7, product not damaged" but result = FAIL
 **Correct example:** Remark states "Carton damaged at drop 7 (1 point, 1 edge, 5 faces were done) and no damage on products. Hasn't further proceeded with the rest drop as the carton already opened." Result = PENDING
 
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: result
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
 ---
 
 **ID:** 5.3.2
@@ -383,6 +658,16 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check against product type and overall result
 **Error example:** Drop test section shows "N/A — factory refused" but overall result = PASS
 **Correct example:** Drop test remark states "Factory refused the carton drop test" and overall result = PENDING
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: result
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -397,6 +682,13 @@ Each rule entry contains:
 **Error example:** Adhesive test = "Not OK — 1 sample unreadable" and overall result = FAIL
 **Correct example:** Adhesive test = "Not OK — 1 of 8 samples was unreadable after the adhesive test" and overall result = PENDING
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 5.4.2
@@ -406,6 +698,15 @@ Each rule entry contains:
 **Error example:** Adhesive test remark reads "PASSED. Checked ok." with no tape model mentioned
 **Correct example:** Adhesive test remark reads "PASSED. Checked ok, and the tape model was 3M 500."
 
+
+```check
+where: [checklist.adhesive_test.comment]
+when: null
+check: 
+  - extract("Quote the tape model stated in this comment, or null")
+  - matches("3M ?(500|600P|810)")
+```
+
 ---
 
 **ID:** 5.4.3
@@ -414,6 +715,16 @@ Each rule entry contains:
 **Scope:** `QUESTION` — verify exemption remark is present when applicable
 **Error example:** Mannings Spiral Cotton Tips report has no remark about the date code exemption
 **Correct example:** Remark reads "Adhesive test on the date code waived due to limitation of the can and ink."
+
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
 
 ---
 
@@ -427,6 +738,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check result against photos showing cloth and product surface
 **Error example:** Rubbing test result = PASS but only consumer pack photos are present; no rubbing test photos for individual pack
 **Correct example:** PASS result with photos showing rubbing performed on both consumer pack and individual pack surfaces, cloth visible and unstained
+
+
+```check
+where:
+  - kind: checklist
+    match: [rubbing, marking, test]
+    field: comment
+when: null
+check: null
+```
 
 ---
 
@@ -443,6 +764,13 @@ Each rule entry contains:
 **Error example:** Cover photo shows the outer shipping carton, or the product is photographed at an angle with the name partially cropped
 **Correct example:** Frontal, vertical photo of the consumer pack with the full product name visible
 
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: The cover photo must show the Consumer Pack (retail packaging), frontal angle, vertical orientation, with the full produ?")
+```
+
 ---
 
 **ID:** 6.1.2
@@ -451,6 +779,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — verify both GSS-related photos within the Product Specifications section
 **Error example:** GSS comparison photos present but no photo of the GSS label or re-sealed GSS
 **Correct example:** GSS label photo shows DFI QA signature clearly; re-sealed GSS photo shows polybag, QIMA sticker signed with date and order number
+
+
+```check
+where:
+  - kind: section
+    match: [product, specifications, packaging]
+    field: photo_count
+when: null
+check: null
+```
 
 ---
 
@@ -461,6 +799,16 @@ Each rule entry contains:
 **Error example:** Comparison photos show only the front and back of consumer pack; no close-up of the date code area, no photos of product inside
 **Correct example:** Photos cover all four faces of consumer pack, close-up of date code area on both GSS and actual product, composition label, barcode, and product inside (e.g. lip balm stick removed from packaging)
 
+
+```check
+where:
+  - kind: section
+    match: [product, specifications, packaging]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
 ---
 
 **ID:** 6.1.4
@@ -469,6 +817,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — cross-check number of photos against sample size and number of measured specs
 **Error example:** Sample size = 8 but only 3 weight photos uploaded; scale display not readable in photos
 **Correct example:** 8 photos of weight measurement, one per sample; scale display showing the reading clearly in each photo
+
+
+```check
+where:
+  - kind: section
+    match: [dfi, product, dimensions, weights]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
 
 ---
 
@@ -479,6 +837,16 @@ Each rule entry contains:
 **Error example:** Only one after-drop photo of the carton exterior; no photo showing the interior product condition
 **Correct example:** Three-stage photo set: intact carton before drop; carton being dropped; carton opened after test showing interior product condition
 
+
+```check
+where:
+  - kind: checklist
+    match: [carton, drop, test]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
 ---
 
 **ID:** 6.1.6
@@ -488,6 +856,16 @@ Each rule entry contains:
 **Error example:** Adhesive test photo shows tape applied to the front artwork area only; no photo covering the date code; no individual pack test photo
 **Correct example:** Adhesive test photos show: tape on date code area of consumer pack + tape on date code area of individual pack; rubbing test photo shows cloth on product surface
 
+
+```check
+where:
+  - kind: checklist
+    match: [adhesive, test]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
 ---
 
 **ID:** 6.1.7
@@ -496,6 +874,16 @@ Each rule entry contains:
 **Scope:** `SECTION` — verify all four photo categories within Factory Review
 **Error example:** Factory Review section has tools photos but no calibration certificate visible; signed documents photos missing
 **Correct example:** Tool photos show calibration certificate alongside the scale; three separate photos of signed Factory Disclaimer, Draft Report, and COC
+
+
+```check
+where:
+  - kind: section
+    match: [factory, review]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
 
 ---
 
@@ -509,6 +897,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — scan all photos
 **Error example:** Workmanship defect photo shows an inspector's face clearly visible while holding the product
 **Correct example:** Photos show product and defect areas only; faces are not identifiable
+
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: No photo in the report may show a worker's face, name badge, or ID in a way that identifies the individual. If visible, ?")
+```
 
 ---
 
@@ -530,6 +925,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check product type, inspection mode, and AQL values
 **Error example:** Onsite inspection of a general product with Consumer Pack sampling level = Level I (remote level used in error)
 **Correct example:** Onsite inspection, general product: Consumer Pack = Level II, Individual Pack = S3, Destructive = S1, AQL = Not Allowed / 1.5 / 4.0
+
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
 
 ---
 
@@ -568,6 +970,13 @@ Each rule entry contains:
 **Error example:** Measurement result shows product net weight 4.480g vs label claim 4.500g (shortfall) but overall result = PASS
 **Correct example:** Product net weight < label claim → overall result = FAIL regardless of all other findings
 
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
 ---
 
 **ID:** 8.1.2
@@ -576,6 +985,13 @@ Each rule entry contains:
 **Scope:** `FULL REPORT` — cross-check test results against overall result
 **Error example:** Rubbing test failed (printing rubbed off) but overall result = PENDING
 **Correct example:** Rubbing test failed → overall result = FAIL; adhesive test failed → overall result = PENDING
+
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
 
 ---
 

@@ -19,8 +19,8 @@ from symbolic_eval import (
 )
 
 
-def _answer(item_id: str, value, confidence: float = 0.9, evidence: str = "ev") -> AtomAnswer:
-    return AtomAnswer(item_id=item_id, field=f"atom.{item_id}", value=value, confidence=confidence, evidence=evidence)
+def _answer(item_id: str, value, evidence: str = "ev") -> AtomAnswer:
+    return AtomAnswer(item_id=item_id, field=f"atom.{item_id}", value=value, evidence=evidence)
 
 
 class SymbolicEvalTests(unittest.TestCase):
@@ -47,15 +47,15 @@ class SymbolicEvalTests(unittest.TestCase):
 
     def test_unable_when_violation_unknown(self):
         atoms = [{"id": "4_1_1_violation"}]
-        answers = {"4_1_1_violation": _answer("4_1_1_violation", None, confidence=0.0)}
+        answers = {"4_1_1_violation": _answer("4_1_1_violation", None)}
         verdict = evaluate_atoms("4_1_1", atoms, answers)
         self.assertEqual(verdict.match, MATCH_UNABLE)
 
-    def test_unable_when_low_confidence(self):
+    def test_flag_when_violation_true_no_confidence(self):
         atoms = [{"id": "5_1_1_violation"}]
-        answers = {"5_1_1_violation": _answer("5_1_1_violation", True, confidence=0.5)}
-        verdict = evaluate_atoms("5_1_1", atoms, answers, confidence_threshold=0.75)
-        self.assertEqual(verdict.match, MATCH_UNABLE)
+        answers = {"5_1_1_violation": _answer("5_1_1_violation", True)}
+        verdict = evaluate_atoms("5_1_1", atoms, answers)
+        self.assertEqual(verdict.match, MATCH_CLEAR_UNMATCH)
 
     def test_vision_deferred(self):
         verdict = vision_verdict("6_1_1")

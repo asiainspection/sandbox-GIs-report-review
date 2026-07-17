@@ -7,7 +7,12 @@ from dataclasses import dataclass
 from typing import Any
 
 from fact_extractor import AtomAnswer
-from fact_schema import resolve_selector
+from fact_schema import (
+    ResolvedField,
+    _is_blank_value,
+    resolve_where_bindings,
+    resolve_selector,
+)
 from semantic_report import SemanticReport
 
 MATCH_CLEAR = "clear_match"
@@ -39,6 +44,39 @@ PRIMITIVE_OPS = frozenset(
     }
 )
 
+_SINGLE_VALUE_OPS = frozenset(
+    {
+        "equals",
+        "in_set",
+        "matches",
+        "contains",
+        "contains_number",
+        "no_language",
+        "count_at_most",
+        "count_at_least",
+        "filename_matches",
+    }
+)
+
+
+def _resolved_from_node(node: dict[str, Any], ctx: EvalContext) -> list[ResolvedField]:
+    binding = node.get("binding")
+    if binding:
+        return resolve_where_bindings([binding], ctx.facts, ctx.semantic)
+    selector = str(node.get("selector") or "")
+    if not selector:
+        return []
+    return resolve_where_bindings([selector], ctx.facts, ctx.semantic)
+
+
+def _requires_fields_resolved(node: dict[str, Any], ctx: EvalContext) -> bool:
+    requires = node.get("requires_fields") or []
+    if not requires:
+        return True
+    resolved = resolve_where_bindings(requires, ctx.facts, ctx.semantic)
+    return any(not _is_blank_value(rf.value) for rf in resolved)
+
+
 _CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]")
 
 
@@ -54,7 +92,6 @@ class EvalContext:
     facts: dict[str, Any]
     semantic: SemanticReport | None = None
     atom_answers: dict[str, AtomAnswer] | None = None
-    confidence_threshold: float = 0.75
 
 
 def _norm_text(value: Any) -> str:
@@ -98,31 +135,30 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
 
     if op == "atom":
         atom_id = str(node.get("id") or "")
+        if not _requires_fields_resolved(node, ctx):
+            return EvalResult(None, "bound field missing", f"atom:{atom_id}:unresolved")
         answers = ctx.atom_answers or {}
         answer = answers.get(atom_id)
         role = str(node.get("role") or "boolean")
+        # Quote atoms: extraction only — a following deterministic op decides.
+        # Gate: missing/null quote => unable; otherwise pass (True) so all_of continues.
+        if role == "quote":
+            raw = None if answer is None else answer.value
+            text = "" if raw is None else str(raw).strip()
+            if not text or text.lower() in {"null", "none", "n/a", "na"}:
+                return EvalResult(
+                    None,
+                    answer.evidence if answer else "quote missing",
+                    f"atom:{atom_id}:quote",
+                )
+            return EvalResult(True, str(answer.evidence or text)[:300], f"atom:{atom_id}:quote")
         val = _bool_atom(answer)
         if val is None:
             return EvalResult(None, answer.evidence if answer else "", f"atom:{atom_id}")
-        if answer and answer.confidence < ctx.confidence_threshold:
-            return EvalResult(
-                None,
-                f"low confidence ({answer.confidence:.2f}): {answer.evidence}",
-                f"atom:{atom_id}:low_confidence",
-            )
         if role == "violation":
-            # Ungated fail_if atoms are soft — require high confidence before flagging.
-            need = max(ctx.confidence_threshold, 0.9)
-            if answer.confidence < need:
-                return EvalResult(
-                    None,
-                    f"low confidence for violation ({answer.confidence:.2f}): {answer.evidence}",
-                    f"atom:{atom_id}:low_confidence",
-                )
             # violation atom true => obligation fails (predicate false for THEN)
             return EvalResult(not val, answer.evidence if answer else "", f"atom:{atom_id}:violation")
         if role == "excuse":
-            # excuse atom true => excused (handled at unless level)
             return EvalResult(val, answer.evidence if answer else "", f"atom:{atom_id}:excuse")
         if role == "required_true":
             return EvalResult(val, answer.evidence if answer else "", f"atom:{atom_id}:required")
@@ -130,6 +166,8 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
 
     if op == "vision":
         vision_id = str(node.get("id") or "")
+        if not _requires_fields_resolved(node, ctx):
+            return EvalResult(None, "bound field missing", f"vision:{vision_id}:unresolved")
         answer = (ctx.atom_answers or {}).get(vision_id)
         if answer is None:
             return EvalResult(
@@ -140,12 +178,6 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         val = _bool_atom(answer)
         if val is None:
             return EvalResult(None, answer.evidence, f"vision:{vision_id}")
-        if answer.confidence < ctx.confidence_threshold:
-            return EvalResult(
-                None,
-                f"low confidence ({answer.confidence:.2f}): {answer.evidence}",
-                f"vision:{vision_id}:low_confidence",
-            )
         # Vision question is phrased as "does content satisfy?" — true means obligation ok.
         return EvalResult(val, answer.evidence, f"vision:{vision_id}")
 
@@ -176,7 +208,27 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         return EvalResult(not inner.value, inner.evidence, "primitive:not")
 
     selector = str(node.get("selector") or "")
-    actual = resolve_selector(selector, ctx.facts, ctx.semantic) if selector else None
+    binding = node.get("binding")
+    if binding:
+        resolved = _resolved_from_node(node, ctx)
+        if not resolved:
+            return EvalResult(None, "binding unresolved", f"primitive:{op}:unresolved")
+        if len(resolved) > 1 and op in _SINGLE_VALUE_OPS:
+            results = []
+            for rf in resolved:
+                child = {**node, "binding": None, "selector": rf.selector}
+                results.append(eval_predicate(child, ctx))
+            values = [r.value for r in results]
+            evidence = "; ".join(r.evidence for r in results if r.evidence)[:300]
+            if any(v is False for v in values):
+                return EvalResult(False, evidence, f"primitive:{op}:all")
+            if any(v is None for v in values):
+                return EvalResult(None, evidence, f"primitive:{op}:unknown")
+            return EvalResult(True, evidence, f"primitive:{op}:all")
+        actual = resolved[0].value
+        selector = resolved[0].selector or f"{resolved[0].kind}.{resolved[0].name}.{resolved[0].field}"
+    else:
+        actual = resolve_selector(selector, ctx.facts, ctx.semantic) if selector else None
     ground = str(node.get("ground") or "json")
 
     if ground == "atom":
@@ -246,13 +298,25 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         return EvalResult(ok, f"{selector} blank={ok}", "primitive:is_blank")
 
     if op == "count_at_most":
-        count = int(actual or 0)
+        if isinstance(actual, list):
+            count = len(actual)
+        else:
+            try:
+                count = int(actual or 0)
+            except (TypeError, ValueError):
+                return EvalResult(None, f"{selector}={actual!r} not countable", "primitive:count_at_most")
         maximum = int(node.get("max", 0))
         ok = count <= maximum
         return EvalResult(ok, f"{selector}={count}, max={maximum}", "primitive:count_at_most")
 
     if op == "count_at_least":
-        count = int(actual or 0)
+        if isinstance(actual, list):
+            count = len(actual)
+        else:
+            try:
+                count = int(actual or 0)
+            except (TypeError, ValueError):
+                return EvalResult(None, f"{selector}={actual!r} not countable", "primitive:count_at_least")
         minimum = int(node.get("min", 1))
         ok = count >= minimum
         return EvalResult(ok, f"{selector}={count}, min={minimum}", "primitive:count_at_least")

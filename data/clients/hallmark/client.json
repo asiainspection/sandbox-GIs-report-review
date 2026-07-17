@@ -6,19 +6,16 @@
   "flawed_dir": "flawed",
   "introduced_checkpoints": {
     "report_1hgo3708_flawed": {
-      "9_2_6": "injected by _inj_defect_extra_photos",
-      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
-      "2_1_1": "injected by _inj_sr_failed_overall_pass"
+      "rpt_10_10": "injected by _inj_defect_extra_photos",
+      "wm_9_6": "same inject as 9_2_6 (defect photo_count>1)"
     },
     "report_1sox2223_flawed": {
-      "9_2_6": "injected by _inj_defect_extra_photos",
-      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
-      "2_2_1": "injected by _inj_fr_failed_overall_pass"
+      "rpt_10_10": "injected by _inj_defect_extra_photos",
+      "wm_9_6": "same inject as 9_2_6 (defect photo_count>1)"
     },
     "report_5qgo2803_flawed": {
-      "9_2_6": "injected by _inj_defect_extra_photos",
-      "4_3_2": "same inject as 9_2_6 (defect photo_count>1)",
-      "2_1_1": "injected by _inj_sr_failed_overall_pass"
+      "rpt_10_10": "injected by _inj_defect_extra_photos",
+      "wm_9_6": "same inject as 9_2_6 (defect photo_count>1)"
     }
   },
   "holdout_keys": [

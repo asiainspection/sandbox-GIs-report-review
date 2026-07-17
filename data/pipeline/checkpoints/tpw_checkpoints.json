@@ -1,0 +1,1049 @@
+{
+  "meta": {
+    "name": "TPW (Temple & Webster) Inspection Report Review – Rules Reference",
+    "source": "data/clients/tpw/gi/rules.md",
+    "generated_at": "2026-07-17T04:40:55Z",
+    "check_blocks": 41,
+    "checkpoint_count": 41
+  },
+  "checkpoints": [
+    {
+      "id": "1_1_1",
+      "section": "documents",
+      "requirement": "Attachments — Packing list — A packing list must be provided/attached. If missing or incorrect, immediately inform support@qima.com, attention quality team.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check packing list attachment against booking/attachment requirement.",
+      "source_rule_id": "1.1.1",
+      "source_lines": {
+        "start": 107,
+        "end": 125
+      },
+      "context": "FULL REPORT — cross-check packing list attachment against booking/attachment requirement.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "packing",
+              "packaging"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "1_1_2",
+      "section": "documents",
+      "requirement": "Attachments — Techpack / factory location — If the techpack is not provided or is wrong, or the factory location is wrong, immediately inform support@qima.com, attention quality team.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check techpack and factory address against booking/IRF.",
+      "source_rule_id": "1.1.2",
+      "source_lines": {
+        "start": 126,
+        "end": 142
+      },
+      "context": "FULL REPORT — cross-check techpack and factory address against booking/IRF.",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "2_1_1",
+      "section": "quantities_and_production_status",
+      "requirement": "PO & Product details — Produced/Packed quantities (PSI) — Apply the production-status rule table:",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check finished %/packed % against this table.",
+      "source_rule_id": "2.1.1",
+      "source_lines": {
+        "start": 146,
+        "end": 168
+      },
+      "context": "SECTION — cross-check finished %/packed % against this table.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "details"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "2_1_2",
+      "section": "quantities_and_production_status",
+      "requirement": "Inspector's remark / Summary review — partial packed/produced quantity mismatch (e.g. booked 80% PSI, actual 20%) — Proceed with the inspection, add an important remark, fail the quantity checkpoint, and mention this on the draft report signed by the factory. Sample size must be selected only from finished and packed goods. If there is no finished/packed product, workmanship check is not required, but the inspector must still check what is checkable.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check remark, quantity checkpoint result, and draft report content.",
+      "source_rule_id": "2.1.2",
+      "source_lines": {
+        "start": 169,
+        "end": 184
+      },
+      "context": "FULL REPORT — cross-check remark, quantity checkpoint result, and draft report content.",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
+      }
+    },
+    {
+      "id": "2_1_3",
+      "section": "quantities_and_production_status",
+      "requirement": "Inspector's remark — no product available on arrival — If no finished/packed product is available on arrival but product will be available before 12:00 noon, remark this in the report and proceed with the inspection once product becomes available; no need to check any non-conforming units from before.",
+      "severity": "MINOR",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check remark against actual inspection start time.",
+      "source_rule_id": "2.1.3",
+      "source_lines": {
+        "start": 185,
+        "end": 201
+      },
+      "context": "SECTION — cross-check remark against actual inspection start time.",
+      "check_block": {
+        "where": [
+          "report.global_remark"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "3_1_1",
+      "section": "report_writing_conventions_product_item_photos",
+      "requirement": "Any checkpoint/defect comment — issue per item — If there is an issue found on a specific item, the item name must be clearly mentioned in the comment describing the issue.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the single comment/finding field.",
+      "source_rule_id": "3.1.1",
+      "source_lines": {
+        "start": 205,
+        "end": 220
+      },
+      "context": "QUESTION — contained within the single comment/finding field.",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "3_1_2",
+      "section": "report_writing_conventions_product_item_photos",
+      "requirement": "Attachments — small parts photos (screws, bolts, discs) — Products with multiple small parts must be photographed together in a single photo, not one photo per individual part.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the photo attachment for that checkpoint.",
+      "source_rule_id": "3.1.2",
+      "source_lines": {
+        "start": 221,
+        "end": 237
+      },
+      "context": "QUESTION — contained within the photo attachment for that checkpoint.",
+      "check_block": {
+        "where": [
+          "report.attachment_filenames"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "4_1_1",
+      "section": "specifications_and_packaging",
+      "requirement": "Specifications — Approval sample — Confirm whether an approval sample is available in the factory, identified via signature/seal/comparison to the booking picture, or a special marking. If not present, proceed with the inspection and clearly add a remark.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check approval sample presence/identification against booking picture.",
+      "source_rule_id": "4.1.1",
+      "source_lines": {
+        "start": 241,
+        "end": 259
+      },
+      "context": "SECTION — cross-check approval sample presence/identification against booking picture.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "4_1_2",
+      "section": "specifications_and_packaging",
+      "requirement": "Specifications — Packaging and shipping marks — Follow the client's booking/attachment instructions if specified; otherwise follow the standard IP.",
+      "severity": "MINOR",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check booking attachments vs. report findings.",
+      "source_rule_id": "4.1.2",
+      "source_lines": {
+        "start": 260,
+        "end": 279
+      },
+      "context": "FULL REPORT — cross-check booking attachments vs. report findings.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_1_1",
+      "section": "measurements",
+      "requirement": "Attachments — Product and Carton Measurements & Weight file — All product and carton measurements/weights must be recorded in the mandatory Excel file \"Product Measurements and Weight - Carton Measurements and Weight v2.\" If the client attached factory packaging forms in the booking, those must also be filled in and submitted with the report.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check that the correct template is attached and, if applicable, that factory packaging forms are included.",
+      "source_rule_id": "5.1.1",
+      "source_lines": {
+        "start": 283,
+        "end": 301
+      },
+      "context": "FULL REPORT — cross-check that the correct template is attached and, if applicable, that factory packaging forms are included.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "and",
+              "carton",
+              "weight",
+              "check"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "5_1_2",
+      "section": "measurements",
+      "requirement": "Measurement file — Carton measurement sequence — Carton measurements recorded in the order Length (L) x Width (W) x Height (H); the sequence must never be mixed.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the measurement fields themselves.",
+      "source_rule_id": "5.1.2",
+      "source_lines": {
+        "start": 302,
+        "end": 317
+      },
+      "context": "QUESTION — contained within the measurement fields themselves.",
+      "check_block": {
+        "where": [
+          "report.all_text"
+        ],
+        "when": null,
+        "check": "scan_absent(\"Golden Sample\")"
+      }
+    },
+    {
+      "id": "5_1_3",
+      "section": "measurements",
+      "requirement": "Measurement file — Product measurement sequence and method — Product measurements recorded in the order Height (H) x Width (W) x Depth (D):",
+      "severity": "MINOR",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check recorded H/W/D values and sequence against product type and the reference diagram.",
+      "source_rule_id": "5.1.3",
+      "source_lines": {
+        "start": 318,
+        "end": 338
+      },
+      "context": "SECTION — cross-check recorded H/W/D values and sequence against product type and the reference diagram.",
+      "check_block": {
+        "where": [
+          "report.attachment_filenames"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "5_1_4",
+      "section": "measurements",
+      "requirement": "Measurement file — tolerance thresholds — Deviation classification: dimensions +/-10mm = minor, +/-20mm = major, +/-30mm = critical; weight +/-1kg = minor, +/-2kg = major, +/-3kg = critical.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check measurement file values against these thresholds and the severity assigned.",
+      "source_rule_id": "5.1.4",
+      "source_lines": {
+        "start": 339,
+        "end": 355
+      },
+      "context": "FULL REPORT — cross-check measurement file values against these thresholds and the severity assigned.",
+      "check_block": {
+        "where": [
+          "report.attachment_filenames"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "6_1_1",
+      "section": "workmanship",
+      "requirement": "Workmanship — defect severity, Rust — Any rust defect must be classified as Critical, regardless of apparent size or location.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the defect severity field for that defect.",
+      "source_rule_id": "6.1.1",
+      "source_lines": {
+        "start": 359,
+        "end": 374
+      },
+      "context": "QUESTION — contained within the defect severity field for that defect.",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Are all 'rust'-related defects classified as Critical?\")"
+      }
+    },
+    {
+      "id": "6_1_2",
+      "section": "workmanship",
+      "requirement": "Workmanship — defect list / manually added defects — Defects found that are not on the predefined defect list must be manually added, not omitted.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check defects found in comments/photos against the selected defect list.",
+      "source_rule_id": "6.1.2",
+      "source_lines": {
+        "start": 375,
+        "end": 391
+      },
+      "context": "SECTION — cross-check defects found in comments/photos against the selected defect list.",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "7_1_1",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — general test conduct — Every applicable test must be conducted and correctly matched to product type; dining benches and barstools must be treated as dining chairs, so relevant tests must not be skipped.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check product type against the checklist of tests actually performed.",
+      "source_rule_id": "7.1.1",
+      "source_lines": {
+        "start": 397,
+        "end": 415
+      },
+      "context": "SECTION — cross-check product type against the checklist of tests actually performed.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_1_2",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — photo requirements for all tests — Each test photo must include (visibly or in caption): Model or Item #, Test name, Weight applied, Result/Remarks.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the individual test photo/caption.",
+      "source_rule_id": "7.1.2",
+      "source_lines": {
+        "start": 416,
+        "end": 434
+      },
+      "context": "QUESTION — contained within the individual test photo/caption.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_captions"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "7_1_3",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Door/Drawer Function and Stability test — Test conducted per checklist parameters: 40kg static load distributed across a 0.12m² (400x300mm) surface for door/drawer function, no damage and drawers/doors functioning normally; 60kg forward/rearward stability force applied 50mm from the specified edge, product must not tip over; unit stability check with 20kg hung 125mm from the front edge, critical fail noted if no wall strap provided.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check checklist result against the documented test method.",
+      "source_rule_id": "7.1.3",
+      "source_lines": {
+        "start": 435,
+        "end": 450
+      },
+      "context": "SECTION — cross-check checklist result against the documented test method.",
+      "check_block": {
+        "where": [
+          "product._first.unit"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?\")"
+      }
+    },
+    {
+      "id": "7_1_4",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Stability test weight placement/photo — The checklist instruction on weight placement must be followed strictly. The actual weight used must be stated in the photo description; a photo without a stated weight description is not acceptable.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the stability test photo/caption.",
+      "source_rule_id": "7.1.4",
+      "source_lines": {
+        "start": 451,
+        "end": 469
+      },
+      "context": "QUESTION — contained within the stability test photo/caption.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_1_5",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Static Loading test — Comment underneath the photo must state model number and weight. Mass weight must be placed in the center of the 400x400mm area for center rail, side rails, and slat (not separated). Sofa seat load must not exceed 500mm width; table load must be overhanging; armrest test: 80kg on one arm only, held 1 minute, with a comment on any damage/deformation for loads between 30–70kg.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check load placement, weight, and comment against these requirements.",
+      "source_rule_id": "7.1.5",
+      "source_lines": {
+        "start": 470,
+        "end": 488
+      },
+      "context": "SECTION — cross-check load placement, weight, and comment against these requirements.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "static",
+              "loading",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_most(0)"
+      }
+    },
+    {
+      "id": "7_1_6",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Assembly — The inspector must use the tools recommended in the assembly instructions when assembling the product.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the assembly checkpoint/comment.",
+      "source_rule_id": "7.1.6",
+      "source_lines": {
+        "start": 489,
+        "end": 507
+      },
+      "context": "QUESTION — contained within the assembly checkpoint/comment.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "assembly",
+              "check"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_1_7",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Care label for cushion products — A care label is mandatory only if the cushion cover is removable; not mandatory (and not to be flagged) if the cover is not removable.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the checkpoint for that cushion/product.",
+      "source_rule_id": "7.1.7",
+      "source_lines": {
+        "start": 508,
+        "end": 515
+      },
+      "context": "QUESTION — contained within the checkpoint for that cushion/product.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_1",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop test standard selection — Standard furniture → ISTA 2C Level 3; standard homeware and Home Improvement → ISTA 2C Level 2; any product with a high incident rate → ISTA 3A. When the client attaches a specific product-type list in the booking (\"TPW Drop Test Requirements by Product Type,\" March 2026), that list takes priority — e.g. within Home Improvement, Bathroom Vanities/Sinks/Toilets require ISTA 3A while Basins/Fixtures/Ceiling Fans/Drains/Shaving Cabinets/Shower Screens/Taps/Towel Rails require ISTA 2C Level 2; within Dining, metal Bar Stools and metal Dining Chairs require ISTA 2C Level 3 while non-metal versions require ISTA 3A.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check product category/material against the booking-attached product-type list, falling back to the general rule if no list is attached.",
+      "source_rule_id": "7.2.1",
+      "source_lines": {
+        "start": 529,
+        "end": 547
+      },
+      "context": "FULL REPORT — cross-check product category/material against the booking-attached product-type list, falling back to the general rule if no list is attached.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_2",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop test box type and applicable steps (ISTA 3A) — Standard Box: Steps 1 & 2 only, then stop. Flat Box: Steps 1, 2, 3, 4, & 5a, then stop (skip 5b). Elongated Box: Steps 1, 2, 3, 4, & 5b, then stop (skip 5a).",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check box type against steps actually performed.",
+      "source_rule_id": "7.2.2",
+      "source_lines": {
+        "start": 548,
+        "end": 566
+      },
+      "context": "SECTION — cross-check box type against steps actually performed.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_3",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop height by weight class — ISTA 3A: <32kg vs 32–70kg product+box weight determines drop height (e.g. most drops = 460mm/300mm; hazard drops 8 and 16 = 910mm/600mm; Step 5a/5b hazard block drop = 400mm regardless of weight). ISTA 2C: drop height depends on weight class (0–23kg/23–45kg/>45kg) and level (Level 2 vs Level 3), e.g. Level 3 0–23kg = 460mm, Level 2 0–23kg = 610mm.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check declared product+box weight, drop height used, and ISTA level/standard.",
+      "source_rule_id": "7.2.3",
+      "source_lines": {
+        "start": 567,
+        "end": 585
+      },
+      "context": "SECTION — cross-check declared product+box weight, drop height used, and ISTA level/standard.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_3b",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Carton face/edge/corner numbering convention — Faces numbered 1=Top, 2=Right Side, 3=Bottom, 4=Left Side, 5=Front End, 6=Back End. Edges named \"Edge X-Y\" where Face X meets Face Y (e.g. Edge 1-2 = Top meets Right Side). Corners named \"Corner X-Y-Z\" where three faces meet (e.g. Corner 2-3-5 = Right/Bottom/Front). Every drop photo caption must use this exact convention and match the physical location shown.",
+      "severity": "MINOR",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check each drop's stated Edge/Corner/Face label against the convention and the photo itself.",
+      "source_rule_id": "7.2.3b",
+      "source_lines": {
+        "start": 586,
+        "end": 604
+      },
+      "context": "SECTION — cross-check each drop's stated Edge/Corner/Face label against the convention and the photo itself.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_captions"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_3c",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop-by-drop impact section verification — Each individual drop number must be captioned with the specific impact section defined for that number: ISTA 3A — Drop 1=Edge 3-4, 2=Edge 3-6, 3=Edge 4-6, 4=Corner 3-4-6, 5=Corner 2-3-5, 6=Edge 2-3, 7=Edge 1-2, 8=Face 3 (hazard, 910/600mm), 9=Face 3, 10=Edge 3-4, 11=Edge 3-6, 12=Edge 1-5, 13=Corner 3-4-6, 14=Corner 1-2-6, 15=Corner 1-4-5, 16=\"most critical or damage-prone flat orientation,\" 17=Face 3 on Hazard (Standard) / Face 2 on Hazard (Flat/Elongated). ISTA 2C — Drop 1=\"most fragile Face-3 corner 1/2/6,\" 2‑4=shortest/next-longest/longest edge from that corner, 5‑6=smallest face and its opposite, 7‑8=medium face and its opposite, 9‑10=largest face and its opposite.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check every individual drop caption against the format document's drop-by-drop table, not just the total photo count.",
+      "source_rule_id": "7.2.3c",
+      "source_lines": {
+        "start": 605,
+        "end": 623
+      },
+      "context": "FULL REPORT — cross-check every individual drop caption against the format document's drop-by-drop table, not just the total photo count.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_captions"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_3d",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Test setup parameters, Steps 3/4/5a/5b (ISTA 3A)",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check the setup described/photographed against these parameters.",
+      "source_rule_id": "7.2.3d",
+      "source_lines": {
+        "start": 624,
+        "end": 645
+      },
+      "context": "SECTION — cross-check the setup described/photographed against these parameters.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_3e",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Step 5b naming inconsistency between GI sources — The \"T&W-ISTA 3A DROP TEST- FORMAT updated\" document names this step \"Step 5b: Shock Concentrated Impact Test,\" while the \"T&W Packaging Guidelines - 3A Drop Test\" document names the same step \"Step 5b: Shock Bridge Impact Test.\" Both describe the same bridging + hazard-drop procedure for Elongated boxes.",
+      "severity": "TO_CONFIRM",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check which name is used in the actual report; do not flag either name as an error.",
+      "source_rule_id": "7.2.3e",
+      "source_lines": {
+        "start": 646,
+        "end": 665
+      },
+      "context": "FULL REPORT — cross-check which name is used in the actual report; do not flag either name as an error.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_4",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop test photo count and captioning — One photo per individual drop, captioned with the corresponding test step and drop number. Minimum counts: ISTA 3A Step 1&2 = 17 photos (3/2/2/2/3/3/2 across the sub-groups); Step 3 = 3 photos; Step 4 = 2–3 photos; Step 5a or 5b = 1 photo; ISTA 2C = 10 photos. If the item consists of smaller cartons packed inside a larger carton, drop test and photos must be done for both.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check number of drop-test photos and captions against these counts and drop numbering.",
+      "source_rule_id": "7.2.4",
+      "source_lines": {
+        "start": 666,
+        "end": 684
+      },
+      "context": "FULL REPORT — cross-check number of drop-test photos and captions against these counts and drop numbering.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "photo_captions"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "7_2_5",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop test result reporting — Clearly indicate which item(s) were drop tested and pass/fail, for both inner and outer carton if requested in the client file.",
+      "severity": "MINOR",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check pass/fail declaration against item identifiers and inner/outer carton distinction.",
+      "source_rule_id": "7.2.5",
+      "source_lines": {
+        "start": 685,
+        "end": 703
+      },
+      "context": "SECTION — cross-check pass/fail declaration against item identifiers and inner/outer carton distinction.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_6",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Carton performance standard — Cartons must be Double Wall Corrugated, B/C Flute, minimum 275 lb/in² burst strength (both under-32kg and 32kg+ cartons). Alternative materials require supplier justification and T&W approval; third-party test results may be requested.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check carton spec/photos against this standard and confirm any deviation has documented T&W approval.",
+      "source_rule_id": "7.2.6",
+      "source_lines": {
+        "start": 704,
+        "end": 722
+      },
+      "context": "FULL REPORT — cross-check carton spec/photos against this standard and confirm any deviation has documented T&W approval.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_7",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Packaging materials (protection & void fill) — Only approved materials: scratch protection (tissue paper, kraft interleaving, micro-flute corrugated), corner protection (molded pulp, honeycomb blocks, folded/die-cut corrugated fibreboard) covering the full corner radius, edge protection (honeycomb fibreboard strips, folded kraft board, U-channel profiles) running the full edge length, cushioning/void fill (molded pulp trays, honeycomb bracing, shredded/crumpled kraft paper, corrugated inserts) immobilizing the product. Renewable/recyclable/plastic-free only; alternatives require justification and T&W approval.",
+      "severity": "MINOR",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check packaging photos against this list and coverage requirements.",
+      "source_rule_id": "7.2.7",
+      "source_lines": {
+        "start": 723,
+        "end": 741
+      },
+      "context": "SECTION — cross-check packaging photos against this list and coverage requirements.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_8",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Internal packaging (hardware, plastic bag safety) — Hardware/instructions packed in Box 1, bagged, labelled, sealed, instructions visible/undamaged. Plastic bags with an opening ≥15cm must carry the suffocation warning label (ACCC guidance). Products for children under 36 months: bags must have ventilation holes (≥5mm per 15×15cm). Additional void fill/panel packing must be fibre-based; panels against carton walls have finished side facing outward, protected with an approved fibre-based scratch layer.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check internal packaging photos against these requirements.",
+      "source_rule_id": "7.2.8",
+      "source_lines": {
+        "start": 742,
+        "end": 760
+      },
+      "context": "SECTION — cross-check internal packaging photos against these requirements.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_9",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Drop test Pass/Fail criteria grid — Packaging No damage or Minor damage AND Product No damage → **Pass**. Packaging No/Minor damage AND Product Damage → **Fail**. Packaging Major damage (regardless of product condition) → **Fail**. Any product damage is an automatic Fail; major carton damage is an automatic Fail even with an undamaged product.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check carton condition, product condition, and stated overall result against this grid.",
+      "source_rule_id": "7.2.9",
+      "source_lines": {
+        "start": 761,
+        "end": 779
+      },
+      "context": "SECTION — cross-check carton condition, product condition, and stated overall result against this grid.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "carton",
+              "drop",
+              "test"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "7_2_10",
+      "section": "tests_and_checkpoints",
+      "requirement": "Tests & checkpoints — Carton condition & product condition photo after drop test — Include a photo capturing both the carton's condition and the product's condition after the drop test, sufficient to support the Pass/Fail determination.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the after-test photo attachment for that item.",
+      "source_rule_id": "7.2.10",
+      "source_lines": {
+        "start": 780,
+        "end": 799
+      },
+      "context": "QUESTION — contained within the after-test photo attachment for that item.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "carton",
+              "condition",
+              "product",
+              "after",
+              "the",
+              "drop"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "8_1_1",
+      "section": "factory_review_documents_and_workload_exceptions",
+      "requirement": "Factory review — Carton & product selection — Carton and product selection must follow QIMA's standard SOP for all products; no TPW-specific deviation was provided.",
+      "severity": "MINOR",
+      "scope_type": "QUESTION",
+      "scope_detail": "contained within the sample/carton selection method documented.",
+      "source_rule_id": "8.1.1",
+      "source_lines": {
+        "start": 803,
+        "end": 818
+      },
+      "context": "QUESTION — contained within the sample/carton selection method documented.",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "8_1_2",
+      "section": "factory_review_documents_and_workload_exceptions",
+      "requirement": "Factory review — IPC Check Points — Inspect samples per the client's attached Excel checklist (\"Checklist – Product Name ABC\"). If all points pass, the inspector may sign off, date, and seal with QIMA stickers on the client's behalf (minor defects accepted, sample kept in factory). If any point fails, provide client evidence in report form, and also list/show evidence for each passed point.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check checklist results, evidence provided, and sign-off/seal status.",
+      "source_rule_id": "8.1.2",
+      "source_lines": {
+        "start": 819,
+        "end": 837
+      },
+      "context": "FULL REPORT — cross-check checklist results, evidence provided, and sign-off/seal status.",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "factory",
+              "review"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "8_1_3",
+      "section": "factory_review_documents_and_workload_exceptions",
+      "requirement": "Inspector's remark / Summary review — Factory refusal to follow client standard or sample size — FAQ #3 and FAQ #4 in the GIs ask the same question (\"If the factory refuse to follow client standard/sample size\") but FAQ #3's answer discusses product availability before noon (identical to FAQ #1/#2's answer), while FAQ #4's answer instructs to inform the quality team of the situation/reasons and add clear remarks. Until clarified, apply the more specific/relevant answer: inform the quality team of the reasons and add a clear remark in the report.",
+      "severity": "TO_CONFIRM",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check remark content and whether the quality team was informed against actual factory behavior.",
+      "source_rule_id": "8.1.3",
+      "source_lines": {
+        "start": 838,
+        "end": 854
+      },
+      "context": "FULL REPORT — cross-check remark content and whether the quality team was informed against actual factory behavior.",
+      "check_block": {
+        "where": [
+          "report.factory_name"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "8_1_4",
+      "section": "factory_review_documents_and_workload_exceptions",
+      "requirement": "Inspector's remark / Summary review — No support from factory — If the factory provides no support (carton selection, pack/unpack assistance, etc.), inform the quality team and ask for advice, then proceed with the inspection immediately, add a remark, and fail the overall inspection.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check remark, overall result, and evidence quality team was informed.",
+      "source_rule_id": "8.1.4",
+      "source_lines": {
+        "start": 855,
+        "end": 870
+      },
+      "context": "FULL REPORT — cross-check remark, overall result, and evidence quality team was informed.",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
+    },
+    {
+      "id": "8_1_5",
+      "section": "factory_review_documents_and_workload_exceptions",
+      "requirement": "Acknowledgments & signatures — Draft report signature refusal — If the factory refuses to sign the draft report, add an important remark and inform the quality team of the reason. If refusal follows a client requirement raised on site, request an official email from the person claiming to represent the client (sent to quality) and wait for the quality team's instruction.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check remark, signature status, and evidence quality/client confirmation was sought.",
+      "source_rule_id": "8.1.5",
+      "source_lines": {
+        "start": 871,
+        "end": 901
+      },
+      "context": "FULL REPORT — cross-check remark, signature status, and evidence quality/client confirmation was sought.",
+      "check_block": {
+        "where": [
+          "report.factory_name"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    }
+  ]
+}

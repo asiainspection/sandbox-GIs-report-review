@@ -320,3 +320,2235 @@ This document does not contain any client rules beyond what was provided. Every 
 - N/A on PID Number checkpoint for products with no display board (2D only checkpoint).
 - Blank Canada Price field on wholesale label when no Canadian Material Number exists on the PO.
 - Missing wholesale label when the film/polybag conditions (countable units, visible stock number, visible/scannable UPC) are all met.
+
+---
+
+## Executable check blocks (auto-generated)
+
+Machine-readable checks for each table rule above. Do not edit IDs.
+
+**ID:** DOC.1.1
+**Field / Location:** Product ref number / PO number
+**What to check:** If the inspector cannot find the PO in QIMAone, contact the quality team to notify the client immediately. If no timely feedback, proceed with the inspection and update the PO later once available.
+**Scope:** `QUESTION`
+
+```check
+where: [report.po_reference]
+when: null
+check: present
+```
+
+---
+
+**ID:** DOC.1.2
+**Field / Location:** IRF (Inspection Request Form)
+**What to check:** IRF was filled by supplier; it cannot be the supporting document for adjusting test results. Inspectors must check actual testing reports (SR and FR) to verify results.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.3
+**Field / Location:** Product Spec
+**What to check:** Must be used together with the DAS; pay close attention to bulk vs. DAS comparison during inspection.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.4
+**Field / Location:** Packing list
+**What to check:** Available when a carton contains mixed SKUs. Inspector can refer to it to check assortment and carton range; any discrepancy must be clearly remarked.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** DOC.1.5
+**Field / Location:** PO sheet
+**What to check:** Check the order quantity against the QIMAone PO quantity.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.6
+**Field / Location:** Defects Variances
+**What to check:** If no file available onsite, proceed with the inspection and add remarks in the report.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** DOC.1.7
+**Field / Location:** SRR / SR (Safety Report, issued by test lab)
+**What to check:** Checked per SKU; missing SR → fail SR checkpoint. Valid 1 year (Toys & Children: 4 weeks). For group HMK9700, near-food product must be tested per PO. If the SR report fails and factory can provide the Hallmark override email, it is acceptable — provide the email record to SIC/back office, keep correspondence records, and upload them in the inspection report. If factory provides an SR report at product-format level (same format, within 1-year validity), acceptable, but inspector must contact SIC to double-check. No need for SR report if the SRR report shows 3 "No" — record in the report, no need to fail the SR checkpoint. If missing SR report, mark it in the report and notify Andrew Chan (andrew.chan@hallmark.com).
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.8
+**Field / Location:** SR report — Gift products 3D
+**What to check:** A valid SR report must be on file, verified during inspection. SR reports acceptable within 1-year validity, including re-run orders from different POs — except Toys, Children products, and Food-contact products. For Material Confirmation Requirement, when re-using an SR report from a different PO (non-exempt categories, within valid date), inspector must confirm the supplier provided confirmation to the client's 3rd-party lab that no materials have changed for the re-run order.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.9
+**Field / Location:** FR (Function Report, issued by Hallmark or certified vendor)
+**What to check:** Non-high-attention items: FR checked per SKU, valid 1 year. High-attention items: FR valid 1 year AND must be tested by each PO. If missing FR, fail the FR checkpoint.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.10
+**Field / Location:** Ship test report (transportation test)
+**What to check:** Always valid unless there are changes such as supplier, production process, product, packaging material, packed quantity, or packaging method. If missing, fail the Documents and Sample Availability checkpoint. Note: for FR test reports from 2024 onward, the ship test report is included as an appendix.
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.11
+**Field / Location:** VAS (Visual Approval Sample)
+**What to check:** For the BU Keepsake ornament only, for mass-product comparison.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: For the BU Keepsake ornament only, for mass-product comparison.?")
+```
+
+---
+
+**ID:** DOC.1.12
+**Field / Location:** DAS (Design Approval Sample)
+**What to check:** For mass-product comparison; if missing, check with SIC/back office for instructions.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.13
+**Field / Location:** Commit sheet (or commit list) — Hallmark Ornaments only
+**What to check:** Cross-check: Product SKU vs. Colorway SKU (DAS shows only product SKU; each colorway SKU shows in the product spec and commit sheet — verify correctness in the mass-production shipment). Colorway UPC code must match the actual production package. Package type and retail price (if shown) must match spec under colorway SKU — inform back office if discrepancy found. Product image must match the actual product. Unit price must be consistent between DAS, specs, commit sheet, and actual retail package. Copyright must be consistent between DAS, specs, commit sheet, actual retail package, and product.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.14
+**Field / Location:** Limit sample
+**What to check:** For mass-product comparison, used when mass products cannot 100% meet client requirements; must be signed by HMK engineers.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: For mass-product comparison, used when mass products cannot 100% meet client requirements; must be signed by HMK enginee?")
+```
+
+---
+
+**ID:** DOC.1.15
+**Field / Location:** PP Report (Product/Production Pilot Report)
+**What to check:** Requested for close-attention and highly confidential products. Must pay close attention to defects found in the PP report during workmanship check, and compare packaging details of the mass product against the PP report.
+**Scope:** `SECTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
+---
+
+**ID:** DOC.1.16
+**Field / Location:** Visual Standard (PT. Camino — KPS Keepsake)
+**What to check:** Mandatory when factory = PT. Camino Industrial, Indonesia AND product = Hallmark KPS (Keepsake) items only. Inspector must check and follow the Visual Standard during visual inspection, in addition to Hallmark's general visual requirements.
+**Scope:** `SECTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** DOC.1.17
+**Field / Location:** Additional attachments
+**What to check:** Example files available on SharePoint (Additional Attachments – Example link).
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** HA.2.1
+**Field / Location:** How to identify HA product
+**What to check:** Check the IRF ("High Attention Item?" field), the Spec ("High Attention Product" field and "Products Integrity Notes"), whether the client attached special checkpoints in the booking, and whether there are instructions under "Products Integrity Notes."
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** HA.2.2
+**Field / Location:** HA handling
+**What to check:** Adopt Single Sampling Plan; ask factory to provide the PP Report; ensure sufficient communication with back office/Hallmark PE (Project Engineer) by asking if there are special requirements; if no special doc/instruction found, check with SIC/back office.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** HA.2.3
+**Field / Location:** HCLP identification
+**What to check:** Signs of HCLP found on DAS's tag, Specs, Packaging levels (carton/wholesale/retail), and IRF (e.g., "Confidential licensed SKU," "Highly Confidential-Licensor [Name]," embargo dates, "STOP — DO NOT OPEN" labels).
+**Scope:** `SECTION`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** HA.2.4
+**Field / Location:** HCLP photo handling
+**What to check:** Do NOT show the entire product picture in the report — use a plank/blank picture and mark "HCLP, no photo." For defect photos, focus only on the defect area, do not show the entire product.
+**Scope:** `SECTION`
+
+```check
+where: [checklist.hclp.values]
+when: checklist.hclp.values contains "yes"
+check: vision("Are product photos blank placeholders with no retail product visible?")
+```
+
+---
+
+**ID:** HA.2.5
+**Field / Location:** Reason for the inspection (HMK Document Availability checkpoint)
+**What to check:** Refer to the IRF "Reason" field: if supplier specifies a reason, select the matching "For CQS – HMK Engineer Specify" option. If the supplier leaves it blank, the supplier is Non-CQS or Non-SEP — select that option.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** PSI.3.1
+**Field / Location:** Finished % / Packed % at PSI
+**What to check:** Inspector must immediately inform the quality team about on-site status. If ≥80% finished and packed, QIMA can proceed with inspection and add a remark in the report. If <80% finished and packed before 12pm, QIMA can issue a missing inspection — unless the inspector can start with another SKU that is finished and packed.
+**Scope:** `QUESTION`
+
+```check
+where: [product._first.real_packed_quantity, product._first.ordered_quantity]
+when: null
+check: ratio_at_least(0.8)
+```
+
+---
+
+**ID:** CS.4.1
+**Field / Location:** Carton selection formula
+**What to check:** Cartons to select = Visual sample size ÷ retail sample to be pulled from each carton. Visual sample size from the booking (calculated based on AOQL level and lot size); retail-per-wholesale and wholesale-per-carton figures from the PO.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: checklist
+    match: [random, carton, selection]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** CS.4.2
+**Field / Location:** Pulling ratio table
+**What to check:** 1 retail/wholesale → pull 5 wholesales/shipper (5 samples); 2 retail/wholesale → pull 2 wholesales/shipper (4 samples); 3 retail/wholesale → pull 1 wholesale/shipper (3 samples); 4 retail/wholesale → pull 1 wholesale/shipper (4 samples); 5+ retail/wholesale → pull 1 wholesale/shipper (5 samples); bulk-packed (no wholesale) → no more than 5 samples/shipper.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 1 retail/wholesale → pull 5 wholesales/shipper (5 samples); 2 retail/wholesale → pull 2 wholesales/shipper (4 samples); ?")
+```
+
+---
+
+**ID:** CS.4.3
+**Field / Location:** Pulling procedure
+**What to check:** Pull one complete shipper carton to the inspection room; other samples drawn in the warehouse via a turnover box. Open half the cartons from the top, half from the bottom. Pull samples from all layers randomly. If total carton quantity is less than the calculated sample, pull evenly from all cartons.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Pull one complete shipper carton to the inspection room; other samples drawn in the warehouse via a turnover box. Open h?")
+```
+
+---
+
+**ID:** CS.4.4
+**Field / Location:** Repack of OK sample
+**What to check:** The inspected OK sample must be re-packaged into a carton with a QIMA sticker placed above the corner label.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: The inspected OK sample must be re-packaged into a carton with a QIMA sticker placed above the corner label.?")
+```
+
+---
+
+**ID:** CS.4.5
+**Field / Location:** Packaging Inspection sample size
+**What to check:** Always select 18 cartons/wholesale packs/retail packs for visual/packaging check. If any defect is found in these 18, do a second sampling of 100 (total 118). Reference: sampling table — 18 pcs first sample (Accept 0 / Reject 3), 100 pcs second sample (cumulative Accept ≤2 / Reject ≥3).
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** CS.4.6
+**Field / Location:** Cartons piling up
+**What to check:** Factory must pile cartons no more than 3 rows and less than 2 meters high, per sketch. Inspector can refuse to proceed if not met — must check with back office first.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** CS.4.7
+**Field / Location:** Shipper carton checks (18 cartons)
+**What to check:** Check: shipping mark, shipper quality, carton label contents & position, Bumpa sticker/partial-filled label (if applicable), carton label scanning, quantity verification (wholesale qty in shipper consistent with specs/ship test report/carton label), carton label vs. PO, carton quality (5-ply), carton dimension.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Check: shipping mark, shipper quality, carton label contents & position, Bumpa sticker/partial-filled label (if applicab?")
+```
+
+---
+
+**ID:** CS.4.8
+**Field / Location:** Carton dimension tolerance
+**What to check:** Refer to "Shipper Dimensions & Weight & Marks" QIMAone instructions per retailer brand. If actual dimension exceeds max/min, fail the shipper check and add a remark. If no specific tolerance in spec, default weight tolerance = +/-5%.
+**Scope:** `SECTION`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** CS.4.9
+**Field / Location:** Product selection
+**What to check:** Follow QIMA's SOP (Standard Operation Process) for all product types.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.1
+**Field / Location:** Non-HA/Non-HCLP 2D items
+**What to check:** AOQL Double sampling per spec/IRF (first sample size from Double Sample Plan matrix). *See ⚠️ TO CONFIRM in Section 0.*
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.2
+**Field / Location:** Non-HA/Non-HCLP 3D items
+**What to check:** AOQL Single sampling per spec/IRF (sample size from LOT size + Single Sampling Plan matrix).
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.3
+**Field / Location:** HA and HCLP 2D and 3D
+**What to check:** AOQL Single sampling per spec/IRF regardless of dimension type.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.4
+**Field / Location:** Dayspring 2D items
+**What to check:** AOQL Double sampling (first sample per Double Sample Plan matrix) — for HMK/QIMA inspectors.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: AOQL Double sampling (first sample per Double Sample Plan matrix) — for HMK/QIMA inspectors.?")
+```
+
+---
+
+**ID:** SMP.5.5
+**Field / Location:** Dayspring 3D items
+**What to check:** AOQL Single sampling, minimum sample size = 85, per AOQL level and Single Sampling Plan Matrix.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: AOQL Single sampling, minimum sample size = 85, per AOQL level and Single Sampling Plan Matrix.?")
+```
+
+---
+
+**ID:** SMP.5.6
+**Field / Location:** Sewn/plush products
+**What to check:** Major AOQL 1.5%, Minor AOQL 4.0%; sample size per LOT size (Sewn/plush sampling table).
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Major AOQL 1.5%, Minor AOQL 4.0%; sample size per LOT size (Sewn/plush sampling table).?")
+```
+
+---
+
+**ID:** SMP.5.7
+**Field / Location:** Pre-packaged / PDQ products
+**What to check:** Single sampling plan for ALL items (HA and non-HA); sampling based on LOT size in **retail quantity**.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Single sampling plan for ALL items (HA and non-HA); sampling based on LOT size in **retail quantity**.?")
+```
+
+---
+
+**ID:** SMP.5.8
+**Field / Location:** Hallmark Nihon (Japan) orders
+**What to check:** AOQL 1.5% — double sampling for 2D items, single sampling for 3D items. "JP" appended next to Category Name on carton marking; "Nihon JP Order" noted in IRF remark column. Non-JP Nihon orders use AOQL 3.0%.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.9
+**Field / Location:** Fixtures and Dealer Service items
+**What to check:** AOQL 2.5% single sampling, fixed sample size = 15, for ALL inspection parties (HMK, QIMA, Agent, CQS, SEP) — Accept Number = 0.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: AOQL 2.5% single sampling, fixed sample size = 15, for ALL inspection parties (HMK, QIMA, Agent, CQS, SEP) — Accept Numb?")
+```
+
+---
+
+**ID:** SMP.5.10
+**Field / Location:** Marks & Spencer products
+**What to check:** Per department/product-format table (T21/T79/T40 codes): AQL Level I (Major 1.5/Minor 4.0/Total 4.0) for Everyday/Xmas Card, Roll Wrap, Bag, Halloween/Party/Stationery pure-printing items, Ribbon & Bow. AQL Level II (same values) for Cracker, Techno Card, Halloween/Stationery non-pure-printing, 3D Xmas/Advent, Event Gifting, Puzzle, Plush, Art & Craft, Toys, Leather product.
+**Scope:** `FULL REPORT`
+
+```check
+where: [workmanship.aql_level_minor]
+when: null
+check: equals(4.0)
+```
+
+---
+
+**ID:** SMP.5.11
+**Field / Location:** Crayola orders
+**What to check:** AQL Level II: Critical 0, Major function 0.4, Major visual 1.5, Minor 4.0.
+**Scope:** `FULL REPORT`
+
+```check
+where: [workmanship.aql_level_minor]
+when: null
+check: equals(4.0)
+```
+
+---
+
+**ID:** SMP.5.12
+**Field / Location:** Dayspring, Mary & Martha
+**What to check:** AOQL 3.0%.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: AOQL 3.0%.?")
+```
+
+---
+
+**ID:** SMP.5.13
+**Field / Location:** 2D International/FOB orders
+**What to check:** UK/HCA/Netherlands: AOQL 3.0%. Nihon JP: AOQL 1.5%; Nihon non-JP: AOQL 3.0%. Walmart FOB 2D: AQL Level I, Critical 0, Major 1.5, Minor 4.0.
+**Scope:** `FULL REPORT`
+
+```check
+where: [workmanship.aql_level_minor]
+when: null
+check: equals(4.0)
+```
+
+---
+
+**ID:** SMP.5.14
+**Field / Location:** Cracker component / Cracker
+**What to check:** Component: AQL Level II, Critical 0, Major 1.0, Minor 2.5. Cracker itself: AQL Level II, Critical 0, Major 1.5, Minor 4.0, Total 4.0. Also must follow Cracker/Module E inspection guidelines.
+**Scope:** `FULL REPORT`
+
+```check
+where: [workmanship.aql_level_major]
+when: null
+check: equals(2.5)
+```
+
+---
+
+**ID:** SMP.5.15
+**Field / Location:** 3D International/FOB orders
+**What to check:** Follow the product specification for inspection standard/sampling plan.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.16
+**Field / Location:** Inspection lot size (general rule)
+**What to check:** Follow the guideline in the spec if applicable. If not specified: double sampling plan → each lot ≤ 50k; single sampling plan → refer to Hallmark Inspection Manual tables (pages 4–5).
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Follow the guideline in the spec if applicable. If not specified: double sampling plan → each lot ≤ 50k; single sampling?")
+```
+
+---
+
+**ID:** SMP.5.17
+**Field / Location:** Sampling plan responsibility matrix (party-dependent)
+**What to check:** HMK inspector: single for HA, double for non-HA. Supplier/CQS/SEP inspectors/HMK inspection agents: always single (HA and non-HA). QIMA inspector: single for 2D HA, 3D HA, and 3D non-HA; double for 2D non-HA.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.supplier_name]
+when: null
+check: extract_bool("Does this field evidence satisfy: HMK inspector: single for HA, double for non-HA. Supplier/CQS/SEP inspectors/HMK inspection agents: always single (HA an?")
+```
+
+---
+
+**ID:** SMP.5.18
+**Field / Location:** Keepsake (KPSK) inspection type
+**What to check:** Always refer to the inspection type under "Keepsake (KPS)" for Hallmark Ornaments/Keepsake items — do not use a generic 3D non-food category.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspection_type]
+when: null
+check: extract_bool("Does this field evidence satisfy: Always refer to the inspection type under 'Keepsake (KPS)' for Hallmark Ornaments/Keepsake items — do not use a generic ?")
+```
+
+---
+
+**ID:** SMP.5.19
+**Field / Location:** Method 1 — IRF/Spec lookup
+**What to check:** Check the IRF for the AOQL standard per SKU; cross-check the product spec's "Testing and Inspection" page for the visual standard/AOQL.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.20
+**Field / Location:** Method 2 — SAP Group # lookup
+**What to check:** Refer to GI document "QIMAone_Hallmark (HMK) Inspection Type and Inspection Workflow Decision Matrix." Look up the SAP Group # (HMK #) on the "HMK SAP Group # and AOQL%" sheet to get the AOQL%.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspection_type]
+when: null
+check: extract_bool("Does this field evidence satisfy: Refer to GI document 'QIMAone_Hallmark (HMK) Inspection Type and Inspection Workflow Decision Matrix.' Look up the SAP G?")
+```
+
+---
+
+**ID:** SMP.5.21
+**Field / Location:** Multiple specs in one report
+**What to check:** Always refer to the spec with the SAME SAP Group # (HMK #) as the order to determine Inspection Type/AOQL%. Also check price and UPC# info for the Child SKU at the same time.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: Always refer to the spec with the SAME SAP Group # (HMK #) as the order to determine Inspection Type/AOQL%. Also check p?")
+```
+
+---
+
+**ID:** SMP.5.22
+**Field / Location:** PDQ lot-size calculation
+**What to check:** When product/order qty is in PDQ, calculate the retail-unit quantity and sample based on the retail LOT size. Example: 5378 PDQ × 72 retail units/PDQ = 387,216 pcs lot size (not 5,378 PDQ).
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: When product/order qty is in PDQ, calculate the retail-unit quantity and sample based on the retail LOT size. Example: 5?")
+```
+
+---
+
+**ID:** SMP.5.23
+**Field / Location:** Quantity unit in report (CTN vs PCS)
+**What to check:** Check the "Qty of inspection lot" unit in the IRF (CTN or PCS). Produced/packed quantity units must be consistent with the PO. If unit is carton, report the carton figures, not the converted piece figures — retail quantity can be remarked separately if needed.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:booking]
+when: null
+check: null
+```
+
+---
+
+**ID:** SMP.5.24
+**Field / Location:** Product Integrity Notes
+**What to check:** Inspector must review Product Spec/Product Detail "Product Integrity Notes" and inspect per its content. Any discrepancy → fail the corresponding checkpoint and add a remark.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** SMP.5.25
+**Field / Location:** HA items (2D & 3D)
+**What to check:** Always use Single Sampling Plan.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Always use Single Sampling Plan.?")
+```
+
+---
+
+**ID:** SMP.5.26
+**Field / Location:** 3D products (any HA status)
+**What to check:** Always use Single Sampling Plan.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Always use Single Sampling Plan.?")
+```
+
+---
+
+**ID:** SMP.5.27
+**Field / Location:** 2D non-HA products
+**What to check:** Packing-method dependent: mixed-packed → Single; individually packed → Double. *(see ⚠️ TO CONFIRM, Section 0)*
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Packing-method dependent: mixed-packed → Single; individually packed → Double. *(see ⚠️ TO CONFIRM, Section 0)*?")
+```
+
+---
+
+**ID:** SMP.5.28
+**Field / Location:** Sampling unit
+**What to check:** Always use the Market Sale Unit (retail unit) as the sampling unit; confirm with SIC if unsure.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Always use the Market Sale Unit (retail unit) as the sampling unit; confirm with SIC if unsure.?")
+```
+
+---
+
+**ID:** SMP.5.29
+**Field / Location:** Double sampling — 2nd sample trigger
+**What to check:** 2nd sample needed only when visual defect qty is between the Accept and Reject numbers of the Double Sampling Plan. If report already failed for another section (test/packing), overall result is Fail and 2nd sampling is NOT required. Inspector may pull 1st+2nd sample sizes together to save time; revise sample size in IAPP to reflect the total if 2nd sampling proceeds.
+**Scope:** `SECTION`
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
+---
+
+**ID:** SMP.5.30
+**Field / Location:** Visual sample size examples (reference only)
+**What to check:** AOQL 3.0% double: 1st sample 30 pcs (Accept 0/Reject 5), 2nd sample 60 pcs (Accept 4/Reject 5 combined). AOQL 5.0% (Good Bags) double: 1st sample 20 (Accept 0/Reject 6), 2nd 60 (Accept 5/Reject 6 combined). Single sampling AOQL 3.0%, lot 5001–10000 → sample size 105.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: AOQL 3.0% double: 1st sample 30 pcs (Accept 0/Reject 5), 2nd sample 60 pcs (Accept 4/Reject 5 combined). AOQL 5.0% (Good?")
+```
+
+---
+
+**ID:** SPEC.6.1
+**Field / Location:** Approval sample presence & ID
+**What to check:** Confirm presence in factory; identify via signature/seal/comparison to booking picture/special marking. If not present → proceed and clearly remark in report.
+**Scope:** `QUESTION`
+
+```check
+where: [report.factory_name]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** SPEC.6.2
+**Field / Location:** DAS + Spec combined use
+**What to check:** Inspector must use DAS and Specs together; pay close attention to bulk vs. DAS comparison.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Inspector must use DAS and Specs together; pay close attention to bulk vs. DAS comparison.?")
+```
+
+---
+
+**ID:** SPEC.6.3
+**Field / Location:** Side mark scenarios
+**What to check:** Two scenarios: (1) Side mark for Canada/USA, (2) Side mark for international (excl. Canada/USA) — content must match the respective template.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Two scenarios: (1) Side mark for Canada/USA, (2) Side mark for international (excl. Canada/USA) — content must match the?")
+```
+
+---
+
+**ID:** SPEC.6.4
+**Field / Location:** Reuse # calculation
+**What to check:** Measure carton inside dimensions (L/W/D in inches). Max cubic = (L+0.5)(W+0.5)(D+0.5); Min cubic = (L-0.5)(W-0.5)(D-0.5). Value must fall within this range to be acceptable. Explanatory yellow text is not to be printed on the carton.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Measure carton inside dimensions (L/W/D in inches). Max cubic = (L+0.5)(W+0.5)(D+0.5); Min cubic = (L-0.5)(W-0.5)(D-0.5)?")
+```
+
+---
+
+**ID:** SPEC.6.5
+**Field / Location:** Shipping mark color/font
+**What to check:** Ship marking color is always BLACK regardless of wholesale quantity (including "wholesale as shipper" case = qty 1). Do NOT partially fill a wholesale box. Font ≈13mm (0.5") tall bold text; downsize only if carton size doesn't permit.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Ship marking color is always BLACK regardless of wholesale quantity (including 'wholesale as shipper' case = qty 1). Do ?")
+```
+
+---
+
+**ID:** SPEC.6.6
+**Field / Location:** Shipmark template
+**What to check:** Must follow the latest shipmark template ("Asia Carton Print-rev 121917" from Hallmark Document Library) — content: NET/GROSS WEIGHT, DIMENSIONS, CARTON NUM, HALLMARK MARKETING COMPANY LLC, REUSE #, MADE IN.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Must follow the latest shipmark template ('Asia Carton Print-rev 121917' from Hallmark Document Library) — content: NET/?")
+```
+
+---
+
+**ID:** SPEC.6.7
+**Field / Location:** Shipper min/max size & weight (Hallmark general, updated 2025.08.27)
+**What to check:** Min O.D.: L12"xW8"xD5" (305x203x127mm); Max O.D.: L22"xW21"xD32" (559x533x813mm); Min weight 5 lbs; Max weight 50 lbs. (M&S and Dayspring use other standards — see below.)
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Min O.D.: L12'xW8'xD5' (305x203x127mm); Max O.D.: L22'xW21'xD32' (559x533x813mm); Min weight 5 lbs; Max weight 50 lbs. (?")
+```
+
+---
+
+**ID:** SPEC.6.8
+**Field / Location:** Walgreens FOB carton
+**What to check:** Max L48"xW40"xH/D46" (121.9x101.6x116.8cm), 50 lbs (22.68kg); no minimum limit to consider.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Max L48'xW40'xH/D46' (121.9x101.6x116.8cm), 50 lbs (22.68kg); no minimum limit to consider.?")
+```
+
+---
+
+**ID:** SPEC.6.9
+**Field / Location:** International orders (excl. Canada) — end panel content
+**What to check:** PO NUMBER, Stock No., Description, Qty, Net/Gross weight, Dimensions, Vendor ID, Prod. Date (MMYY date code), Made in, REUSE#. Font: 19mm (0.75") bold for PO#/SKU, 13mm (0.5") bold for other info. Side panel 1 = Hallmark crown logo; side panel 2 = shipping address.
+**Scope:** `SECTION`
+
+```check
+where: [report.po_reference]
+when: null
+check: present
+```
+
+---
+
+**ID:** SPEC.6.10
+**Field / Location:** Barcoded shipper (corner) label — when required
+**What to check:** Required for finished products shipped to Hallmark warehouses in US/Canada only. NOT required for: sales samples, components, and international orders (excluding Canada).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Required for finished products shipped to Hallmark warehouses in US/Canada only. NOT required for: sales samples, compon?")
+```
+
+---
+
+**ID:** SPEC.6.11
+**Field / Location:** Corner label position
+**What to check:** Placed on right-bottom corner of the shipper side bearing the crown logo; distance from bottom of label to bottom of shipper = 1"–3". Label must wrap around two adjacent panels, visible from both side and end panels; bottom must be within ±15° of parallel with carton bottom.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Placed on right-bottom corner of the shipper side bearing the crown logo; distance from bottom of label to bottom of shi?")
+```
+
+---
+
+**ID:** SPEC.6.12
+**Field / Location:** Tall box corner label
+**What to check:** If carton >22" tall OR depth > 2× width → "tall box": lay box down with top flaps to the right, place label on lower-right corner of the side panel.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: If carton >22' tall OR depth > 2× width → 'tall box': lay box down with top flaps to the right, place label on lower-rig?")
+```
+
+---
+
+**ID:** SPEC.6.13
+**Field / Location:** Corner label content — scan format
+**What to check:** SKU# scanning result must be in 4-3-4 digit format (pad with leading zeros; add space(s) after letters to make the middle segment 3 digits). Examples: SKU 399EGC1255 → scans as 0399EGC1255; SKU 99TM2024 → 0099TM 2024 (space between M and 2); SKU 150B12J → 0150B  012J; SKU A8B → 0000A  008B.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: SKU# scanning result must be in 4-3-4 digit format (pad with leading zeros; add space(s) after letters to make the middl?")
+```
+
+---
+
+**ID:** SPEC.6.14
+**Field / Location:** Corner label content — Whsle Qty
+**What to check:** "Whsle QTY" on the label = wholesale quantity **inside the shipping carton** (NOT retail quantity).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 'Whsle QTY' on the label = wholesale quantity **inside the shipping carton** (NOT retail quantity).?")
+```
+
+---
+
+**ID:** SPEC.6.15
+**Field / Location:** Corner label content fields
+**What to check:** Stock number (SAP Material Number on top, Material/SKU number at bottom — 11-digit code, no international suffix printed); Material Description must match PO/spec; Wholesale Quantity (4-digit); Partial Quantity (blank or zero); Destination (per PO); Date code (MMYY, cannot be later than shipping month); Vendor ID (prefer GS code, else VN code); Canada Price (optional, blank acceptable).
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: Stock number (SAP Material Number on top, Material/SKU number at bottom — 11-digit code, no international suffix printed?")
+```
+
+---
+
+**ID:** SPEC.6.16
+**Field / Location:** Made In field
+**What to check:** US-produced: "US" + 2-digit USPS state code (e.g., USKS). Non-US: 2-letter country/region code (CN, VN, TH, ID, IN, LK, MY, MX, etc.), 10-point font. Must represent actual production location.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: US-produced: 'US' + 2-digit USPS state code (e.g., USKS). Non-US: 2-letter country/region code (CN, VN, TH, ID, IN, LK, ?")
+```
+
+---
+
+**ID:** SPEC.6.17
+**Field / Location:** Barcode scanning of corner label
+**What to check:** 4 barcodes on label: 2 longer (right) = Material Number/SKU; 2 shorter (left) = wholesale quantity. Barcode must be clearly readable (grade C or above; HCA orders require grade B or above). Only one label per lot needs detailed inspection; if it fails (wrong info or poor print), record as a shipper packing defect.
+**Scope:** `SECTION`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: 4 barcodes on label: 2 longer (right) = Material Number/SKU; 2 shorter (left) = wholesale quantity. Barcode must be clea?")
+```
+
+---
+
+**ID:** SPEC.6.18
+**Field / Location:** Corner label minor correction
+**What to check:** Non-barcode info errors (destination code, date code, vendor ID, country of origin) may be corrected with a small overlay label or reprint. Barcode information errors cannot be corrected this way.
+**Scope:** `SECTION`
+
+```check
+where: [report.destinations]
+when: null
+check: extract_bool("Does this field evidence satisfy: Non-barcode info errors (destination code, date code, vendor ID, country of origin) may be corrected with a small overla?")
+```
+
+---
+
+**ID:** SPEC.6.19
+**Field / Location:** Dayspring shipping mark
+**What to check:** Font ≈13mm (0.5") bold. Item No. = UPC code minus first & last digit, 10 digits (e.g. 8198376958). Template (rev. April 2025) removed the "Case Count: xx of xxx" line.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Font ≈13mm (0.5') bold. Item No. = UPC code minus first & last digit, 10 digits (e.g. 8198376958). Template (rev. April ?")
+```
+
+---
+
+**ID:** SPEC.6.20
+**Field / Location:** Dayspring carton label
+**What to check:** 4"x4" label, 1 per carton, top-right corner of long side. Must include: Dayspring item number (1" font, scannable UPC), Prime item number, Carton Quantity, Description of Merchandise, Date of mfg. Generated via https://retailer.dayspring.com/vendor. Barcode format: E0000 + 8-digit item# = shows as "E0000088198362631" (10-digit Item# + 6-digit Qty encoding).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 4'x4' label, 1 per carton, top-right corner of long side. Must include: Dayspring item number (1' font, scannable UPC), ?")
+```
+
+---
+
+**ID:** SPEC.6.21
+**Field / Location:** Dayspring branding
+**What to check:** Must use official logo files (Illustrator/PDF); do NOT distort logo non-uniformly.
+**Scope:** `QUESTION`
+
+```check
+where: [report.attachment_filenames]
+when: null
+check: present
+```
+
+---
+
+**ID:** SPEC.6.22
+**Field / Location:** Dayspring/Mary & Martha carton max size/weight
+**What to check:** Max dimensions: 24" (609mm) Tall x 24" (609mm) Width x 14.5" (368mm) Length/Deep; Max weight 30 lbs (13.6kg) — revised 07/06/2022 (previously 35 lbs).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Max dimensions: 24' (609mm) Tall x 24' (609mm) Width x 14.5' (368mm) Length/Deep; Max weight 30 lbs (13.6kg) — revised 0?")
+```
+
+---
+
+**ID:** SPEC.6.23
+**Field / Location:** Fragile label — when required
+**What to check:** Recommended for easily broken items (ceramic, glass frame, FRP, etc.). If missing, inspector should point it out (label or printed marking acceptable). Symbol placed 31mm from top flap score and 31mm from corner score; symbol size 75mm tall.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Recommended for easily broken items (ceramic, glass frame, FRP, etc.). If missing, inspector should point it out (label ?")
+```
+
+---
+
+**ID:** SPEC.6.24
+**Field / Location:** Carton drop test trigger
+**What to check:** Required if: HMK ENG special request in spec; ceramic & glass products; any product dimension >16" (40.64cm); item failed ship test at HMK DG lab more than once; any packaging shows a fragile note/icon/sign. Mandatory for all SKUs marked fragile even if not in the spec, unless Hallmark issues a waiver.
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** SPEC.6.25
+**Field / Location:** Partially Filled Carton (PFC) definition
+**What to check:** PFC = carton with less than the stated wholesale quantity (usually the last carton). Must have 2 separately-printed PFC labels (not manually amended) applied to two opposite corners; carton label must be reprinted (not manually amended) to reflect actual wholesale quantity and correctly scan. No filler material from empty wholesale/retail boxes — clean corrugate/Kraft paper only. Only ONE PFC allowed per PO per shipment (the last carton#).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: PFC = carton with less than the stated wholesale quantity (usually the last carton). Must have 2 separately-printed PFC ?")
+```
+
+---
+
+**ID:** SPEC.6.26
+**Field / Location:** PFC label specs
+**What to check:** Orange background PMS 1505C, white lettering, "PARTIALLY FILLED CARTON," 15mm bold face, size 5"x2", self-adhesive. Do NOT use RED or GREEN (reserved for Customs). Position: normal shipper — width/opposition edge, 5" from corner, 1–3" from bottom; tall box — depth-middle/opposite edge.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Orange background PMS 1505C, white lettering, 'PARTIALLY FILLED CARTON,' 15mm bold face, size 5'x2', self-adhesive. Do N?")
+```
+
+---
+
+**ID:** SPEC.6.27
+**Field / Location:** Overage tolerance (Hallmark AU)
+**What to check:** Delivery of +3%/-0% of PO quantity allowed for Everyday programs; 0%/0% (no variance) for Seasonal programs.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.global_remark]
+when: product._first.real_packed_quantity != product._first.ordered_quantity
+check: extract_bool("Does the remark explain the quantity shortage or overage vs booking?")
+```
+
+---
+
+**ID:** SPEC.6.28
+**Field / Location:** Wholesale label content (standard US/Canada format)
+**What to check:** (1) SAP Material number, (2) Product description, (3&4) Wholesale package qty, (5&6) Material/SKU number (11 digits), (7) Partial qty (blank/zero), (8) Destination (first 4 digits), (9) Date code, (10) Vendor ID, (11) PO#, (12) Made in.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: (1) SAP Material number, (2) Product description, (3&4) Wholesale package qty, (5&6) Material/SKU number (11 digits), (7?")
+```
+
+---
+
+**ID:** SPEC.6.29
+**Field / Location:** Wholesale label — when NOT required
+**What to check:** If product shipped directly to customer (not via Hallmark DC): label not required if (a) unit count easily countable without opening wholesale film, or (b) stock number clearly visible. Additional requirements for film/polybag wholesales (rev. Aug 2019): stock number ≥3mm (1/8") tall AND clearly visible through film; retail count visible through film; Retail UPC visible & scannable through film/polybag.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: If product shipped directly to customer (not via Hallmark DC): label not required if (a) unit count easily countable wit?")
+```
+
+---
+
+**ID:** SPEC.6.30
+**Field / Location:** Wholesale label size/color/placement
+**What to check:** Size: 3.25"x1.125" (83x29mm) — or per SKU spec if specified. Color: black on white. Position: smallest side panel of the wholesale unit (or front/top if impractical); never place on the sealing area.
+**Scope:** `SECTION`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: Size: 3.25'x1.125' (83x29mm) — or per SKU spec if specified. Color: black on white. Position: smallest side panel of the?")
+```
+
+---
+
+**ID:** SPEC.6.31
+**Field / Location:** Wholesale label — Hallmark DC-routed shipments (new guideline, rev. June 2022)
+**What to check:** If shipped through Hallmark DC then onward: follow new guideline — layout consistent within product category, stock number most prominent (top), size 2.625"x1.69" (67x43mm), black print, min type size 0.25"(6mm) for stock number via inkjet (else 0.125"/3mm min), UPC must match retail label's contrast/format/size.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: If shipped through Hallmark DC then onward: follow new guideline — layout consistent within product category, stock numb?")
+```
+
+---
+
+**ID:** SPEC.6.32
+**Field / Location:** Country of Origin wording
+**What to check:** "Made In" (not "Produced In") on retail product & packaging for all NA POs (effective June 2015). UNICEF, International, M&S, Crayola keep their existing wording unchanged.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 'Made In' (not 'Produced In') on retail product & packaging for all NA POs (effective June 2015). UNICEF, International,?")
+```
+
+---
+
+**ID:** SPEC.6.33
+**Field / Location:** Wholesale Packaging for Hallmark Australia
+**What to check:** Sealed LDPE (≥30% recycled) bag, clear stock number, readable barcode; bag material may be 40 micron/1.5 mil; label min size 3¼"x1⅛" (83x29mm), black on white, placed for visibility (near Hallmark logo if non-pack); multiples of 5 preferred unless specified; label not required if unit count easily countable and stock number visible.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** SPEC.6.34
+**Field / Location:** 1FB Inner Carton Box/Tray (Hallmark AU)
+**What to check:** Size 420(L)x170(H)x205(W)mm, tolerance +0/-2mm; single-wall corrugated; snap-out tray design; 2 x 1FB packed per outer carton; used for Single Cards/Gift Tags unless specified otherwise.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Size 420(L)x170(H)x205(W)mm, tolerance +0/-2mm; single-wall corrugated; snap-out tray design; 2 x 1FB packed per outer c?")
+```
+
+---
+
+**ID:** SPEC.6.35
+**Field / Location:** 1FB Label (Hallmark AU)
+**What to check:** Includes PO number, "INNER" wording top-middle, stock number, wholesale unit quantity; size 100x150mm; pressure-sensitive permanent label; black print; placed on back panel of tray.
+**Scope:** `SECTION`
+
+```check
+where: [report.po_reference]
+when: null
+check: present
+```
+
+---
+
+**ID:** SPEC.6.36
+**Field / Location:** Shipping carton requirements (Hallmark AU)
+**What to check:** 2FB carton holds 2x1FB (≈445x355x230mm double wall); various standard shipper sizes per product type (flat wrap, gift bags, XL gift bags, Gifting 3D); max gross weight 12kg (15kg for tag-on orders). One stock number per carton — do not mix. Hot-melt seal + 2" clear tape, no steel strapping.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 2FB carton holds 2x1FB (≈445x355x230mm double wall); various standard shipper sizes per product type (flat wrap, gift ba?")
+```
+
+---
+
+**ID:** SPEC.6.37
+**Field / Location:** Retail singles (Hallmark AU)
+**What to check:** Retail singles will not be accepted/received — only complete wholesale units placed in cartons.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Retail singles will not be accepted/received — only complete wholesale units placed in cartons.?")
+```
+
+---
+
+**ID:** SPEC.6.38
+**Field / Location:** Polybag warning statement (general)
+**What to check:** Required unless opening width <5" (12.7cm) flat, or it's a wholesale-only polybag (never reaches consumer). Must include English, French, and Spanish (if required) suffocation warning, repeated every 18". "WARNING"/"CAUTION" in all caps only (≥4mm letter height); other text not required in all caps. Print size scales with bag size (60"+ → 24pt; 40-59" → 18pt; 25-39" → 14pt; <25" → 10pt). Material mostly PE; thickness >1 mil (0.0254mm) unless BU-specific rule differs; toys must also comply with ASTM F963 §4.12.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Required unless opening width <5' (12.7cm) flat, or it's a wholesale-only polybag (never reaches consumer). Must include?")
+```
+
+---
+
+**ID:** SPEC.6.39
+**Field / Location:** Product logo checkpoint
+**What to check:** Verify inspector's Pass/Fail/N/A result is consistent with what's visible in report photos — logos can appear in non-obvious locations; do not accept N/A/no-logo without photographic evidence of absence.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Verify inspector's Pass/Fail/N/A result is consistent with what's visible in report photos — logos can appear in non-obv?")
+```
+
+---
+
+**ID:** SPEC.6.40
+**Field / Location:** PID Number check (2D only)
+**What to check:** PID = display board on card items. Select N/A only if the product genuinely has no such display board.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: PID = display board on card items. Select N/A only if the product genuinely has no such display board.?")
+```
+
+---
+
+**ID:** SPEC.6.41
+**Field / Location:** Warning Statement and License checkpoint
+**What to check:** Verify copyright info on retail package conforms to spec and DAS before selecting Pass.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Verify copyright info on retail package conforms to spec and DAS before selecting Pass.?")
+```
+
+---
+
+**ID:** SPEC.6.42
+**Field / Location:** Client/Destination selection
+**What to check:** Lung Cheong (Indonesia), Starlite (Malaysia), PT IGP suppliers → always select "KC HKBO." Hallmark-brand orders shipping to USA → "KC HKBO." Costco/Walmart/Walgreens/QVC etc. orders → select the specific retailer name.
+**Scope:** `QUESTION`
+
+```check
+where: [report.supplier_name]
+when: null
+check: extract_bool("Does this field evidence satisfy: Lung Cheong (Indonesia), Starlite (Malaysia), PT IGP suppliers → always select 'KC HKBO.' Hallmark-brand orders shipping?")
+```
+
+---
+
+**ID:** SPEC.6.43
+**Field / Location:** Reece's Law check (button-cell battery items)
+**What to check:** Applicable ONLY to items with button cell battery shipping to US/Canada. Select "Mark as N/A" for items without button cell battery or non-US/Canada destination. Not applicable to Keepsake 2024 products. Does not apply to toys for children under 14 compliant with the Toy Standard. Both product and retail packaging must show visible warning statements (exception: heavy embossed/textured product will not have a product marking).
+**Scope:** `SECTION`
+
+```check
+where: [report.destinations]
+when: null
+check: extract_bool("Does this field evidence satisfy: Applicable ONLY to items with button cell battery shipping to US/Canada. Select 'Mark as N/A' for items without button c?")
+```
+
+---
+
+**ID:** SPEC.6.44
+**Field / Location:** Color accuracy — CMYK (PressSIGN Report)
+**What to check:** Result should be ≥90%; if below, remark in report.
+**Scope:** `QUESTION`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** SPEC.6.45
+**Field / Location:** Color accuracy — PMS/Delta E
+**What to check:** Delta E should be ≤2 (solid color only). If >2, check with SIC for instruction. If factory lacks a Delta E device, request their own test record. If inspector has doubts, remark and fail the color check.
+**Scope:** `QUESTION`
+
+```check
+where: [report.factory_name]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** MEAS.7.1
+**Field / Location:** M&S and Dayspring products
+**What to check:** Refer to the Hallmark Inspection Manual for measurement questions. No AQL for measurement — only 1 pc (retail sample) is measured and recorded; noticeable difference → report with a failure remark.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** MEAS.7.2
+**Field / Location:** Paper bags
+**What to check:** Must measure handle length and remark in the report.
+**Scope:** `QUESTION`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** MEAS.7.3
+**Field / Location:** Products with components
+**What to check:** Must weigh the component as well.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Must weigh the component as well.?")
+```
+
+---
+
+**ID:** TST.8.1
+**Field / Location:** Visual batch check — Card Items
+**What to check:** Sample size e.g. 30 pcs: 1 pc checked against DAS for full compliance; remaining 29 pcs use batch-checking method.
+**Scope:** `SECTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.2
+**Field / Location:** Visual batch check — Boxed Cards
+**What to check:** Batch check for visual; check ALL pieces for functional check (no missing cards/envelopes, no mix-ups, correct qty). Envelope sealing function test: 10 pcs per inspection lot.
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Batch check for visual; check ALL pieces for functional check (no missing cards/envelopes, no mix-ups, correct qty). Env?")
+```
+
+---
+
+**ID:** TST.8.3
+**Field / Location:** Visual batch check — Handle Bags
+**What to check:** Batch check for visual; check ALL pieces for functional check (pull/check handle strength, open each bag to review construction/gluing/visual inside).
+**Scope:** `SECTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Batch check for visual; check ALL pieces for functional check (pull/check handle strength, open each bag to review const?")
+```
+
+---
+
+**ID:** TST.8.4
+**Field / Location:** Abuse test (pull test, glue joint test)
+**What to check:** Sample must be selected from bulk SEPARATELY, not pulled from the visual-check samples.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.5
+**Field / Location:** Color Accuracy Check (Delta E concern)
+**What to check:** If Delta E variance is a concern between DAS and production, include photos of color target Lab value and Delta E reading against the target (e.g. PMS Pantone from spectrometer's digital library).
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.6
+**Field / Location:** Pull Test
+**What to check:** If no pull tester onsite, inspector may DIY one using measured dead weight (e.g. 2/3/5 lbs via hook/clip). Test must not be skipped; remark that a DIY Weight Pull Tester was used.
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: checklist
+    match: [pull, test]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** TST.8.7
+**Field / Location:** Functional Test acceptance
+**What to check:** If functional defect qty >50% of Acceptance quantity (C#), fail the Functional Test and remark. Accept functional defect qty ≤ C#/2; for >C#/2, send to PE for final decision.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** TST.8.8
+**Field / Location:** UPC Scan Test
+**What to check:** AU orders require grade B or above (else check supplier's scanner). Special barcode scanner required (or "Barcode Scanner" app + inspector sends PDF/image to QIMA DG lab). Results table: Pass ≥90%/grade A(>0.62); Warning zone 75–89%/grade C(≥0.25); Fail <75%/grade D(<0.25). If result Pass → insert scan photos. If Fail → fail checkpoint + seal 1 barcode sticker per version for further testing (or fail + remark if no seal possible). If result unavailable before inspector leaves → rate Fail with remark, update later with lab result.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
+---
+
+**ID:** TST.8.9
+**Field / Location:** UPC test sample size
+**What to check:** Shipper carton: 1 carton, scan every corner label barcode. Retail package: Greetings/Print Specialty/Gift/Ornament = 1 pc; International/Crayola/Marks & Spencer = 10 pcs.
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.10
+**Field / Location:** UPC scan procedure
+**What to check:** Laser gun ~6" from UPC, held at 5° perpendicular angle, trigger held 3 sec (top-to-bottom scan), push enter until DECODE%/DECODABILITY% shown; if bad scan, do not record — rescan. Retail box extra price barcode: use Barcode Scanner app; result Pass only if info appears under "Metadata."
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Laser gun ~6' from UPC, held at 5° perpendicular angle, trigger held 3 sec (top-to-bottom scan), push enter until DECODE?")
+```
+
+---
+
+**ID:** TST.8.11
+**Field / Location:** UPC scan pass criterion (7-of-10 rule)
+**What to check:** If 7 or more of 10 scans are acceptable (grade C or above), overall result = Pass; otherwise Fail.
+**Scope:** `SECTION`
+
+```check
+where: [report.overall_result]
+when: null
+check: in_set(PASS, FAIL, PENDING)
+```
+
+---
+
+**ID:** TST.8.12
+**Field / Location:** Carton Drop Test
+**What to check:** Required per triggers in SPEC.6.24. Sample: wholesale boxes fill 50–85% of shipper; ≥12 retails but no more than 3 shippers. Report any breakage to the responsible HMK Engineer for final decision. Not required for subsequent lots if 1st lot passed.
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.13
+**Field / Location:** Grammage/Paper weight test
+**What to check:** GSM meter on 5 samples; compare to factory-provided paper weight test report. Tolerance: label claim ±5%.
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.14
+**Field / Location:** FHSA test (electrical function items only)
+**What to check:** Test 5 samples for: Working current <200mA; Standby current <10µA; Voltage (per factory-supplied batteries); dB 75–85 for keepsake. Ask factory for "Battery Powered Product Evaluation Report"; acceptance standard not exceeding 10%. Record in the required format with photo evidence in IAPP.
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: photo_count
+when: null
+check: count_at_least(1)
+```
+
+---
+
+**ID:** TST.8.15
+**Field / Location:** Adhesion Tape Test (non-paper products w/coating)
+**What to check:** 3M #810 tape applied to coated/painted surface, rest 1 min, remove rapidly. Acceptable if no visual effect. Exception for glass/ceramic décor not intended for handling in coated area: up to 25% coating removal acceptable. Not required for fabric/plush items or products not managed by Gift Presentation & Package Expressions BU.
+**Scope:** `QUESTION`
+
+```check
+where: [checklist.adhesive_test.comment]
+when: null
+check: 
+  - extract("Quote the tape model stated in this comment, or null")
+  - matches("3M ?(500|600P|810)")
+```
+
+---
+
+**ID:** TST.8.16
+**Field / Location:** Envelope Seal (20-min) Function Test
+**What to check:** Scope: Hallmark UK, HCA (Hallmark Australia), M&S only. Sample: 10 envelopes. Procedure: insert card, moisten adhesive strip, close flap, slide finger once, wait 20 min, open. Pass = fiber pull detected. Fail = flap opens early or no fiber pull after 20 min.
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.17
+**Field / Location:** Test instructions fallback
+**What to check:** If inspector doesn't understand how to perform a test, follow the SR or FR report's instructions. For all onsite tests: if failed, reflect the number of failed pieces in remarks; if passed, no comment required.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+```
+
+---
+
+**ID:** TST.8.18
+**Field / Location:** Function test — general reminder
+**What to check:** Check function for all inspected samples (1-2 cycles); report issues under appearance/workmanship section. Functional defect = impacts designed product function (electronic or mechanical), rendering the product unsellable — clarify with HMK engineer if unclear.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defects]
+when: null
+check: null
+```
+
+---
+
+**ID:** TST.8.19
+**Field / Location:** Function test sample size
+**What to check:** 25 test attempts per specs; sample size follows FR protocol (FR KPS, Greeting Cards, Houseware Food/Non-food → function test sample size = 1).
+**Scope:** `FULL REPORT`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** WM.9.1
+**Field / Location:** No defect found
+**What to check:** Select "no defect found" from the public defect list.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
+---
+
+**ID:** WM.9.2
+**Field / Location:** Tea Towel defect variances
+**What to check:** Refer to "1SNN1015 Tea Towel defects variances SG feedback" for accepted variances.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
+---
+
+**ID:** WM.9.3
+**Field / Location:** Felt ornament visual standard
+**What to check:** Shape/width/thickness variation acceptable if item remains recognizable; facial features may vary if symmetrical and proportionate; design feature placement may vary; wholesale variation acceptable (no two identical). Minor print defect <5mm — no need to report UNLESS it affects sellability (then classify as Major).
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** WM.9.4
+**Field / Location:** Box cards / set products
+**What to check:** Count only 1 defect per box or set (not per individual card).
+**Scope:** `QUESTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
+---
+
+**ID:** WM.9.5
+**Field / Location:** Acceptable defect — dirt marks (kraft recycled paper)
+**What to check:** Dirt marks on kraft recycled paper material acceptable if no glue residue penetrated the bag surface — no need to record.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defects]
+when: null
+check: extract_bool("Does this field evidence satisfy: Dirt marks on kraft recycled paper material acceptable if no glue residue penetrated the bag surface — no need to record?")
+```
+
+---
+
+**ID:** WM.9.6
+**Field / Location:** MAJOR defect photo requirement
+**What to check:** 2 photos required per Major defect (global view + close view).
+**Scope:** `QUESTION`
+
+```check
+where: [checklist.defect_photos_workmanship_section.photo_count]
+when: null
+check: count_at_most(1)
+```
+
+---
+
+**ID:** WM.9.7
+**Field / Location:** Critical defects (zero tolerance)
+**What to check:** Not accepted: Animal Fur; Human Hair or body fluid (e.g. blood); Insect/Insect Debris/Animal Debris; Mold on packaging or product; Sharp Tools (cutter, needle, scissor, etc.). Client may accept some functional sharp points/edges — clarify with SIC if needed. PE decides on potential risk for sharp point/edge/small parts.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defect_count]
+when: null
+check: present
+```
+
+---
+
+**ID:** WM.9.8
+**Field / Location:** Major defect classification
+**What to check:** Refer to client defect visual standard and HQR to rate defects; follow the "golden rule" if no matching example exists in the visual standard. Defects affecting sellability = Major. Doubt on MIN/MAJ classification → check with back office.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** WM.9.9
+**Field / Location:** Minor defects under AOQL inspections
+**What to check:** Minor defects are NOT allowed under AOQL inspections — any apparent Minor defect must be reclassified as Major. Exception: plush items apply AOQL 1.5% Major / AOQL 4.0% Minor (Minor allowed here).
+**Scope:** `SECTION`
+
+```check
+where: [report.defects]
+when: null
+check: extract_bool("Are all 'defect'-related defects classified as MAJOR?")
+```
+
+---
+
+**ID:** WM.9.10
+**Field / Location:** Defect photo caption
+**What to check:** For defects >1cm, describe length/area accurately in the caption and place a ruler next to the defect in the photo.
+**Scope:** `QUESTION`
+
+```check
+where: [report.defects_without_photo]
+when: null
+check: equals(0)
+```
+
+---
+
+**ID:** WM.9.11
+**Field / Location:** Test/Functional/Critical acceptable qty (Manual detail)
+**What to check:** Functional defect acceptance ≤ C#/2 (else PE decision); 0 (zero) critical defects accepted.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.1
+**Field / Location:** Inspector's Remark section
+**What to check:** Must never be left empty; follow the standard 5-line format: (1) QIMA order number, (2) Inspector name, (3) which test/spec documents the factory provided onsite, (4) sample repacking note, (5) sampling method/carton count.
+**Scope:** `QUESTION`
+
+```check
+where: [report.all_text]
+when: null
+check: scan_absent("Golden Sample")
+```
+
+---
+
+**ID:** RPT.10.2
+**Field / Location:** Picture orientation
+**What to check:** Landscape, not portrait.
+**Scope:** `QUESTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Landscape, not portrait.?")
+```
+
+---
+
+**ID:** RPT.10.3
+**Field / Location:** Picture description
+**What to check:** Every picture field must have a description/caption.
+**Scope:** `QUESTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: Every picture field must have a description/caption.?")
+```
+
+---
+
+**ID:** RPT.10.4
+**Field / Location:** Date format
+**What to check:** Date-Month-Year (e.g., 17-July-2020).
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Date-Month-Year (e.g., 17-July-2020).?")
+```
+
+---
+
+**ID:** RPT.10.5
+**Field / Location:** Report cover photo
+**What to check:** 1 photo required.
+**Scope:** `QUESTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: present
+```
+
+---
+
+**ID:** RPT.10.6
+**Field / Location:** Carton/Shipper photos
+**What to check:** ~3 photos: 45° view (corner label position + shipping mark), close-up of corner label detail (both sides, ideally one photo), photo showing total wholesale count (easily countable).
+**Scope:** `SECTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: ~3 photos: 45° view (corner label position + shipping mark), close-up of corner label detail (both sides, ideally one ph?")
+```
+
+---
+
+**ID:** RPT.10.7
+**Field / Location:** Wholesale package photos
+**What to check:** ~2 photos: side view of wholesale label/marking, photo showing retail count per wholesale (easily countable).
+**Scope:** `SECTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: ~2 photos: side view of wholesale label/marking, photo showing retail count per wholesale (easily countable).?")
+```
+
+---
+
+**ID:** RPT.10.8
+**Field / Location:** Retail package photos
+**What to check:** ~3 photos: front view, back view, photo clearly showing retail labeling. (Skip duplication if already covered in DAS check photos.)
+**Scope:** `SECTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: extract_bool("Does this field evidence satisfy: ~3 photos: front view, back view, photo clearly showing retail labeling. (Skip duplication if already covered in DAS che?")
+```
+
+---
+
+**ID:** RPT.10.9
+**Field / Location:** DAS check photos
+**What to check:** ~8-10 photos, DAS and production sample need to be in the SAME photo: front/back/bottom view of retail package; front/back/left/right/top/bottom view of product (as applicable); 1 photo of 4-6 products together for consistency review.
+**Scope:** `SECTION`
+
+```check
+where: [report.all_captions]
+when: null
+check: present
+```
+
+---
+
+**ID:** RPT.10.10
+**Field / Location:** Testing photos
+**What to check:** Pull test (hanger/component): no photo unless failed (then remark pull-off force data). UPC test: 4 photos on corner label + 1 on retail package. Adhesive tape test: no photo unless failed. Grammage paper weight: photo required + actual measurement data remarked. Envelope seal test: 1 photo to show the tested sample (tearing areas) if applicable. Other tests required per FR protocol: remark test names in comment field, insert 1 photo for each test. For plush item: photos to show test force diagram and test data.
+**Scope:** `SECTION`
+
+```check
+where: [checklist.defect_photos_workmanship_section.photo_count]
+when: null
+check: count_at_most(1)
+```
+
+---
+
+**ID:** RPT.10.11
+**Field / Location:** Measurement section
+**What to check:** Record measuring results/data in report; insert measurement photos with remark if measurement fails.
+**Scope:** `SECTION`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** RPT.10.12
+**Field / Location:** Workmanship defect photos
+**What to check:** Insert photos based on actual defects found.
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: checklist
+    match: [defect, photos, workmanship, section]
+    field: photo_count
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.13
+**Field / Location:** Re-inspection reports
+**What to check:** Must make sure there is an inspection reason at the head of the report.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: Must make sure there is an inspection reason at the head of the report.?")
+```
+
+---
+
+**ID:** RPT.10.14
+**Field / Location:** HA/HCLP communication note
+**What to check:** Please make sure the inspector advises if they have communicated with back office.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.15
+**Field / Location:** No combining inspection reports
+**What to check:** Inspector must NOT combine inspection reports (Hallmark required inspection report will be issued by SKU and inspection lot) unless Hallmark confirms to do so.
+**Scope:** `QUESTION`
+
+```check
+where: [report.product_label]
+when: null
+check: extract_bool("Does this field evidence satisfy: Inspector must NOT combine inspection reports (Hallmark required inspection report will be issued by SKU and inspection ?")
+```
+
+---
+
+**ID:** RPT.10.16
+**Field / Location:** Shipper packaging picture composability
+**What to check:** Photo must make it easy to count wholesale quantity (e.g., 2 columns x 4 rows x 3 layers = 24).
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: photo_count
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.17
+**Field / Location:** Wholesale packaging picture composability
+**What to check:** Photo must make it easy to count retail quantity.
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: photo_count
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.18
+**Field / Location:** Packaging comment template
+**What to check:** For Shipper/Wholesale/Retail packaging sections, if no inconsistency found, use exact template: "Conform to Specs, PO and approved ship test report."
+**Scope:** `QUESTION`
+
+```check
+where:
+  - kind: section
+    match: [product, packing, packaging]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.19
+**Field / Location:** Quantity/Sampling count field (QIMAone)
+**What to check:** "Defect sampling level & AQL" input must be the Acceptance Number (NOT the workmanship defect count found).
+**Scope:** `SECTION`
+
+```check
+where:
+  - kind: section
+    match: [quantity]
+    field: comment
+when: null
+check: null
+```
+
+---
+
+**ID:** RPT.10.20
+**Field / Location:** Golden report review
+**What to check:** Inspector should review the golden report (attached to Inspector GI) before writing the QIMAone report.
+**Scope:** `QUESTION`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** PLT.11.1
+**Field / Location:** Search / selection
+**What to check:** Search by SKU (Product Reference) or PO Number (only the portion before "+"). QTY of the selected project must be the **Order PO QTY** (from the PO attachment "Purchase Order Chance"), NOT a generic "order QTY" field elsewhere.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.po_reference]
+when: null
+check: present
+```
+
+---
+
+**ID:** PLT.11.2
+**Field / Location:** Inspection Type selection
+**What to check:** Always chosen based on the Specifications attached to the order — the SAP Group# (HMK#) on the spec must match the order. Single Sampling → Lot size = available quantity in factory. Double Sampling → no lot size required. If unsure, contact back office.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** PLT.11.3
+**Field / Location:** Workflow selection
+**What to check:** Only select workflows under Type "SP" (Self Picking); search using keyword "HMK –"; refer to the workflow decision matrix; contact back office if unclear.
+**Scope:** `FULL REPORT`
+
+```check
+where: [out_of_report:spec_sheet]
+when: null
+check: null
+```
+
+---
+
+**ID:** PLT.11.4
+**Field / Location:** Report finalization
+**What to check:** "COMPLETE MY INSPECTION" should only be clicked when inspection is genuinely finished — report becomes inaccessible afterward.
+**Scope:** `QUESTION`
+
+```check
+where: [report.inspector_text]
+when: null
+check: extract_bool("Does this field evidence satisfy: 'COMPLETE MY INSPECTION' should only be clicked when inspection is genuinely finished — report becomes inaccessible afte?")
+```
+
+---
+
+**ID:** SUM.12.1
+**Field / Location:** Negative responses require explanation
+**What to check:** Every "No"/"Failed"/anomaly recorded anywhere in the report must have a corresponding explanation in the Inspector's Remark / Summary Review.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---
+
+**ID:** SUM.12.2
+**Field / Location:** HA/HCLP disclosure
+**What to check:** If item is HA or HCLP, the summary/remarks must reflect this and confirm back-office communication occurred.
+**Scope:** `FULL REPORT`
+
+```check
+where: [report.global_remark]
+when: null
+check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+```
+
+---

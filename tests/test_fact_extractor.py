@@ -42,7 +42,7 @@ class ExtractGroupingTests(unittest.TestCase):
 
 class ParseBatchResponseTests(unittest.TestCase):
     def test_parses_clean_answers_array(self) -> None:
-        raw = '{"answers": [{"id": "a", "value": true, "confidence": 0.9}]}'
+        raw = '{"answers": [{"id": "a", "value": true}]}'
         rows = _parse_batch_response(raw)
         self.assertEqual(rows[0]["id"], "a")
         self.assertTrue(rows[0]["value"])

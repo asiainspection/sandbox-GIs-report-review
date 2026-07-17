@@ -22,9 +22,9 @@ notebooks/gi_findings_export.ipynb
   --report-json data/clients/ribkoff/corrected/Q2614146161.json \
   --checkpoints data/pipeline/checkpoints/ribkoff_checkpoints.json
 
-# Offline P/R gate (no LLM):
-.venv/bin/python scripts/eval_all.py \
-  --gis ribkoff hallmark cemaco --arms policy_guard --offline --no-vision
+# Full production eval (all clients/reports) + P/R plot:
+.venv/bin/python scripts/eval_all.py
+.venv/bin/python scripts/eval_all.py --gis ribkoff dfi --no-vision
 ```
 
 Python entrypoint: `from review import review` (alias: `run_production_review`).

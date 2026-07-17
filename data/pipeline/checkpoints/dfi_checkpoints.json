@@ -1,1347 +1,1232 @@
 {
   "meta": {
-    "name": "DFI H&B PSI Review Checkpoints",
-    "version": "1.0.0",
-    "source": "DFI_KH__All_instructions.txt",
-    "platform": "QIMAone",
-    "schema": [
-      "id",
-      "section",
-      "requirement",
-      "md_sections",
-      "fail_if",
-      "examples",
-      "applies_when"
-    ]
+    "name": "DFI H&B Inspection Report Review – Rules Reference",
+    "source": "data/clients/dfi/gi/rules.md",
+    "generated_at": "2026-07-17T04:40:54Z",
+    "check_blocks": 50,
+    "checkpoint_count": 50
   },
   "checkpoints": [
     {
-      "id": "preliminary.product_matches_booking",
-      "section": "before_starting",
-      "requirement": "Product inspected must match what was booked.",
-      "md_sections": [
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Product in report does not match booked product",
-        "SKU or reference order mismatch with booking"
-      ]
-    },
-    {
-      "id": "preliminary.qimaone_platform",
-      "section": "before_starting",
-      "requirement": "Inspection must be performed in QIMAone, never IAPP.",
-      "md_sections": [
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Evidence suggests inspection was performed in IAPP instead of QIMAone"
-      ]
-    },
-    {
-      "id": "cover.supplier_factory_name",
-      "section": "cover_page",
-      "requirement": "Supplier and Factory names must be in English, combined format: Supplier Name (Factory Name). Both fields filled.",
-      "md_sections": [
-        "Parties & Location",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Chinese characters in supplier or factory name",
-        "Only one of supplier or factory name is filled",
-        "Format is not combined Supplier (Factory)"
-      ],
-      "examples": {
-        "pass": [
-          "Ruby Beauty Corporation Limited (ZHEJIANG YASILI COSMETICS CO., LTD)"
-        ],
-        "fail": [
-          "ZHEJIANG YASILI COSMETICS CO., LTD",
-          "Ruby Beauty (浙江公司)"
-        ]
-      }
-    },
-    {
-      "id": "cover.product_name_not_sku",
-      "section": "cover_page",
-      "requirement": "Product name must be the real product name, not SKU or barcode string.",
-      "md_sections": [
-        "Executive Summary",
-        "Products & Quantities",
-        "Additional Fields"
-      ],
-      "fail_if": [
-        "Product name is mostly digits or barcode",
-        "Product name equals SKU",
-        "Booking name looks like barcode while QSP product name exists in Additional Fields"
-      ],
-      "examples": {
-        "fail": [
-          "1_9557514024035 [Q2611274887_3]"
-        ],
-        "pass": [
-          "guardian OMEGA-3 FISH OIL 1000mg SOFTGEL 90s"
-        ]
-      }
-    },
-    {
-      "id": "cover.cover_photo",
-      "section": "cover_page",
-      "requirement": "Cover photo must show Consumer Pack, frontal angle, vertical orientation, full product name readable.",
-      "md_sections": [
-        "Product cover photo",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Photo shows bare product without packaging",
-        "Photo shows outer carton instead of consumer pack",
-        "Blurry, angled, or product name not readable"
-      ]
-    },
-    {
-      "id": "cover.po_number",
-      "section": "cover_page",
-      "requirement": "If no PO on site, field must be N/A with no additional comment.",
-      "md_sections": [
-        "Products & Quantities",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "PO field blank",
-        "PO field contains comment instead of N/A when PO not found"
-      ]
-    },
-    {
-      "id": "cover.date_code_all_na_replacement",
-      "section": "cover_page",
-      "requirement": "If MFG, EXP, and Batch are all N/A on cover, replace with: Refer to the individual batch/date code in the date code check section",
-      "md_sections": [
-        "Executive Summary",
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "All three cover date fields show N/A but replacement sentence is absent"
-      ]
-    },
-    {
-      "id": "cover.location_english",
-      "section": "cover_page",
-      "requirement": "Location must be written entirely in English.",
-      "md_sections": [
-        "Parties & Location"
-      ],
-      "fail_if": [
-        "Chinese characters in location field"
-      ]
-    },
-    {
-      "id": "cover.unit_not_other",
-      "section": "cover_page",
-      "requirement": "Unit must not display Other. Use actual unit from booking (typically Boxes or Packs).",
-      "md_sections": [
-        "Products & Quantities",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Unit field shows Other"
-      ]
-    },
-    {
-      "id": "cover.result_matches_body",
-      "section": "cover_page",
-      "requirement": "Cover/overall result must match findings in report body.",
-      "md_sections": [
-        "Executive Summary",
-        "Attention Items (read first)",
-        "Closing Summary",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Overall result contradicts checklist findings or defects",
-        "Result is Pending or Failed but Important Remarks do not explain why"
-      ]
-    },
-    {
-      "id": "result.overall_logic",
-      "section": "overall_result",
-      "requirement": "Overall result must follow DFI Pass/Pending/Fail/Missing logic.",
-      "md_sections": [
-        "Executive Summary",
-        "Attention Items (read first)",
-        "Important Remarks",
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Closing Summary"
-      ],
-      "fail_if": [
-        "PASS assigned but failures, beyond AQL, or inconsistencies exist",
-        "PENDING triggers present but result is PASS or FAIL",
-        "FAIL triggers present but result is PASS or PENDING",
-        "Missing inspection scenario not classified correctly"
-      ]
-    },
-    {
-      "id": "result.adhesive_fail_is_pending",
-      "section": "overall_result",
-      "requirement": "Adhesive test fail (printing unreadable) must yield Pending, never Fail.",
-      "md_sections": [
-        "Checklist Sections",
-        "Executive Summary",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Adhesive test printing unreadable but overall result is FAIL instead of PENDING"
-      ]
-    },
-    {
-      "id": "result.pass_quantity_threshold",
-      "section": "overall_result",
-      "requirement": "For PASS: finished quantity >= ordered AND packed quantity >= ordered.",
-      "md_sections": [
-        "Products & Quantities",
-        "DFI(H&B) - Quantity & Packaging",
-        "Inspection preparation",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Produced quantity below ordered but result is PASS",
-        "Packed quantity below ordered but result is PASS",
-        "Quantity table says 100% packed but products.packedQuantity is lower"
-      ]
-    },
-    {
-      "id": "result.pending_quantity_threshold",
-      "section": "overall_result",
-      "requirement": "Quantity on site < 100% finished OR < 80% packed should trigger Pending.",
-      "md_sections": [
-        "Products & Quantities",
-        "DFI(H&B) - Quantity & Packaging",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Below 100% finished or 80% packed but result is PASS"
-      ]
-    },
-    {
-      "id": "result.pending_gss_issues",
-      "section": "overall_result",
-      "requirement": "No GSS, expired GSS, or GSS inconsistent with bulk should trigger Pending.",
-      "md_sections": [
-        "Reference sample (GSS)",
-        "DFI(H&B) - Product Specifications",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "GSS absent or unavailable but result is PASS",
-        "GSS expired but result is PASS",
-        "GSS inconsistent with bulk product but result is PASS"
-      ]
-    },
-    {
-      "id": "result.pending_adhesive_unreadable",
-      "section": "overall_result",
-      "requirement": "Adhesive test failed with unreadable printing should trigger Pending.",
-      "md_sections": [
-        "Checklist Sections",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Adhesive unreadable but result is PASS"
-      ]
-    },
-    {
-      "id": "result.pending_factory_refusal",
-      "section": "overall_result",
-      "requirement": "Factory refused drop test, did not provide tools, or test could not be completed → Pending.",
-      "md_sections": [
-        "QIMA - Factory Review",
-        "DFI(H&B) - Shipping Carton Verification",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Factory refusal or missing tools noted but result is PASS"
-      ]
-    },
-    {
-      "id": "result.fail_measurement_out_of_spec",
-      "section": "overall_result",
-      "requirement": "Measurement below spec or outside tolerance → Fail.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "Important Remarks",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Measurement failure evident but result is PASS or PENDING"
-      ]
-    },
-    {
-      "id": "result.fail_beyond_aql",
-      "section": "overall_result",
-      "requirement": "Defects beyond AQL acceptance → Fail.",
-      "md_sections": [
-        "AQL & Sampling",
-        "Checklist Sections",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Defects exceed AQL limits but result is PASS"
-      ]
-    },
-    {
-      "id": "result.fail_test_except_adhesive",
-      "section": "overall_result",
-      "requirement": "Any onsite test failed except adhesive → Fail.",
-      "md_sections": [
-        "Checklist Sections",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Non-adhesive test failed but result is PASS or PENDING"
-      ]
-    },
-    {
-      "id": "remarks.mandatory_result_statement",
-      "section": "important_remarks",
-      "requirement": "Remark required: The inspection result is [Passed/Pending/Failed] due to [reason].",
-      "md_sections": [
-        "Important Remarks",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Mandatory result statement missing or vague"
-      ]
-    },
-    {
-      "id": "remarks.defects_presented_to_factory",
-      "section": "important_remarks",
-      "requirement": "Remark required: All defective items and failure findings are presented to the factory.",
-      "md_sections": [
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Defects or failures found but factory presentation not mentioned"
-      ]
-    },
-    {
-      "id": "remarks.tolerance_health_product",
-      "section": "important_remarks",
-      "requirement": "For health product weight checks: remark must state tolerance range regardless of pass/fail.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Product Dimensions & Weights",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Health product measurement done but only Checked OK without tolerance range",
-        "Tolerance range not stated in remark"
-      ],
-      "applies_when": {
-        "product_type": "health_supplement"
+      "id": "1_1_1",
+      "section": "general_report_setup",
+      "requirement": "Supplier Name / Factory Name — Cover page, Inspection Details — Both fields must be filled in English using the combined format: `Supplier Name (Factory Name)`. Neither field may contain Chinese characters or show only one of the two names.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify both fields independently",
+      "source_rule_id": "1.1.1",
+      "source_lines": {
+        "start": 26,
+        "end": 43
       },
-      "examples": {
-        "pass": [
-          "Checked OK, the tolerance range of weight is 950mg – 1050mg."
+      "context": "QUESTION — verify both fields independently",
+      "check_block": {
+        "where": [
+          "report.supplier_name",
+          "report.factory_name"
         ],
-        "fail": [
-          "Checked OK"
+        "when": null,
+        "check": [
+          "present",
+          "no_language(chinese)"
         ]
       }
     },
     {
-      "id": "remarks.tolerance_dimension",
-      "section": "important_remarks",
-      "requirement": "For dimension checks with tolerance: remark must state tolerance range.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Dimension measurement with tolerance but range not stated in remark"
-      ]
-    },
-    {
-      "id": "remarks.adhesive_date_code_waiver",
-      "section": "important_remarks",
-      "requirement": "If adhesive test waived on date code area (Appendix A products): required waiver remark.",
-      "md_sections": [
-        "Important Remarks",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Date code adhesive waived but remark missing: Adhesive test on the date code waived due to limitation of the can and ink."
-      ],
-      "applies_when": {
-        "adhesive_date_code_exemption": true
+      "id": "1_1_2",
+      "section": "general_report_setup",
+      "requirement": "Product Name — Cover page / POs & product details, Name (Main identifier) — The product name field must show the real product name, not the SKU or barcode string. QIMAone auto-populates the SKU by default; the inspector must replace it manually. Check both the cover page and the POs & product details section.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify the same product name is consistent between cover and POs section",
+      "source_rule_id": "1.1.2",
+      "source_lines": {
+        "start": 44,
+        "end": 59
+      },
+      "context": "SECTION — verify the same product name is consistent between cover and POs section",
+      "check_block": {
+        "where": [
+          "report.product_label"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Is the product name a real product name (not a SKU/barcode string)?\")"
       }
     },
     {
-      "id": "remarks.carton_drop_observation",
-      "section": "important_remarks",
-      "requirement": "Carton drop test with findings must describe exactly what was observed using required formats.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Shipping Carton Verification"
-      ],
-      "fail_if": [
-        "Drop test has findings but remark does not describe outcome"
-      ],
-      "applies_when": {
-        "carton_drop_has_findings": true
+      "id": "1_1_3",
+      "section": "general_report_setup",
+      "requirement": "PO Number — Cover page, Inspection Details — If no PO was found on site, the field must read exactly \"N/A\" with no additional comment. The field must not be left blank.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify field value only",
+      "source_rule_id": "1.1.3",
+      "source_lines": {
+        "start": 60,
+        "end": 75
+      },
+      "context": "QUESTION — verify field value only",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
       }
     },
     {
-      "id": "remarks.defect_outside_workmanship",
-      "section": "important_remarks",
-      "requirement": "Defect found outside workmanship stage must be described separately in remarks.",
-      "md_sections": [
-        "Important Remarks",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Defect found during quantity/dimension check but no separate remark with section name"
-      ]
-    },
-    {
-      "id": "remarks.multiple_batches",
-      "section": "important_remarks",
-      "requirement": "Multiple batches: all batch codes found must be mentioned in remarks.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "Multiple batches on site but not all batch codes mentioned"
-      ],
-      "applies_when": {
-        "multiple_batches": true
+      "id": "1_1_4",
+      "section": "general_report_setup",
+      "requirement": "MFG Date / EXP Date / Batch Code — Cover page, Inspection Details — If all three date/batch fields are \"N/A\", they must be replaced with the sentence: \"Refer to the individual batch/date code in the date code check section\". If at least one field has a real value, no replacement is needed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check with Date Code Check section to confirm codes are recorded there",
+      "source_rule_id": "1.1.4",
+      "source_lines": {
+        "start": 76,
+        "end": 91
+      },
+      "context": "SECTION — cross-check with Date Code Check section to confirm codes are recorded there",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?\")"
       }
     },
     {
-      "id": "remarks.no_calibration_noted",
-      "section": "important_remarks",
-      "requirement": "If no calibration record for tools, note explicitly without impacting result.",
-      "md_sections": [
-        "Important Remarks",
-        "QIMA - Factory Review"
-      ],
-      "fail_if": [
-        "No calibration record but not remarked"
-      ],
-      "applies_when": {
-        "no_calibration_record": true
-      }
-    },
-    {
-      "id": "remarks.factory_internal_calibration",
-      "section": "important_remarks",
-      "requirement": "Factory internal calibration accepted must be remarked.",
-      "md_sections": [
-        "Important Remarks",
-        "QIMA - Factory Review"
-      ],
-      "fail_if": [
-        "Factory internal calibration used but not remarked"
-      ],
-      "applies_when": {
-        "factory_internal_calibration": true
-      }
-    },
-    {
-      "id": "remarks.no_chinese",
-      "section": "important_remarks",
-      "requirement": "No Chinese characters in remarks (except Chinese date codes recorded exactly as printed elsewhere).",
-      "md_sections": [
-        "Important Remarks",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Chinese characters in remarks"
-      ]
-    },
-    {
-      "id": "remarks.not_vague",
-      "section": "important_remarks",
-      "requirement": "Remarks must be specific, not vague.",
-      "md_sections": [
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Vague statements like some issues found without specifics"
-      ]
-    },
-    {
-      "id": "remarks.match_overall_result",
-      "section": "important_remarks",
-      "requirement": "Result stated in remark must match overall inspection result.",
-      "md_sections": [
-        "Important Remarks",
-        "Executive Summary",
-        "Closing Summary"
-      ],
-      "fail_if": [
-        "Remark says passed but overall is Failed/Pending or vice versa"
-      ]
-    },
-    {
-      "id": "remarks.pending_fail_reason",
-      "section": "important_remarks",
-      "requirement": "Pending or Failed reports must state reason explicitly.",
-      "md_sections": [
-        "Important Remarks",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Result is Pending or Failed but no reason in remarks"
-      ],
-      "applies_when": {
-        "result_in": [
-          "PENDING",
-          "FAILED",
-          "FAIL"
+      "id": "1_1_5",
+      "section": "general_report_setup",
+      "requirement": "Location — Cover page, Inspection Details — The location field must be written entirely in English. No Chinese characters are permitted.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify language only",
+      "source_rule_id": "1.1.5",
+      "source_lines": {
+        "start": 92,
+        "end": 109
+      },
+      "context": "QUESTION — verify language only",
+      "check_block": {
+        "where": [
+          "report.production_site"
+        ],
+        "when": null,
+        "check": [
+          "present",
+          "no_language(chinese)"
         ]
       }
     },
     {
-      "id": "standards.sampling_level_match",
-      "section": "inspection_standards",
-      "requirement": "Sampling levels must match DFI Sampling Plan Excel.",
-      "md_sections": [
-        "AQL & Sampling",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Sampling level in report does not match DFI Sampling Plan"
-      ]
-    },
-    {
-      "id": "standards.aql_values_product_type",
-      "section": "inspection_standards",
-      "requirement": "AQL values must match product type: general Not Allowed/1.5/4.0; earplug same; mask percentage-based from plan.",
-      "md_sections": [
-        "AQL & Sampling",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "AQL CRI/MAJ/MIN values do not match product type rules"
-      ]
-    },
-    {
-      "id": "standards.aql_checked_max",
-      "section": "inspection_standards",
-      "requirement": "Checked must match sample size; Max acceptance: size 8→0/0/0, 13→0/0/1, 32→0/1/3.",
-      "md_sections": [
-        "AQL & Sampling",
-        "DFI(H&B) - Workmanship check"
-      ],
-      "fail_if": [
-        "Checked number does not match sampling plan",
-        "Max acceptance numbers incorrect for sample size"
-      ]
-    },
-    {
-      "id": "standards.individual_pack_aql_table",
-      "section": "inspection_standards",
-      "requirement": "Individual Pack AQL table present only if product has individual packaging.",
-      "md_sections": [
-        "DFI(H&B) - Workmanship check",
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "Individual Pack AQL table present but product has no individual pack",
-        "Individual Pack AQL table absent but product has individual pack"
-      ]
-    },
-    {
-      "id": "standards.colors_labels_not_na",
-      "section": "inspection_standards",
-      "requirement": "Colors, Labels, Artworks: if no finding, must be OK not auto N/A.",
-      "md_sections": [
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "N/A in colors/labels/artworks without corresponding finding"
-      ]
-    },
-    {
-      "id": "date_code.recorded_as_printed",
-      "section": "date_code",
-      "requirement": "Record date codes exactly as printed: format, separators, casing.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "Date code reformatted or does not match printed format"
-      ]
-    },
-    {
-      "id": "date_code.mfg_exp_lot_present",
-      "section": "date_code",
-      "requirement": "At least one of MFG Date, EXP Date, or Lot#/Batch# must be present per product.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "All three absent without N/A where applicable",
-        "No date code and no batch on any packaging"
-      ]
-    },
-    {
-      "id": "date_code.gss_format_position",
-      "section": "date_code",
-      "requirement": "Date code format and printing position must match GSS. Values may differ.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details",
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "GSS has MFG+Lot but product only Lot# or format/position differs",
-        "Format or printing position differs between GSS and product"
-      ]
-    },
-    {
-      "id": "date_code.comparison_photo",
-      "section": "date_code",
-      "requirement": "Mandatory close-up comparison photo of date code area GSS vs actual product.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details",
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "Date code GSS vs product comparison photo absent or insufficient photos"
-      ]
-    },
-    {
-      "id": "date_code.multiple_batches_separated",
-      "section": "date_code",
-      "requirement": "Multiple batches: each separated clearly, recommended one batch per line.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Multiple batches not clearly separated"
-      ],
-      "applies_when": {
-        "multiple_batches": true
+      "id": "1_1_6",
+      "section": "general_report_setup",
+      "requirement": "Unit — Cover page / POs & product details — The unit field must not display \"Other\". If \"Other\" appears, it must be replaced with the actual unit found in the booking — typically \"Boxes\" or \"Packs\".",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify field value only",
+      "source_rule_id": "1.1.6",
+      "source_lines": {
+        "start": 110,
+        "end": 125
+      },
+      "context": "QUESTION — verify field value only",
+      "check_block": {
+        "where": [
+          "product._first.unit"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?\")"
       }
     },
     {
-      "id": "date_code.chinese_recorded_exactly",
-      "section": "date_code",
-      "requirement": "Chinese date codes must be recorded in Chinese exactly as printed.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "Chinese date code translated or reformatted instead of recorded as printed"
-      ],
-      "applies_when": {
-        "chinese_date_code": true
+      "id": "1_2_1",
+      "section": "general_report_setup",
+      "requirement": "Overall Inspection Result — Cover page — The overall result must match the Pass/Pending/Fail/Missing Inspection logic defined in Section 8. Verify that the result shown is consistent with all findings in the body of the report.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against all test results, AQL outcomes, and measurement results",
+      "source_rule_id": "1.2.1",
+      "source_lines": {
+        "start": 130,
+        "end": 145
+      },
+      "context": "FULL REPORT — cross-check against all test results, AQL outcomes, and measurement results",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
       }
     },
     {
-      "id": "date_code.barcode_fields_filled",
-      "section": "date_code",
-      "requirement": "Full barcode for Individual Pack, Consumer Pack, Outer Carton. N/A if no individual pack.",
-      "md_sections": [
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "Barcode fields left blank instead of filled or N/A"
-      ]
-    },
-    {
-      "id": "gss.terminology_only_gss",
-      "section": "gss",
-      "requirement": "Only GSS term allowed. Never Approved Sample, Golden Sample, etc.",
-      "md_sections": [
-        "Checklist Sections",
-        "Important Remarks",
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "Alternative terms to GSS used anywhere in report text"
-      ]
-    },
-    {
-      "id": "gss.validity_four_criteria",
-      "section": "gss",
-      "requirement": "GSS valid only if: on site, real product, DFI QA signed label, within EXP timeframe.",
-      "md_sections": [
-        "Reference sample (GSS)",
-        "DFI(H&B) - Product Specifications",
-        "Green Seal Sample(GSS)"
-      ],
-      "fail_if": [
-        "GSS not physically on site",
-        "GSS is copy/photo not real product",
-        "GSS missing DFI QA signed label",
-        "GSS expired based on product EXP on GSS"
-      ]
-    },
-    {
-      "id": "gss.absent_pending",
-      "section": "gss",
-      "requirement": "If GSS absent: pending report with clear remark.",
-      "md_sections": [
-        "Reference sample (GSS)",
-        "Important Remarks",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "GSS absent but result is PASS without pending/remark"
-      ]
-    },
-    {
-      "id": "gss.expired_pending",
-      "section": "gss",
-      "requirement": "If GSS expired: inform back office, seal 1 good bulk pc, pending with remark.",
-      "md_sections": [
-        "Reference sample (GSS)",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "GSS expired but not pending or missing remark"
-      ]
-    },
-    {
-      "id": "gss.comparison_elements",
-      "section": "gss",
-      "requirement": "Compare all faces, date code, composition, volume/quantity, markings, barcodes, manual, inside product.",
-      "md_sections": [
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "Missing comparison photos for required elements",
-        "Product inside not compared",
-        "Date code format or position differs between GSS and product"
-      ]
-    },
-    {
-      "id": "gss.resealed_requirements",
-      "section": "gss",
-      "requirement": "Re-sealed GSS: polybag, QIMA sticker signed with date and order number, photo mandatory.",
-      "md_sections": [
-        "DFI(H&B) - Product Specifications",
-        "Re-Sealed Green Seal Sample(Re-sealed GSS)"
-      ],
-      "fail_if": [
-        "Re-sealed GSS photo absent",
-        "QIMA sticker unsigned or missing date/order number"
-      ]
-    },
-    {
-      "id": "measurements.claimed_specs_only",
-      "section": "measurements",
-      "requirement": "Only measure specs claimed on product name, label, or packaging.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Specs measured that are not claimed",
-        "Claimed specs not measured"
-      ]
-    },
-    {
-      "id": "measurements.health_product_weight",
-      "section": "measurements",
-      "requirement": "Health products (NIP): measure total net weight and individual serving weight if stated on label.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Total net weight not measured for health product",
-        "Serving weight on label but not measured"
-      ],
-      "applies_when": {
-        "product_type": "health_supplement"
+      "id": "1_2_2",
+      "section": "general_report_setup",
+      "requirement": "Inspector's Remark — Cover page — Every Pending or Failed report must contain both of the following remarks: (1) \"The inspection result is [Pending/Failed] due to [reason].\" (2) \"All defective items (and failure findings) are presented to the factory.\" Both must be present. Neither is optional.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "result stated in remark must match the overall result on the cover",
+      "source_rule_id": "1.2.2",
+      "source_lines": {
+        "start": 146,
+        "end": 161
+      },
+      "context": "FULL REPORT — result stated in remark must match the overall result on the cover",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
-      "id": "measurements.sample_size_8_or_13",
-      "section": "measurements",
-      "requirement": "Sample size 8 or 13 per packaging level from DFI Sampling Plan.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "AQL & Sampling"
-      ],
-      "fail_if": [
-        "Wrong sample size per packaging level"
-      ]
-    },
-    {
-      "id": "measurements.pass_fail_logic",
-      "section": "measurements",
-      "requirement": "Volume/quantity/general weight: no tolerance, actual must be >= claim. Health weight and dimension: tolerance required.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Pass/Fail contradicts tolerance logic"
-      ]
-    },
-    {
-      "id": "measurements.tolerance_in_remark",
-      "section": "measurements",
-      "requirement": "Tolerance range must be stated in remark for dimension and health product weight.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Tolerance range missing in remark for applicable checks"
-      ]
-    },
-    {
-      "id": "measurements.identical_sample_values",
-      "section": "measurements",
-      "requirement": "All 8 or 13 samples must not show exactly identical values (copy-paste error).",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "All samples show identical weight or dimension values"
-      ]
-    },
-    {
-      "id": "measurements.excel_attached",
-      "section": "measurements",
-      "requirement": "Measurement Table Excel must be attached, filename without Chinese characters.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "DFI(H&B) - Workmanship check",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Measurement Table Excel not attached",
-        "Excel filename contains Chinese characters"
-      ]
-    },
-    {
-      "id": "measurements.empty_bottle_separate",
-      "section": "measurements",
-      "requirement": "Empty bottle/sachet and filled product weighed separately, not tare method.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Empty and filled weights not recorded separately"
-      ]
-    },
-    {
-      "id": "measurements.no_tolerance_pending",
-      "section": "measurements",
-      "requirement": "If factory/client cannot provide tolerance: pending with remark, upload data anyway.",
-      "md_sections": [
-        "Important Remarks",
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "No tolerance available but result PASS without pending/remark"
-      ]
-    },
-    {
-      "id": "measurements.duplicate_spec_across_tables",
-      "section": "measurements",
-      "requirement": "Same weight/volume must not be duplicated across two tables for same spec.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Same spec value duplicated inconsistently across tables"
-      ]
-    },
-    {
-      "id": "tests.carton_drop_mandatory",
-      "section": "tests",
-      "requirement": "Carton drop test mandatory for all products except defined fragile/scale exceptions.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification"
-      ],
-      "fail_if": [
-        "Drop test missing without valid exception"
-      ]
-    },
-    {
-      "id": "tests.carton_drop_result_logic",
-      "section": "tests",
-      "requirement": "Drop test PASS/PENDING/FAIL per ISTA 1A logic and damage description.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Drop result does not match described outcome",
-        "No remark describing what was observed",
-        "Drop test photos missing"
-      ]
-    },
-    {
-      "id": "tests.adhesive_scope",
-      "section": "tests",
-      "requirement": "Adhesive test on all printed areas, Consumer and Individual Pack if present. 3M 500/600P/810.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Adhesive not performed on all required areas",
-        "Photos do not show test on date code area",
-        "No 3M tape noted when required"
-      ]
-    },
-    {
-      "id": "tests.adhesive_fail_pending_not_fail",
-      "section": "tests",
-      "requirement": "Adhesive unreadable = Pending not Fail.",
-      "md_sections": [
-        "Checklist Sections",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Adhesive fail classified as overall Fail"
-      ]
-    },
-    {
-      "id": "tests.adhesive_exemption_remark",
-      "section": "tests",
-      "requirement": "Appendix A products: date code adhesive may be waived with required remark only.",
-      "md_sections": [
-        "Important Remarks",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Exemption applicable but waiver remark missing"
-      ],
-      "applies_when": {
-        "adhesive_date_code_exemption": true
+      "id": "1_2_3",
+      "section": "general_report_setup",
+      "requirement": "Inspector's Remark — Cover page — The remark must be in English. Chinese characters in inspector-written remark fields are not acceptable. Exception: date codes recorded exactly as printed on the product may appear in Chinese.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify language of remark text",
+      "source_rule_id": "1.2.3",
+      "source_lines": {
+        "start": 162,
+        "end": 177
+      },
+      "context": "QUESTION — verify language of remark text",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
       }
     },
     {
-      "id": "tests.rubbing_performed",
-      "section": "tests",
-      "requirement": "Rubbing test on all printings, dry and wet cloth, photos required.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Rubbing test not performed or photos missing"
-      ]
-    },
-    {
-      "id": "tests.barcode_scanning",
-      "section": "tests",
-      "requirement": "Scan all barcodes on Consumer, Individual, Outer Carton. Record full numbers.",
-      "md_sections": [
-        "Checklist Sections",
-        "DFI(H&B) - Date code check & Barcode details"
-      ],
-      "fail_if": [
-        "Barcode scanning not done or numbers not recorded"
-      ]
-    },
-    {
-      "id": "tests.sensory_all_emptied",
-      "section": "tests",
-      "requirement": "Sensory: all destructive samples fully poured/emptied with photos.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Not all sensory samples emptied or photos missing"
-      ]
-    },
-    {
-      "id": "tests.content_all_emptied",
-      "section": "tests",
-      "requirement": "Content check: all 8 or 13 samples emptied with all support photos.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Not all content samples emptied or photos missing"
-      ]
-    },
-    {
-      "id": "tests.bristle_pull",
-      "section": "tests",
-      "requirement": "Brush products: bristle pull test per supplier rules.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Bristle pull missing for brush product"
-      ],
-      "applies_when": {
-        "product_type": "brush"
+      "id": "2_1_1",
+      "section": "documents_and_attachments",
+      "requirement": "Attachments section — end of report — The Measurement Table Excel file must be attached. Verify its presence. Also verify that the filename does not contain Chinese characters — a Chinese filename prevents the report team from opening the file.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify presence and filename",
+      "source_rule_id": "2.1.1",
+      "source_lines": {
+        "start": 184,
+        "end": 199
+      },
+      "context": "QUESTION — verify presence and filename",
+      "check_block": {
+        "where": [
+          "report.attachment_filenames"
+        ],
+        "when": null,
+        "check": "present"
       }
     },
     {
-      "id": "tests.function_test",
-      "section": "tests",
-      "requirement": "Function test all capacities per spec/manual.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Function test incomplete"
-      ]
-    },
-    {
-      "id": "tests.back_adhesive_pantyliner",
-      "section": "tests",
-      "requirement": "Pantyliner from Carmelton: back adhesive 500-800 mN per GB/T 8939-2018.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Back adhesive out of range or missing"
-      ],
-      "applies_when": {
-        "product_type": "pantyliner",
-        "supplier": "Carmelton"
+      "id": "2_2_1",
+      "section": "documents_and_attachments",
+      "requirement": "Green Seal Sample (GSS) — DFI(H&B) Product Specifications checklist — The GSS result must be \"Yes\" (available on site and valid) for any report with an overall result of PASS. If GSS is absent, expired, or invalid, the report must be PENDING. Verify the GSS result is consistent with the overall result.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check GSS availability against overall result",
+      "source_rule_id": "2.2.1",
+      "source_lines": {
+        "start": 204,
+        "end": 219
+      },
+      "context": "FULL REPORT — cross-check GSS availability against overall result",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
       }
     },
     {
-      "id": "workmanship.minimum_two_aql_tables",
+      "id": "2_2_2",
+      "section": "documents_and_attachments",
+      "requirement": "Any remark, photo caption, or checklist field throughout the report — The term \"GSS\" is the only accepted terminology for the approval sample. \"Approved Sample\", \"Golden Sample\", or any equivalent must never appear anywhere in the report text or photo captions.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "scan all text fields and photo captions",
+      "source_rule_id": "2.2.2",
+      "source_lines": {
+        "start": 220,
+        "end": 235
+      },
+      "context": "FULL REPORT — scan all text fields and photo captions",
+      "check_block": {
+        "where": [
+          "checklist.green_seal_sample_gss.comment"
+        ],
+        "when": null,
+        "check": "scan_absent(\"sample\")"
+      }
+    },
+    {
+      "id": "2_2_3",
+      "section": "documents_and_attachments",
+      "requirement": "Re-Sealed Green Seal Sample — DFI(H&B) Product Specifications checklist — After using the GSS for comparison, the inspector must re-seal it in a polybag with a signed QIMA sticker showing the date and order number, and upload a photo. Verify the re-sealed GSS photo is present in the Product Specifications section.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check re-seal photo against GSS comparison photos (if comparison was done, re-seal must follow)",
+      "source_rule_id": "2.2.3",
+      "source_lines": {
+        "start": 236,
+        "end": 254
+      },
+      "context": "SECTION — cross-check re-seal photo against GSS comparison photos (if comparison was done, re-seal must follow)",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "re",
+              "sealed",
+              "green",
+              "seal",
+              "sample",
+              "re"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_1_1",
+      "section": "packaging_and_carton",
+      "requirement": "Carton Shipping Mark — DFI(H&B) Shipping Carton Verification checklist — Photos of the shipping mark must be present for both the front face and the side face of the carton. If an inner shipping mark exists, it must also be photographed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify photo count and angles within Shipping Carton section",
+      "source_rule_id": "3.1.1",
+      "source_lines": {
+        "start": 261,
+        "end": 279
+      },
+      "context": "SECTION — verify photo count and angles within Shipping Carton section",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "carton",
+              "shipping",
+              "mark"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "3_1_2",
+      "section": "packaging_and_carton",
+      "requirement": "Carton Check: Dimensions and Weight — DFI(H&B) Shipping Carton Verification checklist — For each product style, the report must record: printed size (L×W×H in mm), actual measured size, printed weight (kg), and actual measured weight. If actual values differ from printed spec, a remark is required. A difference alone does not trigger Pending or Fail.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check recorded values against remark; verify remark is present when a difference exists",
+      "source_rule_id": "3.1.2",
+      "source_lines": {
+        "start": 280,
+        "end": 298
+      },
+      "context": "SECTION — cross-check recorded values against remark; verify remark is present when a difference exists",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "carton",
+              "check",
+              "dimensions",
+              "and",
+              "weight"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "3_2_1",
+      "section": "packaging_and_carton",
+      "requirement": "Individual Pack AQL table — Workmanship section — An Individual Pack AQL table must be present if and only if the product has individual packaging. If the product has no individual pack, the table must be absent. Verify against the product description and photos.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check table presence against product structure visible in photos and POs section",
+      "source_rule_id": "3.2.1",
+      "source_lines": {
+        "start": 303,
+        "end": 318
+      },
+      "context": "FULL REPORT — cross-check table presence against product structure visible in photos and POs section",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "4_1_1",
       "section": "workmanship",
-      "requirement": "Minimum 2 AQL tables in Workmanship check. Consumer, Individual, Destructive separate.",
-      "md_sections": [
-        "DFI(H&B) - Workmanship check",
-        "AQL & Sampling"
-      ],
-      "fail_if": [
-        "Fewer than 2 AQL tables present"
-      ]
-    },
-    {
-      "id": "workmanship.defects_from_list_only",
-      "section": "workmanship",
-      "requirement": "Only defects from existing QIMAone list. Unlisted → photos, remark, Pending, not in AQL.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Unlisted defect recorded in AQL table",
-        "Custom defect category created"
-      ]
-    },
-    {
-      "id": "workmanship.multiple_defect_remark",
-      "section": "workmanship",
-      "requirement": "Multiple defects on one sample: count most serious in AQL, full remark in defect comment and Important Remarks.",
-      "md_sections": [
-        "Important Remarks",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Multiple defects without required remark template"
-      ]
-    },
-    {
-      "id": "workmanship.defect_outside_stage",
-      "section": "workmanship",
-      "requirement": "Defect outside workmanship: not in AQL, remark added, Pending, seal consumer pack.",
-      "md_sections": [
-        "Important Remarks",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Outside-stage defect in AQL table or missing remark/Pending"
-      ]
-    },
-    {
-      "id": "workmanship.defect_photo_required",
-      "section": "workmanship",
-      "requirement": "Every defect needs photo with QIMA sticker or arrow.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Defect recorded without supporting photo",
-        "Defect photo without arrow/sticker"
-      ]
-    },
-    {
-      "id": "workmanship.no_defects_found_text",
-      "section": "workmanship",
-      "requirement": "If no defects: No Defects Found in defect pictures section.",
-      "md_sections": [
-        "Checklist Sections",
-        "DFI(H&B) - Workmanship check"
-      ],
-      "fail_if": [
-        "No defects recorded but No Defects Found text absent"
-      ]
-    },
-    {
-      "id": "quantity.finished_packed_threshold",
-      "section": "quantity_packaging",
-      "requirement": "Required 100% finished and 80% packed. Below → Pending + remark.",
-      "md_sections": [
-        "Products & Quantities",
-        "DFI(H&B) - Quantity & Packaging",
-        "Attention Items (read first)"
-      ],
-      "fail_if": [
-        "Below threshold but PASS without remark",
-        "Remark claims 100% packed but packedQuantity below ordered"
-      ]
-    },
-    {
-      "id": "quantity.multiple_batches_proportional",
-      "section": "quantity_packaging",
-      "requirement": "Multiple batches sampled proportionally by quantity.",
-      "md_sections": [
-        "DFI(H&B) - Quantity & Packaging",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Multiple batches but proportional sampling not applied or noted"
-      ],
-      "applies_when": {
-        "multiple_batches": true
+      "requirement": "Workmanship AQL tables — Workmanship section (Consumer Pack, Individual Pack, Destructive Sample) — Three separate AQL tables must be present: Consumer Pack, Individual Pack (if applicable), and Destructive Sample. Each must have its own result. Verify sampling levels match the standard: Consumer Pack = Level II (onsite) or Level I (remote); Individual Pack = S4 (restorable pack) or S3 (destructive/sticker); Destructive Sample = S1.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify each table independently",
+      "source_rule_id": "4.1.1",
+      "source_lines": {
+        "start": 325,
+        "end": 340
+      },
+      "context": "SECTION — verify each table independently",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
       }
     },
     {
-      "id": "quantity.destructive_separate_packs",
-      "section": "quantity_packaging",
-      "requirement": "Destructive samples from separate consumer packs.",
-      "md_sections": [
-        "DFI(H&B) - Quantity & Packaging",
-        "DFI(H&B) - Workmanship check"
-      ],
-      "fail_if": [
-        "Destructive samples not from separate consumer packs"
-      ]
+      "id": "4_1_2",
+      "section": "workmanship",
+      "requirement": "Sample size and Max (acceptance number) — Workmanship AQL tables — The \"Checked\" number must match the sample size in the DFI Sampling Plan. The \"Max\" acceptance numbers must match: sample size 8 → 0/0/0; sample size 13 → 0/0/1; sample size 32 → 0/1/3. Destructive sample size is 8 if lot ≤ 35,000 and 13 if lot > 35,000.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check Checked, Max, and lot size within the same section",
+      "source_rule_id": "4.1.2",
+      "source_lines": {
+        "start": 341,
+        "end": 356
+      },
+      "context": "SECTION — cross-check Checked, Max, and lot size within the same section",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
     },
     {
-      "id": "shipping.carton_mark_photos",
-      "section": "shipping_carton",
-      "requirement": "Shipping mark: front and side photos. Inner mark if exists.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification"
-      ],
-      "fail_if": [
-        "Shipping mark photos missing"
-      ]
+      "id": "4_1_3",
+      "section": "workmanship",
+      "requirement": "AQL values (CRI/MAJ/MIN) — Workmanship AQL tables — AQL values for general products must be Not Allowed / 1.5 / 4.0. Earplug products: same (Not Allowed / 1.5 / 4.0). Protection Mask products: percentage-based values must match the DFI Sampling Plan attachment exactly.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check AQL values against product type",
+      "source_rule_id": "4.1.3",
+      "source_lines": {
+        "start": 357,
+        "end": 372
+      },
+      "context": "FULL REPORT — cross-check AQL values against product type",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
     },
     {
-      "id": "shipping.carton_dimensions_weight",
-      "section": "shipping_carton",
-      "requirement": "One carton per style: printed vs actual size and weight recorded.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification"
-      ],
-      "fail_if": [
-        "Carton dimension/weight table incomplete",
-        "Missing photo per dimension controlled"
-      ]
+      "id": "4_1_4",
+      "section": "workmanship",
+      "requirement": "Colors, Labels, Artworks, Accessories and Markings result — Workmanship section — If no special finding was observed in this category, the result must be \"OK\". QIMAone sometimes auto-generates \"N/A\" — this must be manually corrected to \"OK\" if there is no finding.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify result value",
+      "source_rule_id": "4.1.4",
+      "source_lines": {
+        "start": 373,
+        "end": 388
+      },
+      "context": "QUESTION — verify result value",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
     },
     {
-      "id": "shipping.carton_mark_diff_remark_only",
-      "section": "shipping_carton",
-      "requirement": "Carton dim/weight diff from shipping mark alone does NOT trigger Pending/Fail but should be remarked if significant.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification",
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Large gap vs printed spec with no remark"
-      ]
+      "id": "4_2_1",
+      "section": "workmanship",
+      "requirement": "Defect list and comments — Workmanship section — If no defects were found, the text \"No Defects Found\" must appear in the defect section. If defects were found, each defect must have at least one supporting photo with a QIMA sticker or arrow clearly indicating the defect.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check defect entries against photos",
+      "source_rule_id": "4.2.1",
+      "source_lines": {
+        "start": 393,
+        "end": 408
+      },
+      "context": "SECTION — cross-check defect entries against photos",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "factory.location_matches_booking",
-      "section": "factory_review",
-      "requirement": "Factory location must match booking with entrance/gate photos.",
-      "md_sections": [
-        "QIMA - Factory Review",
-        "Parties & Location",
-        "Starting pictures"
-      ],
-      "fail_if": [
-        "Factory location differs from booking",
-        "No factory entrance photos"
-      ]
+      "id": "4_2_2",
+      "section": "workmanship",
+      "requirement": "Defect comments and Important Remark — Workmanship section — If multiple defects were found on the same sample, only the most serious is counted in the AQL. A remark must appear in both the Defect Comment and the Important Remark following this template: \"Found [X] pcs with multiple defects: [most serious] (counted into AQL) + [other] (excluded from AQL), see defect pictures below, all defects are arrowed.\"",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check defect count in AQL table against remark",
+      "source_rule_id": "4.2.2",
+      "source_lines": {
+        "start": 409,
+        "end": 424
+      },
+      "context": "SECTION — cross-check defect count in AQL table against remark",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
+      }
     },
     {
-      "id": "factory.calibration_certificates",
-      "section": "factory_review",
-      "requirement": "Tools calibrated, certificates photographed, valid 1 year.",
-      "md_sections": [
-        "QIMA - Factory Review"
-      ],
-      "fail_if": [
-        "Calibration certificates absent or expired"
-      ]
+      "id": "4_2_3",
+      "section": "workmanship",
+      "requirement": "AQL table and remark — Workmanship section — If a defect was found outside the workmanship check stage (e.g. during quantity check or dimension measurement), it must NOT appear in the AQL workmanship table. Instead, a remark must describe it separately, the report must be set to Pending, and the full consumer pack must be sealed in a polybag with a QIMA sticker.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check remark against AQL table entries and overall result",
+      "source_rule_id": "4.2.3",
+      "source_lines": {
+        "start": 425,
+        "end": 440
+      },
+      "context": "FULL REPORT — cross-check remark against AQL table entries and overall result",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "factory.qima_documents_signed",
-      "section": "factory_review",
-      "requirement": "Factory Disclaimer, Draft Report, COC signed by inspector and factory, photos mandatory.",
-      "md_sections": [
-        "QIMA - Factory Review"
-      ],
-      "fail_if": [
-        "Signed QIMA documents photos missing"
-      ]
+      "id": "5_1_1",
+      "section": "tests_and_measurements",
+      "requirement": "Date Code Check table — DFI(H&B) Date code check & Barcode details checklist — Date codes must be recorded exactly as printed: same format, separators, and casing. The format AND printing position must match between GSS and actual product. The actual values (dates, lot numbers) may differ — this is acceptable.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check GSS row against Actual Product row within the date code table",
+      "source_rule_id": "5.1.1",
+      "source_lines": {
+        "start": 447,
+        "end": 465
+      },
+      "context": "SECTION — cross-check GSS row against Actual Product row within the date code table",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "date",
+              "code",
+              "check"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "factory.cooperation_poor",
-      "section": "factory_review",
-      "requirement": "Flag if factory cooperation/cleanliness rated Poor.",
-      "md_sections": [
-        "QIMA - Factory Review"
-      ],
-      "fail_if": [
-        "Factory cooperation rated Poor"
-      ]
+      "id": "5_1_2",
+      "section": "tests_and_measurements",
+      "requirement": "Date Code Check table — DFI(H&B) Date code check & Barcode details checklist — At least one of the three codes must be present: MFG Date / EXP Date / Lot# (Batch#). If a code is absent on the product, record \"N/A\" in that field. If no date code AND no batch code is found on any packaging: this is a back-office escalation situation — verify that a remark and a Pending result are present.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against overall result if all codes are N/A",
+      "source_rule_id": "5.1.2",
+      "source_lines": {
+        "start": 466,
+        "end": 481
+      },
+      "context": "FULL REPORT — cross-check against overall result if all codes are N/A",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?\")"
+      }
     },
     {
-      "id": "photos.mandatory_categories",
-      "section": "mandatory_photos",
-      "requirement": "All mandatory photo categories from Section 14 must be present.",
-      "md_sections": [
-        "Checklist Sections",
-        "Starting pictures",
-        "Product cover photo"
-      ],
-      "fail_if": [
-        "Any mandatory photo category absent"
-      ]
+      "id": "5_1_3",
+      "section": "tests_and_measurements",
+      "requirement": "Date Code Check table — multiple batches or sub-products — If the product has multiple batches or multiple sub-products (e.g. a travel set), all date codes must be clearly separated by batch and item keywords, with 1 batch per line. Chinese date codes must be recorded in Chinese exactly as printed.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify formatting of date code table entries",
+      "source_rule_id": "5.1.3",
+      "source_lines": {
+        "start": 482,
+        "end": 500
+      },
+      "context": "QUESTION — verify formatting of date code table entries",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "date",
+              "code",
+              "check"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "photos.adhesive_date_code_area",
-      "section": "mandatory_photos",
-      "requirement": "Adhesive test photos must show date code area.",
-      "md_sections": [
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Adhesive photos do not show date code area"
-      ]
+      "id": "5_1_4",
+      "section": "tests_and_measurements",
+      "requirement": "Barcode Details — DFI(H&B) Date code check & Barcode details checklist — The full barcode number must be recorded for each packaging level: Individual Pack / Consumer Pack / Outer Carton. If no Individual Pack exists, that field must show \"N/A\" — it must not be left blank.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify all three barcode fields are filled",
+      "source_rule_id": "5.1.4",
+      "source_lines": {
+        "start": 501,
+        "end": 519
+      },
+      "context": "QUESTION — verify all three barcode fields are filled",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "barcode",
+              "details"
+            ],
+            "field": "result"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "photos.gss_four_faces",
-      "section": "mandatory_photos",
-      "requirement": "GSS comparison: all four faces Consumer and Individual Pack if present.",
-      "md_sections": [
-        "DFI(H&B) - Product Specifications"
-      ],
-      "fail_if": [
-        "Comparison photos missing faces for Consumer or Individual Pack"
-      ]
+      "id": "5_2_1",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement table — DFI(H&B) Product Dimensions & Weights checklist — Only specs explicitly claimed on the product name, label, or packaging must be measured. Do not measure specs not claimed anywhere. Both Consumer Pack and Individual Pack claimed specs must be measured. The Measurement Table is a template — only rows relevant to the actual product should be filled.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check measured specs against product label visible in photos",
+      "source_rule_id": "5.2.1",
+      "source_lines": {
+        "start": 524,
+        "end": 542
+      },
+      "context": "SECTION — cross-check measured specs against product label visible in photos",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "dfi",
+              "product",
+              "dimensions",
+              "weights"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "photos.measurement_per_sample",
-      "section": "mandatory_photos",
-      "requirement": "Measurements: photo per sample (8 or 13), empty bottle + each filled weight.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights"
-      ],
-      "fail_if": [
-        "Insufficient measurement photos for sample size"
-      ]
+      "id": "5_2_2",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement results — DFI(H&B) Product Dimensions & Weights checklist — Apply pass/fail logic per spec type: (1) Volume, Quantity, Weight (general product): actual ≥ label claim → PASS; actual < label claim (even by 0.01) → FAIL. (2) Weight (health product — identified by NIP panel) and Size/Dimension: tolerance required; within tolerance → PASS; outside tolerance in either direction → FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check recorded values against pass/fail result and label claim",
+      "source_rule_id": "5.2.2",
+      "source_lines": {
+        "start": 543,
+        "end": 561
+      },
+      "context": "SECTION — cross-check recorded values against pass/fail result and label claim",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "dfi",
+              "product",
+              "dimensions",
+              "weights"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "photos.carton_drop_set",
-      "section": "mandatory_photos",
-      "requirement": "Drop test: before, during, after exterior, after interior.",
-      "md_sections": [
-        "DFI(H&B) - Shipping Carton Verification"
-      ],
-      "fail_if": [
-        "Drop test photo set incomplete"
-      ]
+      "id": "5_2_3",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement remark — DFI(H&B) Product Dimensions & Weights checklist — For any tolerance-based check (dimension or health product weight), the tolerance range must be stated in the remark regardless of pass or fail outcome. Required format: \"Checked OK, the tolerance range of [weight/dimension] is XXX – XXX.\"",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify remark is present whenever a tolerance-based measurement is recorded",
+      "source_rule_id": "5.2.3",
+      "source_lines": {
+        "start": 562,
+        "end": 580
+      },
+      "context": "SECTION — verify remark is present whenever a tolerance-based measurement is recorded",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "dfi",
+              "product",
+              "dimensions",
+              "weights"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
     },
     {
-      "id": "report.language_english",
-      "section": "report_writing",
-      "requirement": "All report content in English except Chinese date codes recorded as printed.",
-      "md_sections": [
-        "Important Remarks",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Non-English content outside allowed Chinese date codes"
-      ]
+      "id": "5_2_4",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement table values — DFI(H&B) Product Dimensions & Weights checklist — If all 8 (or 13) samples show exactly the same value for a measurement, flag as a likely data entry error. Real measurement variation across samples is expected — identical values across all samples are suspicious.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "scan all measurement columns for uniform values",
+      "source_rule_id": "5.2.4",
+      "source_lines": {
+        "start": 581,
+        "end": 599
+      },
+      "context": "QUESTION — scan all measurement columns for uniform values",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "dfi",
+              "product",
+              "dimensions",
+              "weights"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
     },
     {
-      "id": "report.data_integrity_typos",
-      "section": "report_writing",
-      "requirement": "Check wrong units, copy-paste identical values, bad decimals, N/A for measured specs.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Wrong unit e.g. kg instead of g",
-        "Unreasonable decimal precision",
-        "N/A row for spec that should be measured"
-      ]
+      "id": "5_2_5",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement table — Protection Mask products — For Protection Mask products, the individual mask net weight must always be measured and recorded, even if no weight spec is claimed on the label.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify net weight row is present for Mask products",
+      "source_rule_id": "5.2.5",
+      "source_lines": {
+        "start": 600,
+        "end": 615
+      },
+      "context": "QUESTION — verify net weight row is present for Mask products",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: For Protection Mask products, the individual mask net weight must always be measured and recorded, even if no weight spe?\")"
+      }
     },
     {
-      "id": "report.measurement_excel_mandatory",
-      "section": "report_writing",
-      "requirement": "Measurement Table Excel mandatory attachment.",
-      "md_sections": [
-        "DFI(H&B) - Product Dimensions & Weights",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Measurement Table Excel not attached"
-      ]
+      "id": "5_2_6",
+      "section": "tests_and_measurements",
+      "requirement": "Measurement table — Health products (products with NIP panel) — For health products (identified by a Nutrition Information Panel on the label), both total net weight and individual serving weight must be measured if the serving size per piece is stated on the NIP. Examples: \"1 Capsule/1.043g\" → weigh 1 capsule; \"3 Tablets/5.4g\" → weigh 3 tablets; \"1370mg/softgel\" → weigh 1 softgel.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check NIP label visible in photos against measurement rows",
+      "source_rule_id": "5.2.6",
+      "source_lines": {
+        "start": 616,
+        "end": 631
+      },
+      "context": "SECTION — cross-check NIP label visible in photos against measurement rows",
+      "check_block": {
+        "where": [
+          "report.inspector_text"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: For health products (identified by a Nutrition Information Panel on the label), both total net weight and individual ser?\")"
+      }
     },
     {
-      "id": "sample_collection.sealing_rules",
-      "section": "sample_collection",
-      "requirement": "Seal samples per rules: no GSS, expired GSS, critical defects, >50% same defect.",
-      "md_sections": [
-        "Important Remarks",
-        "Checklist Sections"
-      ],
-      "fail_if": [
-        "Critical defects mentioned but no sealing noted",
-        "No GSS or expired GSS but sealing not mentioned"
-      ]
+      "id": "5_3_1",
+      "section": "tests_and_measurements",
+      "requirement": "Carton drop test result — DFI(H&B) Shipping Carton Verification checklist — The carton drop test result must follow this logic: PASS if no damage on product (carton dented but product OK = PASS); PENDING if carton broken/opened but product undamaged; FAIL if product is damaged or falls out. Any outcome other than a fully clean pass requires a descriptive remark.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check result against remark description",
+      "source_rule_id": "5.3.1",
+      "source_lines": {
+        "start": 636,
+        "end": 654
+      },
+      "context": "SECTION — cross-check result against remark description",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "result"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
     },
     {
-      "id": "sample_collection.repacking",
-      "section": "sample_collection",
-      "requirement": "Defectives repacked in same carton; all good products fully repacked.",
-      "md_sections": [
-        "Important Remarks"
-      ],
-      "fail_if": [
-        "Repacking rules not followed or not mentioned when relevant"
-      ]
+      "id": "5_3_2",
+      "section": "tests_and_measurements",
+      "requirement": "Carton drop test result — DFI(H&B) Shipping Carton Verification checklist — The carton drop test is mandatory for all products. Exceptions: fragile products (ceramics, glass — factory documentation must be checked), and product \"Guardian WEIGHING SCALE BR9012\" from supplier \"Camry Electronic\". If the factory refused: result must be PENDING with a remark.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check against product type and overall result",
+      "source_rule_id": "5.3.2",
+      "source_lines": {
+        "start": 655,
+        "end": 673
+      },
+      "context": "FULL REPORT — cross-check against product type and overall result",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "result"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
     },
     {
-      "id": "escalation.back_office_contact",
-      "section": "escalation",
-      "requirement": "Section 17 triggers require back office contact CC KA during inspection.",
-      "md_sections": [
-        "Attention Items (read first)",
-        "Important Remarks",
-        "Executive Summary"
-      ],
-      "fail_if": [
-        "Failed finding or beyond AQL without evidence of escalation",
-        "Factory address differs from booking",
-        "Factory refused drop test non-fragile",
-        "Factory refused special test procedure",
-        "No inspection tools provided",
-        "Performed in IAPP",
-        "Individual pack sampling mismatch",
-        "Individual pack on site vs QIMAone mismatch",
-        "No date code AND no batch on packaging",
-        "GSS not on site / unsigned / expired",
-        "Factory refused to open GSS",
-        "No 3M tape for adhesive test"
-      ]
+      "id": "5_4_1",
+      "section": "tests_and_measurements",
+      "requirement": "Adhesive test result — test checklist (e.g. DCL 013 - Dairy Farm - Toiletry V9 H&B) — An adhesive test failure (printing unreadable after tape removal) must result in overall report = PENDING, never FAIL. Verify consistency between adhesive test result and overall result.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check adhesive test result against overall result",
+      "source_rule_id": "5.4.1",
+      "source_lines": {
+        "start": 678,
+        "end": 693
+      },
+      "context": "FULL REPORT — cross-check adhesive test result against overall result",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
+    },
+    {
+      "id": "5_4_2",
+      "section": "tests_and_measurements",
+      "requirement": "Adhesive test remark — test checklist — The tape model used must be stated in the remark. Accepted models: 3M 500, 3M 600P, 3M 810.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify remark contains tape model reference",
+      "source_rule_id": "5.4.2",
+      "source_lines": {
+        "start": 694,
+        "end": 711
+      },
+      "context": "QUESTION — verify remark contains tape model reference",
+      "check_block": {
+        "where": [
+          "checklist.adhesive_test.comment"
+        ],
+        "when": null,
+        "check": [
+          "extract(\"Quote the tape model stated in this comment, or null\")",
+          "matches(\"3M ?(500|600P|810)\")"
+        ]
+      }
+    },
+    {
+      "id": "5_4_3",
+      "section": "tests_and_measurements",
+      "requirement": "Adhesive test remark — test checklist (exemption products) — For products on the adhesive test date code exemption list (cotton tips in canisters from SOFT TIP (THAILAND) CO., LTD and WISE EVER ENTERPRISES LIMITED; PE bag products including Gurdian/Mannings amino acid bubble cleansing towel and Mannings Face Towel 10s), the date code area is exempt. If this exemption applies, a mandatory remark must be added: \"Adhesive test on the date code waived due to limitation of the can and ink.\" All other printed areas on these products must still be tested.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify exemption remark is present when applicable",
+      "source_rule_id": "5.4.3",
+      "source_lines": {
+        "start": 712,
+        "end": 730
+      },
+      "context": "QUESTION — verify exemption remark is present when applicable",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "checkpoints"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+      }
+    },
+    {
+      "id": "5_5_1",
+      "section": "tests_and_measurements",
+      "requirement": "Rubbing test result — test checklist — The rubbing test must be performed on all printed areas and markings on both Consumer Pack and Individual Pack (if present). The test must be performed with both dry cloth (10 strokes, 9N force) and wet cloth. Result = PASS if printing clear and cloth unstained; FAIL if printing rubbed off, dimmed, or illegible.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check result against photos showing cloth and product surface",
+      "source_rule_id": "5.5.1",
+      "source_lines": {
+        "start": 735,
+        "end": 753
+      },
+      "context": "SECTION — cross-check result against photos showing cloth and product surface",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "rubbing",
+              "marking",
+              "test"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "6_1_1",
+      "section": "report_photos",
+      "requirement": "Cover photo — Cover page — The cover photo must show the Consumer Pack (retail packaging), frontal angle, vertical orientation, with the full product name clearly readable.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "verify photo content",
+      "source_rule_id": "6.1.1",
+      "source_lines": {
+        "start": 760,
+        "end": 775
+      },
+      "context": "QUESTION — verify photo content",
+      "check_block": {
+        "where": [
+          "report.product_label"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: The cover photo must show the Consumer Pack (retail packaging), frontal angle, vertical orientation, with the full produ?\")"
+      }
+    },
+    {
+      "id": "6_1_2",
+      "section": "report_photos",
+      "requirement": "GSS photos — DFI(H&B) Product Specifications checklist — A photo of the GSS showing the DFI QA Team label with signature must be present. The re-sealed GSS photo (polybag + signed QIMA sticker) must also be present.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify both GSS-related photos within the Product Specifications section",
+      "source_rule_id": "6.1.2",
+      "source_lines": {
+        "start": 776,
+        "end": 794
+      },
+      "context": "SECTION — verify both GSS-related photos within the Product Specifications section",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications",
+              "packaging"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": null
+      }
+    },
+    {
+      "id": "6_1_3",
+      "section": "report_photos",
+      "requirement": "GSS comparison photos — DFI(H&B) Product Specifications checklist — GSS vs actual product comparison photos must cover: all four faces (top, bottom, front, back) for Consumer Pack and Individual Pack (if present); date code area close-up; composition/ingredient label; volume or quantity claims; all barcodes and markings; product inside (capsules, liquid, etc.). Each element must appear in a photo.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify completeness of comparison photo set",
+      "source_rule_id": "6.1.3",
+      "source_lines": {
+        "start": 795,
+        "end": 813
+      },
+      "context": "SECTION — verify completeness of comparison photo set",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "product",
+              "specifications",
+              "packaging"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "6_1_4",
+      "section": "report_photos",
+      "requirement": "Measurement photos — DFI(H&B) Product Dimensions & Weights checklist — Every spec that was measured must have at least one photo per sample (minimum 8 photos for a sample size of 8). Weight photos must show the scale display readable with the product on the scale. Dimension photos must show the measuring tool and product.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "cross-check number of photos against sample size and number of measured specs",
+      "source_rule_id": "6.1.4",
+      "source_lines": {
+        "start": 814,
+        "end": 832
+      },
+      "context": "SECTION — cross-check number of photos against sample size and number of measured specs",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "dfi",
+              "product",
+              "dimensions",
+              "weights"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "6_1_5",
+      "section": "report_photos",
+      "requirement": "Carton drop test photos — DFI(H&B) Shipping Carton Verification checklist — Three photo stages are required: (1) before drop showing intact carton; (2) during drop; (3) after drop showing carton exterior condition AND interior product condition. Interior product photo is especially critical when any damage or deformation is observed.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify all three photo stages are present",
+      "source_rule_id": "6.1.5",
+      "source_lines": {
+        "start": 833,
+        "end": 851
+      },
+      "context": "SECTION — verify all three photo stages are present",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "carton",
+              "drop",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "6_1_6",
+      "section": "report_photos",
+      "requirement": "Adhesive and Rubbing test photos — test checklist — Adhesive test photos must clearly show the tape being applied or removed on the date code area specifically, for both Consumer Pack and Individual Pack (if present). Rubbing test photos must show the cloth on the product surface.",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify photo content and coverage",
+      "source_rule_id": "6.1.6",
+      "source_lines": {
+        "start": 852,
+        "end": 870
+      },
+      "context": "SECTION — verify photo content and coverage",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "adhesive",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "6_1_7",
+      "section": "report_photos",
+      "requirement": "Factory Review photos — QIMA Factory Review checklist — The following photos must be present: factory entrance/gate (confirming location), inspection room lighting, weighing scale and measuring tools with calibration certificates visible, and all three signed QIMA documents (Factory Disclaimer, Draft Report, COC).",
+      "severity": "BLOCKING",
+      "scope_type": "SECTION",
+      "scope_detail": "verify all four photo categories within Factory Review",
+      "source_rule_id": "6.1.7",
+      "source_lines": {
+        "start": 871,
+        "end": 889
+      },
+      "context": "SECTION — verify all four photo categories within Factory Review",
+      "check_block": {
+        "where": [
+          {
+            "kind": "section",
+            "match": [
+              "factory",
+              "review"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)"
+      }
+    },
+    {
+      "id": "6_2_1",
+      "section": "report_photos",
+      "requirement": "Any photo throughout the report — No photo in the report may show a worker's face, name badge, or ID in a way that identifies the individual. If visible, this is a data privacy issue.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "scan all photos",
+      "source_rule_id": "6.2.1",
+      "source_lines": {
+        "start": 894,
+        "end": 909
+      },
+      "context": "FULL REPORT — scan all photos",
+      "check_block": {
+        "where": [
+          "report.all_captions"
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this field evidence satisfy: No photo in the report may show a worker's face, name badge, or ID in a way that identifies the individual. If visible, ?\")"
+      }
+    },
+    {
+      "id": "7_1_1",
+      "section": "aql_summary",
+      "requirement": "AQL tables — Workmanship section — Verify the AQL levels and acceptance numbers match the product type and inspection mode (onsite vs remote):",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check product type, inspection mode, and AQL values",
+      "source_rule_id": "7.1.1",
+      "source_lines": {
+        "start": 914,
+        "end": 937
+      },
+      "context": "FULL REPORT — cross-check product type, inspection mode, and AQL values",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": "present"
+      }
+    },
+    {
+      "id": "8_1_1",
+      "section": "pass_fail_decision_logic",
+      "requirement": "Overall Inspection Result — Cover page — The overall result must follow this logic exactly.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check overall result against all findings across all sections",
+      "source_rule_id": "8.1.1",
+      "source_lines": {
+        "start": 942,
+        "end": 981
+      },
+      "context": "FULL REPORT — cross-check overall result against all findings across all sections",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
+    },
+    {
+      "id": "8_1_2",
+      "section": "pass_fail_decision_logic",
+      "requirement": "Overall Inspection Result — Cover page — The adhesive test is the only test where failure triggers PENDING rather than FAIL. All other test failures (rubbing test, function test, sensory check, barcode scanning, back adhesive test for pantyliners, bristle pull test) trigger FAIL. Verify the overall result matches this distinction.",
+      "severity": "BLOCKING",
+      "scope_type": "FULL REPORT",
+      "scope_detail": "cross-check test results against overall result",
+      "source_rule_id": "8.1.2",
+      "source_lines": {
+        "start": 982,
+        "end": 1008
+      },
+      "context": "FULL REPORT — cross-check test results against overall result",
+      "check_block": {
+        "where": [
+          "report.overall_result"
+        ],
+        "when": null,
+        "check": "in_set(PASS, FAIL, PENDING)"
+      }
     }
   ]
 }

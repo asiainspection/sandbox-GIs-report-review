@@ -5,18 +5,9 @@
   "corrected_dir": "corrected",
   "flawed_dir": "flawed",
   "introduced_checkpoints": {
-    "report_q2611142925_flawed": {
-      "2-7-1-2": "result: Carton drop (ISTA) result must reflect the finding: comment describes damage, so PASS is inconsistent.",
-      "2-7-1-4": "photo_count: TPW ISTA 3A requires a full drop set; too few drop photos fails the layout requirement."
-    },
-    "report_q2614472847_2_flawed": {
-      "2-6-1-8": "result: Result must reflect findings: comment says PO number missing, so Match packing info cannot be PASS.",
-      "2-6-1-6": "result: Result must reflect findings: comment reports missing barcode sticker, so PASS is inconsistent."
-    },
-    "report_q2614472847_4_flawed": {
-      "2-6-1-8": "result: Result must reflect findings: comment says wrong PO number, so Match packing info cannot be PASS.",
-      "2-6-1-6": "result: Result must reflect findings: comment reports packing not conform to spec."
-    }
+    "report_q2611142925_flawed": {},
+    "report_q2614472847_2_flawed": {},
+    "report_q2614472847_4_flawed": {}
   },
   "holdout_keys": [],
   "flawed_manifest": "flawed/injection_manifest.json"

@@ -1,23 +1,51 @@
 {
   "meta": {
-    "source": "data/pipeline/checkpoints/ribkoff_checkpoints.json",
+    "source": "/Users/williambrun/Documents/test_GI_reports/data/pipeline/checkpoints/ribkoff_checkpoints.json",
     "checkpoint_count": 56,
-    "source_hash": "174f5d493297d067",
-    "compiler": "2026-07-16.footer"
+    "source_hash": "8d08749249a01d96",
+    "compiler": "2026-07-17.grounded-where",
+    "sample_report": "/Users/williambrun/Documents/test_GI_reports/data/clients/ribkoff/corrected/Q2613916538_Jun29.json"
   },
   "specs": {
     "1_1_1": {
       "checkpoint_id": "1_1_1",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "all_of",
+        "items": [
+          {
+            "op": "not",
+            "item": {
+              "op": "is_blank",
+              "ground": "json",
+              "selector": "report.factory_address"
+            }
+          },
+          {
+            "op": "no_language",
+            "ground": "json",
+            "selector": "report.factory_address",
+            "language": "chinese"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Inspection site address — report header / Factory Review checklist — Verify the full factory address is written in English and includes street, building, floor, city, province/state, country, and postal code. Address must not contain Chinese characters.",
       "extract": [],
-      "source": "advisory",
+      "source": "check_block",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.factory_address"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "1_1_2": {
       "checkpoint_id": "1_1_2",
@@ -30,25 +58,64 @@
       "source": "advisory",
       "tier": "deterministic",
       "status_class": "advisory",
-      "data_source": "PO_booking"
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
     },
     "1_2_1": {
       "checkpoint_id": "1_2_1",
       "severity": "MINOR",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "1_2_1.check_does_the_inspector_remark_list_defects_broken_do",
-        "question": "Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.",
-        "role": "required_true",
-        "ground": "atom"
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "1_2_1.check_does_the_inspector_remark_list_defects_broken_do",
+            "question": "Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.",
+            "role": "quote",
+            "value_type": "string",
+            "ground": "atom",
+            "requires_fields": [
+              {
+                "type": "selector",
+                "selector": "report.global_remark"
+              }
+            ]
+          },
+          {
+            "op": "not",
+            "item": {
+              "op": "is_blank",
+              "selector": "atom.1_2_1.check_does_the_inspector_remark_list_defects_broken_do",
+              "ground": "json"
+            }
+          }
+        ]
       },
       "unless": null,
       "requirement": "Inspector's Remark — report header summary — Verify that a complete list of all defects found is provided, broken down by PO number, with a structured format: \"PO xxx: X pcs defect found / Total: X% defect found.\" If large quantities of defective units are found in the bulk, this must be clearly explained at the beginning of this section.",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.global_remark"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "1_3_1": {
       "checkpoint_id": "1_3_1",
@@ -66,7 +133,21 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "product._first.real_packed_quantity"
+        },
+        {
+          "type": "selector",
+          "selector": "product._first.ordered_quantity"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "1_3_2": {
       "checkpoint_id": "1_3_2",
@@ -79,18 +160,48 @@
         "ground": "json"
       },
       "then": {
-        "op": "atom",
-        "id": "1_3_2.check_quote_the_sentence_explaining_the_quantity_short",
-        "question": "Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.",
-        "role": "required_true",
-        "ground": "atom"
+        "op": "all_of",
+        "items": [
+          {
+            "op": "atom",
+            "id": "1_3_2.check_quote_the_sentence_explaining_the_quantity_short",
+            "question": "Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.",
+            "role": "quote",
+            "value_type": "string",
+            "ground": "atom",
+            "requires_fields": [
+              {
+                "type": "selector",
+                "selector": "report.global_remark"
+              }
+            ]
+          },
+          {
+            "op": "not",
+            "item": {
+              "op": "is_blank",
+              "selector": "atom.1_3_2.check_quote_the_sentence_explaining_the_quantity_short",
+              "ground": "json"
+            }
+          }
+        ]
       },
       "unless": null,
       "requirement": "Available Quantity Details table — Quantity & Packaging checklist — Verify that any discrepancy between the booking quantity and the on-site quantity (shortage or overage) is clearly noted in the report with an explanation.",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.global_remark"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "1_4_1": {
       "checkpoint_id": "1_4_1",
@@ -101,14 +212,31 @@
         "id": "1_4_1.check_for_every_no_answer_recorded_in_inspection_detai",
         "question": "For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.",
         "role": "required_true",
-        "ground": "atom"
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.global_remark"
+          }
+        ]
       },
       "unless": null,
       "requirement": "Summary review — end of report — For any \"No\" response recorded anywhere in the Inspection Details fields, a corresponding explanation must be present in the Summary Review section.",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.global_remark"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "2_1_1": {
       "checkpoint_id": "2_1_1",
@@ -121,7 +249,16 @@
       "source": "advisory",
       "tier": "deterministic",
       "status_class": "advisory",
-      "data_source": "PO_booking"
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
     },
     "2_1_2": {
       "checkpoint_id": "2_1_2",
@@ -134,7 +271,16 @@
       "source": "advisory",
       "tier": "deterministic",
       "status_class": "advisory",
-      "data_source": "PO_booking"
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
     },
     "2_1_3": {
       "checkpoint_id": "2_1_3",
@@ -145,14 +291,31 @@
         "id": "2_1_3.check_do_the_lot_numbers_on_hangtags_match_the_lot_num",
         "question": "Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.",
         "role": "required_true",
-        "ground": "atom"
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.global_remark"
+          }
+        ]
       },
       "unless": null,
       "requirement": "Lot number — hangtag vs. carton marking — Verify that the lot number on the hangtag matches the lot number on the shipping carton. If they do not match, mark this as Failed and add a remark.",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.global_remark"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "2_2_1": {
       "checkpoint_id": "2_2_1",
@@ -160,16 +323,26 @@
       "when": null,
       "then": {
         "op": "count_at_least",
+        "ground": "json",
         "selector": "checklist.are_the_qima_documents_signed.photo_count",
-        "min": 3,
-        "ground": "json"
+        "min": 3
       },
       "unless": null,
       "requirement": "Are the QIMA documents signed? — Factory Review checklist — Confirm that the Factory Disclaimer, Draft Report, and COC are all signed by both the inspector and the factory representative. Photos of all signed documents must be included in the report.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.are_the_qima_documents_signed.photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_1_1": {
       "checkpoint_id": "3_1_1",
@@ -177,32 +350,82 @@
       "when": null,
       "then": {
         "op": "in_set",
+        "ground": "json",
         "selector": "checklist.random_carton_selection.result",
         "values": [
           "PASS",
           "FAIL"
-        ],
-        "ground": "json"
+        ]
       },
       "unless": null,
       "requirement": "Random carton selection — Product Specifications checklist — Confirm that cartons were selected fully randomly. If random selection was not possible, the result must be marked as Failed.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.random_carton_selection.result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
     },
     "3_1_2": {
       "checkpoint_id": "3_1_2",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "3_1_2.check_does_the_bound_remark_comment_satisfy_the_gi_req",
+        "question": "Does the bound remark/comment satisfy the GI requirement?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "outer",
+              "packing",
+              "shipping",
+              "marks",
+              "front",
+              "side"
+            ],
+            "field": "comment"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Outer Packing & Shipping Marks — Product Specifications checklist — Verify the carton side reads \"Made in China / Fabrique en Chine.\" If the wording is incorrect (e.g., \"Fait en Chine\"), record a MINOR defect remark but do not fail this section. Misspellings of color and country of origin on the carton are also MINOR defects requiring a remark but not a failure.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "outer",
+            "packing",
+            "shipping",
+            "marks",
+            "front",
+            "side"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "3_1_3": {
       "checkpoint_id": "3_1_3",
@@ -210,16 +433,26 @@
       "when": null,
       "then": {
         "op": "count_at_least",
+        "ground": "json",
         "selector": "checklist.outer_packing_shipping_marks_front_side.photo_count",
-        "min": 3,
-        "ground": "json"
+        "min": 3
       },
       "unless": null,
       "requirement": "Outer Packing & Shipping Marks — Product Specifications checklist / report photos — Verify that photos of (1) cartons stacked on pallets, (2) carton seals, and (3) labelling on the side of boxes are included in the report under the Specifications section.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.outer_packing_shipping_marks_front_side.photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_1_4": {
       "checkpoint_id": "3_1_4",
@@ -229,10 +462,26 @@
       "unless": null,
       "requirement": "Inner Packing & Unit Packing — Product Specifications checklist — Verify availability of mold prevention unit (anti-mold sheet or desiccant pack) and vent hole as specified in the tech pack. All products must have anti-mold sheets or desiccant packs.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "inner",
+            "packing",
+            "unit",
+            "packing"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "3_1_5": {
       "checkpoint_id": "3_1_5",
@@ -240,16 +489,26 @@
       "when": null,
       "then": {
         "op": "equals",
+        "ground": "json",
         "selector": "checklist.match_packing_info.result",
-        "expected": "PASS",
-        "ground": "json"
+        "expected": "PASS"
       },
       "unless": null,
       "requirement": "Match packing info — Product Specifications checklist — Verify that the PO number, item/style number, and product description on the product identification inside the carton match the information on the corresponding export carton marking.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.match_packing_info.result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
     },
     "3_1_6": {
       "checkpoint_id": "3_1_6",
@@ -262,16 +521,26 @@
       },
       "then": {
         "op": "count_at_most",
+        "ground": "json",
         "selector": "checklist.carton_drop_test.photo_count",
-        "max": 0,
-        "ground": "json"
+        "max": 0
       },
       "unless": null,
       "requirement": "Carton drop test — Product Specifications checklist / report photos — Photos of the carton drop test must NOT be included in the report unless the test fails. Only a failure requires photos.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.carton_drop_test.photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_1_7": {
       "checkpoint_id": "3_1_7",
@@ -279,16 +548,26 @@
       "when": null,
       "then": {
         "op": "count_at_most",
+        "ground": "json",
         "selector": "checklist.outer_packing_assortment_dimensions_weight.photo_count",
-        "max": 0,
-        "ground": "json"
+        "max": 0
       },
       "unless": null,
       "requirement": "Outer Packing: Assortment, Dimensions & Weight — Product Specifications checklist / report photos — Photos of measuring the boxes (tape measure applied to carton sides or weight scale reading) must NOT be included in the report. Only the dimensions/weight results table and carton overview photos are required.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.outer_packing_assortment_dimensions_weight.photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_1_8": {
       "checkpoint_id": "3_1_8",
@@ -301,33 +580,86 @@
       "source": "advisory",
       "tier": "deterministic",
       "status_class": "advisory",
-      "data_source": "spec_sheet"
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
     },
     "3_1_9": {
       "checkpoint_id": "3_1_9",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "3_1_9.check_does_the_bound_remark_comment_satisfy_the_gi_req",
+        "question": "Does the bound remark/comment satisfy the GI requirement?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defect_count"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Swift attaches — serial tags / Inspector's Remark — Swift attaches for serial tags must be black. If they are clear/transparent, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defect_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_1_10": {
       "checkpoint_id": "3_1_10",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "3_1_10.check_does_the_bound_remark_comment_satisfy_the_gi_req",
+        "question": "Does the bound remark/comment satisfy the GI requirement?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defect_count"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Joker tags — denim pants only / Inspector's Remark — For denim pants, joker tags must be sewn on with thread. If attached with black plastic swift attaches instead, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defect_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_2_1": {
       "checkpoint_id": "3_2_1",
@@ -335,16 +667,26 @@
       "when": null,
       "then": {
         "op": "count_at_least",
+        "ground": "json",
         "selector": "checklist.product_labels.photo_count",
-        "min": 1,
-        "ground": "json"
+        "min": 1
       },
       "unless": null,
       "requirement": "Product Labels — Product Specifications checklist / report photos — Verify that all hang tags and care labels are photographed together and grouped in the Product Labels section of the report. Do not scatter label photos across different sections.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_labels.photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "3_2_2": {
       "checkpoint_id": "3_2_2",
@@ -354,10 +696,24 @@
       "unless": null,
       "requirement": "Product Labels — style number, PO, color, lot number consistency — Verify that the style number, PO number, color(s), and lot number are visible and consistent across: (1) the care and content label header (style number and PO number only), (2) the serial barcode hangtag (style number, color(s), PO number, lot number), and (3) the shipping carton marking (style number, color(s), sizes, PO number, lot number).",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "labels"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "3_2_3": {
       "checkpoint_id": "3_2_3",
@@ -375,7 +731,17 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_logo.result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
     },
     "3_2_4": {
       "checkpoint_id": "3_2_4",
@@ -383,16 +749,26 @@
       "when": null,
       "then": {
         "op": "equals",
+        "ground": "json",
         "selector": "checklist.product_style_construction.result",
-        "expected": "PASS",
-        "ground": "json"
+        "expected": "PASS"
       },
       "unless": null,
       "requirement": "Product Labels — brand logo comparison vs. approval sample — If there is any visual variation or damage to the brand logo label between the approval sample and the bulk, the report must be marked FAIL. Brand logo variation is a CRITICAL defect.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_style_construction.result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
     },
     "3_2_5": {
       "checkpoint_id": "3_2_5",
@@ -402,23 +778,59 @@
       "unless": null,
       "requirement": "Size tab — Product Specifications checklist — If there is any visual variation between the approval sample size tab and the production size tab, the report must be marked FAIL. Size tab variation is a MAJOR defect.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "product",
+            "specifications"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "3_2_6": {
       "checkpoint_id": "3_2_6",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "3_2_6.check_is_the_care_content_label_language_sequence_corr",
+        "question": "Is the care/content label language sequence correct per the GI rule?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.inspector_text"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Care content label — language sequence — Misprinting or variation in the sequence of languages on care content labels compared to the approval sample is NOT a reason to fail the report.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.inspector_text"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "3_2_7": {
       "checkpoint_id": "3_2_7",
@@ -428,10 +840,24 @@
       "unless": null,
       "requirement": "Hangers — Product Specifications checklist (when applicable) — If the lot is to be shipped on hangers, verify that hangers bear the Joseph Ribkoff logo as specified in the tech pack.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "product",
+            "specifications"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "4_1_1": {
       "checkpoint_id": "4_1_1",
@@ -449,72 +875,196 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "workmanship.found_critical"
+        },
+        {
+          "type": "selector",
+          "selector": "workmanship.max_defects_critical"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "4_1_2": {
       "checkpoint_id": "4_1_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_2.check_are_all_dirt_related_defects_classified_as_major",
+        "question": "Are all 'dirt'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — All dirt and stain defects must be classified as MAJOR, regardless of size or location.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_3": {
       "checkpoint_id": "4_1_3",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_3.check_are_all_stitch_related_defects_classified_as_maj",
+        "question": "Are all 'stitch'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — All stitching defects must be classified as MAJOR.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_4": {
       "checkpoint_id": "4_1_4",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_4.check_are_all_yarn_related_defects_classified_as_major",
+        "question": "Are all 'yarn'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — Yarn defects and holes must be classified as MAJOR.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_5": {
       "checkpoint_id": "4_1_5",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_5.check_are_all_wrinkle_related_defects_classified_as_ma",
+        "question": "Are all 'wrinkle'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — Wrinkles, over-press marks, or creases visible from 1 meter away must be classified as MAJOR.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_6": {
       "checkpoint_id": "4_1_6",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_6.check_are_all_pucker_related_defects_classified_as_maj",
+        "question": "Are all 'pucker'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — Any seam with excessive puckering, poor tension, or linking that causes the seam to open must be classified as MAJOR.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_7": {
       "checkpoint_id": "4_1_7",
@@ -524,23 +1074,54 @@
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — Any product whose shape or form differs from the specifications or approval sample must be classified as a MAJOR workmanship defect.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_1_8": {
       "checkpoint_id": "4_1_8",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "atom",
+        "id": "4_1_8.check_are_all_defect_related_defects_classified_as_maj",
+        "question": "Are all 'defect'-related defects classified as MAJOR?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.defects"
+          }
+        ]
+      },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section — Any trim that is missing, not installed securely, or falling off must be classified as MAJOR. Trim placement and installation must conform to the tech pack and/or approval sample.",
       "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
     },
     "4_2_1": {
       "checkpoint_id": "4_2_1",
@@ -548,16 +1129,26 @@
       "when": null,
       "then": {
         "op": "equals",
+        "ground": "json",
         "selector": "report.defects_without_photo",
-        "expected": 0,
-        "ground": "json"
+        "expected": 0
       },
       "unless": null,
       "requirement": "Defects checklist — Workmanship section / report photos — Include a maximum of 5 photos per defect type. If the same defect is found on more than 5 units, upload only 5 representative photos and document the total count in the report. For multiple references or colors, include only 1 photo per color.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects_without_photo"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "5_1_1": {
       "checkpoint_id": "5_1_1",
@@ -574,7 +1165,17 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_attachments",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_dimensions_result.attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
     },
     "5_1_2": {
       "checkpoint_id": "5_1_2",
@@ -584,10 +1185,20 @@
       "unless": null,
       "requirement": "Product Dimensions Result — measurement chart (Excel attachment) / report result field — All out-of-tolerance measurements must be highlighted in yellow in the Excel file. Apply the tolerance rule as follows: if all out-of-tolerance values are within ±1/8\", classify as MINOR — add a remark and do not fail the section. If any tolerance exceeds ±1/8\", highlight in yellow with red text — the measurement section must be marked FAIL.",
       "extract": [],
-      "source": "advisory",
+      "source": "pending",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "spec_sheet"
+      "status_class": "pending",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_dimensions_result.attachment_content"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "file_content",
+      "processor": "file",
+      "pending_processor": "xlsx"
     },
     "5_1_3": {
       "checkpoint_id": "5_1_3",
@@ -597,10 +1208,20 @@
       "unless": null,
       "requirement": "Product Dimensions Result — header row and content of measurement chart — Verify that (1) no column is left empty, (2) the style number is written in the chart header, (3) top-row bulk measurements are identified by size and/or color, and (4) no typo errors exist (e.g., letters entered in numeric result cells).",
       "extract": [],
-      "source": "advisory",
+      "source": "pending",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "spec_sheet"
+      "status_class": "pending",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_dimensions_result.attachment_content"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "file_content",
+      "processor": "file",
+      "pending_processor": "xlsx"
     },
     "5_1_4": {
       "checkpoint_id": "5_1_4",
@@ -610,10 +1231,19 @@
       "unless": null,
       "requirement": "Product Dimensions Result — checklist photos and attachments — Measurement chart screenshots (print screen of POM) and the Excel file must both be uploaded exclusively in the Product Dimensions Result section. Product weight photos must NOT appear in this section. The print screen must be legible and not blurry.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "spec_sheet"
+      "status_class": "unauthored",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_dimensions_result.attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
     },
     "5_1_5": {
       "checkpoint_id": "5_1_5",
@@ -626,7 +1256,16 @@
       "source": "advisory",
       "tier": "deterministic",
       "status_class": "advisory",
-      "data_source": "spec_sheet"
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
     },
     "5_2_1": {
       "checkpoint_id": "5_2_1",
@@ -634,16 +1273,37 @@
       "when": null,
       "then": {
         "op": "count_at_most",
-        "selector": "checklist.color_shading_check.photo_count",
-        "max": 1,
-        "ground": "json"
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "photo_count"
+        },
+        "max": 1
       },
       "unless": null,
       "requirement": "Tests checklist — all test checkpoints / report photos — Include only 1 photo per test in the checklist. For failed tests, provide only 1 photo per failure. Do not upload multiple photos for the same test.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "5_2_2": {
       "checkpoint_id": "5_2_2",
@@ -656,14 +1316,14 @@
             "op": "not",
             "item": {
               "op": "is_blank",
-              "selector": "checklist.stitch_density_check.comment",
-              "ground": "json"
+              "ground": "json",
+              "selector": "checklist.stitch_density_check.comment"
             }
           },
           {
             "op": "contains_number",
-            "selector": "checklist.stitch_density_check.comment",
-            "ground": "json"
+            "ground": "json",
+            "selector": "checklist.stitch_density_check.comment"
           }
         ]
       },
@@ -672,7 +1332,17 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.stitch_density_check.comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "5_2_3": {
       "checkpoint_id": "5_2_3",
@@ -682,23 +1352,69 @@
       "unless": null,
       "requirement": "Ironing, washing, treatment check — Tests checklist / report photos — Include clear photos of both the approval sample and the bulk product side by side, each with a caption identifying which is which.",
       "extract": [],
-      "source": "advisory",
+      "source": "pending",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "pending",
+      "data_source": "report_images",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "ironing",
+            "washing",
+            "treatment",
+            "check"
+          ],
+          "field": "photo_content"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "image",
+      "processor": "vision",
+      "pending_processor": "vision"
     },
     "5_2_4": {
       "checkpoint_id": "5_2_4",
       "severity": "MINOR",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "count_at_least",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "barcode",
+            "scanning",
+            "test"
+          ],
+          "field": "photo_count"
+        },
+        "min": 1
+      },
       "unless": null,
       "requirement": "Barcode scanning test — Tests checklist / report photos — The UPC 13 scanner must be used (not UPC 12). Upload 1 photo per barcode type present on the product. If a barcode scan result is missing a leading zero, record this as a remark but do not fail this section.",
       "extract": [],
-      "source": "advisory",
+      "source": "check_block",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "barcode",
+            "scanning",
+            "test"
+          ],
+          "field": "photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "5_2_5": {
       "checkpoint_id": "5_2_5",
@@ -708,23 +1424,53 @@
       "unless": null,
       "requirement": "Symmetry check — Tests checklist / report photos — A verification of the front facing must be done and must be visible in the report. Fold the product on its symmetry axis or use a measurement tool to compare. The result and a supporting photo must be present.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "symmetry",
+            "check"
+          ],
+          "field": "photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "5_2_6": {
       "checkpoint_id": "5_2_6",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "ground": "json",
+          "selector": "report.all_captions"
+        }
+      },
       "unless": null,
       "requirement": "Denim pants — leg twisting / fit model — If leg twisting is identified during inspection of denim pants, the pants must be fitted on a fit model to validate the finding. Clear front and back view photos must be taken on the fit model and uploaded.",
       "extract": [],
-      "source": "advisory",
+      "source": "check_block",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_captions"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "5_2_7": {
       "checkpoint_id": "5_2_7",
@@ -734,10 +1480,24 @@
       "unless": null,
       "requirement": "Tests checklist — fit model photos (all products) — Samples must be tried on a fit model and photos provided in the report.",
       "extract": [],
-      "source": "advisory",
+      "source": "pending",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "pending",
+      "data_source": "report_images",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "photo_content"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "image",
+      "processor": "vision",
+      "pending_processor": "vision"
     },
     "5_3_1": {
       "checkpoint_id": "5_3_1",
@@ -747,10 +1507,26 @@
       "unless": null,
       "requirement": "Approval Sample Comparison — Product Specifications checklist / report photos — Each approval sample comparison photo must show the on-site bulk product and the approval sample physically side by side. Each photo must have a caption explicitly identifying which item is the approval sample. The approval sample is identified by a green \"QIMA SAMPLE\" tag; if the tag is missing, note this in the Other Remarks section.",
       "extract": [],
-      "source": "advisory",
+      "source": "pending",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "pending",
+      "data_source": "report_images",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "approval",
+            "sample",
+            "comparison"
+          ],
+          "field": "photo_content"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "image",
+      "processor": "vision",
+      "pending_processor": "vision"
     },
     "6_1_1": {
       "checkpoint_id": "6_1_1",
@@ -758,20 +1534,30 @@
       "when": null,
       "then": {
         "op": "in_set",
+        "ground": "json",
         "selector": "report.overall_result",
         "values": [
           "PASS",
           "FAIL",
           "PENDING"
-        ],
-        "ground": "json"
+        ]
       },
       "unless": null,
       "requirement": "Starting pictures — report photo section — Verify that a starting photo is present showing the inspector standing in front of the factory logo or name (factory identifier clearly visible).",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.overall_result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
     },
     "6_1_2": {
       "checkpoint_id": "6_1_2",
@@ -781,10 +1567,19 @@
       "unless": null,
       "requirement": "All checklist sections — report photos throughout — Exactly 1 photo per checkpoint is required. Duplicate photos must not appear in the report. General factory environment photos (exterior, inspector walking around) must not be added.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
     },
     "6_1_3": {
       "checkpoint_id": "6_1_3",
@@ -794,10 +1589,19 @@
       "unless": null,
       "requirement": "All photos — report-wide — All photos must have captions describing what they show. A photo without a caption is a reportable issue.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_captions"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
     },
     "6_1_4": {
       "checkpoint_id": "6_1_4",
@@ -807,10 +1611,19 @@
       "unless": null,
       "requirement": "Product Dimensions Result — report photos and attachments — Measurement chart screenshots and the Excel file must be uploaded only in the Product Dimensions Result section. Verify these materials do not appear in any other section of the report.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "external"
+      "status_class": "unauthored",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "checklist.product_dimensions_result.attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
     },
     "7_1_1": {
       "checkpoint_id": "7_1_1",
@@ -818,16 +1631,26 @@
       "when": null,
       "then": {
         "op": "equals",
+        "ground": "json",
         "selector": "workmanship.aql_level_major",
-        "expected": 2.5,
-        "ground": "json"
+        "expected": 2.5
       },
       "unless": null,
       "requirement": "Workmanship sampling standards — Workmanship section header — Verify the workmanship inspection uses the correct sampling level and AQL values.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "workmanship.aql_level_major"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "7_1_2": {
       "checkpoint_id": "7_1_2",
@@ -835,16 +1658,26 @@
       "when": null,
       "then": {
         "op": "equals",
+        "ground": "json",
         "selector": "workmanship.aql_level_minor",
-        "expected": 4.0,
-        "ground": "json"
+        "expected": 4.0
       },
       "unless": null,
       "requirement": "Product Dimensions SL checklist — sampling header — Verify the measurement sampling uses the correct level and AQL.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "workmanship.aql_level_minor"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     },
     "8_1_1": {
       "checkpoint_id": "8_1_1",
@@ -867,7 +1700,21 @@
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
-      "data_source": "in_report"
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "product._first.real_packed_quantity"
+        },
+        {
+          "type": "selector",
+          "selector": "product._first.ordered_quantity"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
     }
   }
 }

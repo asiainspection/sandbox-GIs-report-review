@@ -8,9 +8,12 @@ from pathlib import Path
 from typing import Any
 
 from check_block import compile_block, compile_checkpoints, validate_block
+from fact_schema import resolve_where_bindings
+from field_registry import STATUS_ADVISORY, STATUS_UNMAPPED
 from obligation import save_checkspecs, validate_checkspec
+from semantic_report import parse_semantic_report
 
-COMPILER_VERSION = "2026-07-16.footer"
+COMPILER_VERSION = "2026-07-17.grounded-where"
 
 
 def compile_checkpoint(
@@ -31,17 +34,72 @@ def source_hash(checkpoints_path: Path, hand_specs_path: Path | None = None) -> 
     return h.hexdigest()[:16]
 
 
+def _load_sample_semantic(sample_report_path: Path | None):
+    if sample_report_path is None or not sample_report_path.is_file():
+        return None, {}
+    report = json.loads(sample_report_path.read_text(encoding="utf-8"))
+    semantic = parse_semantic_report(report)
+    # Minimal facts dict — resolvability only needs checklist/section structure.
+    facts: dict[str, Any] = {}
+    return semantic, facts
+
+
+def apply_resolvability_gate(
+    specs: dict[str, dict[str, Any]],
+    *,
+    sample_report_path: Path | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Downgrade specs whose where binds to nothing on a real sample report.
+
+    out_of_report / unmapped / advisory are left alone.
+    Zero resolved fields → status_class=unmapped (honest backlog, not advisory).
+    """
+    semantic, facts = _load_sample_semantic(sample_report_path)
+    if semantic is None:
+        return specs
+
+    for _cp_id, spec in specs.items():
+        status = str(spec.get("status_class") or "")
+        if status in (STATUS_ADVISORY, STATUS_UNMAPPED):
+            continue
+        where = spec.get("where_bindings") or []
+        if not where:
+            continue
+        # Skip pure out_of_report / unmapped markers.
+        actionable = [
+            b
+            for b in where
+            if isinstance(b, dict) and b.get("type") not in ("out_of_report", "unmapped")
+        ]
+        if not actionable:
+            continue
+        resolved = resolve_where_bindings(actionable, facts, semantic)
+        if resolved:
+            continue
+        # Binding authored but resolves to zero fields on a real report.
+        spec["status_class"] = STATUS_UNMAPPED
+        spec["source"] = "unmapped"
+        spec["then"] = None
+        spec["when"] = None
+        spec["resolvability"] = "unresolved"
+        spec["data_source"] = str(spec.get("data_source") or "report_content")
+    return specs
+
+
 def compile_gi(
     checkpoints_path: Path,
     output_path: Path,
     *,
     hand_specs_path: Path | None = None,
+    sample_report_path: Path | None = None,
 ) -> dict[str, dict[str, Any]]:
     from gi_review import load_checkpoints
 
     _ = hand_specs_path
     checkpoints = load_checkpoints(checkpoints_path)
     specs = compile_checkpoints(checkpoints)
+    specs = apply_resolvability_gate(specs, sample_report_path=sample_report_path)
+
     errors: list[str] = []
     for cp in checkpoints:
         block = cp.get("check_block")
@@ -60,6 +118,7 @@ def compile_gi(
         "checkpoint_count": len(specs),
         "source_hash": source_hash(checkpoints_path),
         "compiler": COMPILER_VERSION,
+        "sample_report": str(sample_report_path) if sample_report_path else None,
     }
     save_checkspecs(output_path, specs, meta)
     return specs

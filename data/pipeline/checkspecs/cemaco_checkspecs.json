@@ -1,0 +1,1036 @@
+{
+  "meta": {
+    "source": "/Users/williambrun/Documents/test_GI_reports/data/pipeline/checkpoints/cemaco_checkpoints.json",
+    "checkpoint_count": 37,
+    "source_hash": "075686d4c6466a29",
+    "compiler": "2026-07-17.grounded-where",
+    "sample_report": "/Users/williambrun/Documents/test_GI_reports/data/clients/cemaco/corrected/Q2519476686.json"
+  },
+  "specs": {
+    "1_1_1": {
+      "checkpoint_id": "1_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspection product list (client-uploaded files) — Verify that all client-uploaded inspection files (artwork, specifications, etc.) have been reviewed before starting the inspection. If the supplier offers any conversation record relevant to the inspection, a dated screenshot must be included in the report.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "1_1_2": {
+      "checkpoint_id": "1_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_1_2.check_does_this_field_evidence_satisfy_confirm_the_rep",
+        "question": "Does this field evidence satisfy: Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for eac?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.product_label"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Specification sheets — Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for each SKU inspected.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.product_label"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "1_2_1": {
+      "checkpoint_id": "1_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "ground": "json",
+          "selector": "report.days_postponed"
+        }
+      },
+      "unless": null,
+      "requirement": "Report front page — inspection date fields — The number of days the inspection was postponed or advanced versus the originally planned date must always be stated. \"N/A\" is not accepted, even for a missing report.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.days_postponed"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
+    },
+    "1_2_2": {
+      "checkpoint_id": "1_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Report front page — Factory / Vendor details — Factory name, address, and site representative must be recorded in English, even if the factory only confirmed them in Chinese. Vendor details must also be completed.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "1_2_3": {
+      "checkpoint_id": "1_2_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "count_at_least",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "production",
+            "line"
+          ],
+          "field": "photo_count"
+        },
+        "min": 1
+      },
+      "unless": null,
+      "requirement": "Report — production line photo — A picture of the factory's production line must be included in the report.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "production",
+            "line"
+          ],
+          "field": "photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
+    },
+    "1_2_4": {
+      "checkpoint_id": "1_2_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "ground": "json",
+          "selector": "report.attachment_filenames"
+        }
+      },
+      "unless": null,
+      "requirement": "Final PDF file — The PDF report sent to the client must be under 15MB. If it exceeds this, pictures must be compressed and the PDF regenerated; if still over 15MB, the QIMA quality team must be notified.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_attachments",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
+    },
+    "1_3_1": {
+      "checkpoint_id": "1_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspection site / availability remark — If goods belonging to the supplier are at another location no more than a 5–15 minute walk away, the inspection may proceed; the location must be reflected in the report and the back office notified. For new suppliers in China, the inspection address must be reconfirmed by e-mail beforehand.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "1_3_2": {
+      "checkpoint_id": "1_3_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Available Quantity Check — If products are not ready for inspection, the inspector must check available/semi-finished product, request packing material from the factory if available, and mark the inspection FAILED. If nothing is available at all, a MISSED REPORT must be issued instead.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "available",
+            "quantity",
+            "details"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "1_3_3": {
+      "checkpoint_id": "1_3_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "1_3_3.check_does_this_field_evidence_satisfy_if_the_inspecti",
+        "question": "Does this field evidence satisfy: If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must con?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.supplier_name"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Inspection coordination note — If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must contact the QIMA quality team before proceeding.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.supplier_name"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "1_3_4": {
+      "checkpoint_id": "1_3_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspection start time / remark — If goods are not ready when the inspector arrives, the inspector must wait until at least part of the goods are available, notify the back office and SIC, and wait until 2:00 PM local time before issuing a missing inspection report if goods remain unavailable.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "1_4_1": {
+      "checkpoint_id": "1_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Random carton selection / Selected cartons — Carton and product selection must follow QIMA's Standard Operating Process (SOP) for random sampling.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "2_1_1": {
+      "checkpoint_id": "2_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Approval Sample Comparison — When no approval sample is provided by the factory (standard for Cemaco), the inspector must verify that all on-site findings (product, plug type, packaging) are fully aligned with the specification file, with no assumptions or interpretation.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "approval",
+            "sample",
+            "comparison"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "2_2_1": {
+      "checkpoint_id": "2_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "contains",
+          "selector": "report.all_text",
+          "text": "Golden Sample",
+          "ground": "json"
+        }
+      },
+      "unless": null,
+      "requirement": "Product Style & Construction — hangtag — The hangtag physically attached to each product must match that exact product's SKU, description, and specification exactly — hangtags must never be mixed between products or SKUs.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_text"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "2_2_2": {
+      "checkpoint_id": "2_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Product Style & Construction — barcode — The barcode printed on the product must be verified against both the hangtag barcode and the packing list/file; any discrepancy between the three must be reported.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "style",
+            "construction"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "2_2_3": {
+      "checkpoint_id": "2_2_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "2_2_3.check_does_this_field_satisfy_the_gi_requirement_state",
+        "question": "Does this field satisfy the GI requirement stated for this checkpoint?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.inspector_text"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Product Labels / Product Details – Barcode — Barcode scanning result must be recorded for each SKU, with a photo of both the barcode label and the scan result.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.inspector_text"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "2_3_1": {
+      "checkpoint_id": "2_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "ground": "json",
+          "selector": "report.all_captions"
+        }
+      },
+      "unless": null,
+      "requirement": "Photo captions / TAG feature (QIMAone) — Photos must be organized and captioned by SKU using the TAG feature in QIMAone; photo captions must always reflect the correct SKU.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_captions"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "3_1_1": {
+      "checkpoint_id": "3_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Outer Packing & Shipping Marks: Front & Side — carton quantity marking — The quantity marked on the outer carton must match the quantity specified in the client's order file for that SKU exactly.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "outer",
+            "packing",
+            "shipping",
+            "marks",
+            "front",
+            "side"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "3_1_2": {
+      "checkpoint_id": "3_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Outer Packing & Shipping Marks — plug type / certification (E&E products) — Plug type and certification markings on the product/adaptor must match the certification required in the booking specification (e.g., UL vs. EU plug).",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "3_1_3": {
+      "checkpoint_id": "3_1_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Outer Packing & Shipping Marks — market-specific labels — Labels not required for the client's destination market (e.g., a yellow ENERGYGUIDE sticker for a market that doesn't require it) must not be present on the product/packaging; if found, it must be reported as a deviation from the approved artwork.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "3_1_4": {
+      "checkpoint_id": "3_1_4",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Outer Packing & Shipping Marks — printed component/feature count — Any printed specification on the product packaging (e.g., LED light count, piece count) must match the booking specification exactly.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "3_2_1": {
+      "checkpoint_id": "3_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inner Packing & Unit Packing — warning sticker — Warning/advisory stickers on inner or unit packaging must be firmly adhered with no lifting edges, positioned as specified in the packing manual, and match the required dimensions.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "inner",
+            "packing",
+            "unit",
+            "packing"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "3_3_1": {
+      "checkpoint_id": "3_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Product Color Specification Check / insert card — The color of any insert card, color box, or gift box must be compared against the Pantone reference stated in the client's artwork, with a photo of the comparison. If TCX/TPG Pantone references are unavailable, use the STD Pantone.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "spec_sheet"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "3_3_2": {
+      "checkpoint_id": "3_3_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "3_3_2.check_does_this_field_evidence_satisfy_for_color_gift_",
+        "question": "Does this field evidence satisfy: For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork s?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.all_captions"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "Color boxes — photography — For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork should be enlarged for detailed comparison.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_captions"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "4_1_1": {
+      "checkpoint_id": "4_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Defects checklist — Every defect must be recorded by SKU, with a supporting photo for each defect found; factory and vendor information must be completed.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
+    },
+    "4_2_1": {
+      "checkpoint_id": "4_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Product Color Specification Check — Color shade must be checked and compared across all inspected items/colors selected for the inspection — not only one representative color per SKU or series.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "color",
+            "specification",
+            "check"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "4_3_1": {
+      "checkpoint_id": "4_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Workmanship — metal items — For all-metal items, moisture level must be checked to assess the potential for rust or mildew; screws (if assembled) or loose parts/components (if not assembled) must be checked for rust.",
+      "extract": [],
+      "source": "unmapped",
+      "tier": "deterministic",
+      "status_class": "unmapped",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "end",
+            "workmanship"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text",
+      "resolvability": "unresolved"
+    },
+    "4_4_1": {
+      "checkpoint_id": "4_4_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Product Dimensions Result / Product Weights Result — When the client provides no specific dimension specification, the general dimension and weight of the product must still be checked, on 5 pieces per item.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "dimensions",
+            "result"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "5_1_1": {
+      "checkpoint_id": "5_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspection standards — Workmanship / Measurement sampling — Workmanship and measurement sampling must follow the Inspection Profile (IP) defined for the order; no separate Cemaco-specific AQL table exists beyond the IP.",
+      "extract": [],
+      "source": "unmapped",
+      "tier": "deterministic",
+      "status_class": "unmapped",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "end",
+            "workmanship"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text",
+      "resolvability": "unresolved"
+    },
+    "5_2_1": {
+      "checkpoint_id": "5_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Product Dimensions Result — measurement chart — All measurements taken during inspection must be recorded in the client's official measurement chart ([Cemaco Nuevos Almacenes] [Measurements Template]).",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_attachments",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "dimensions",
+            "result"
+          ],
+          "field": "attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
+    },
+    "5_3_1": {
+      "checkpoint_id": "5_3_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Tests checklist — memory foam pillow — For memory foam pillow products, both the filling and the assembled pillow must be weighed separately.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "5_3_2": {
+      "checkpoint_id": "5_3_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Tests checklist — Container Load Check (CLC) — For CLC inspections, no product quality checks are required; the inspector should instead focus on the container's condition and confirm pallets are loaded horizontally.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "5_3_3": {
+      "checkpoint_id": "5_3_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Tests checklist — Metal Detection Test — The Metal Detection Test is mandatory for all tablecloth and cushion product inspections.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "checkpoints"
+          ],
+          "field": "comment"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "6_1_1": {
+      "checkpoint_id": "6_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "not",
+        "item": {
+          "op": "is_blank",
+          "ground": "json",
+          "selector": "report.all_captions"
+        }
+      },
+      "unless": null,
+      "requirement": "Product Style & Construction (main page) — One product photo per SKU is required; if an SKU has multiple colors, a separate photo is required for each color, with all SKUs combined into a single photo on the first page of the report.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.all_captions"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "6_1_2": {
+      "checkpoint_id": "6_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "atom",
+        "id": "6_1_2.check_does_this_field_evidence_satisfy_the_front_view_",
+        "question": "Does this field evidence satisfy: The front view of the product must always be included and placed on the main page for each SKU.?",
+        "role": "required_true",
+        "value_type": "boolean",
+        "ground": "atom",
+        "requires_fields": [
+          {
+            "type": "selector",
+            "selector": "report.product_label"
+          }
+        ]
+      },
+      "unless": null,
+      "requirement": "General photo requirement — The front view of the product must always be included and placed on the main page for each SKU.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "atoms",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.product_label"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "6_2_1": {
+      "checkpoint_id": "6_2_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "General cosmetics — measurement/carton/packing photos — Each SKU section must include: product measurement photos, carton box size/weight photos (with a carton photo even when no SKU marking appears on the carton), packing photos, and shipping mark photos.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "section",
+          "match": [
+            "product",
+            "packing",
+            "packaging"
+          ],
+          "field": "photo_count"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "number",
+      "processor": "structured"
+    },
+    "7_1_1": {
+      "checkpoint_id": "7_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspection type / sampling level field (report header) — Verify the sampling level and AQL used in the report match the Inspection Profile (IP) defined for the order.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "ip"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
+    "8_1_1": {
+      "checkpoint_id": "8_1_1",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "in_set",
+        "ground": "json",
+        "selector": "report.overall_result",
+        "values": [
+          "PASS",
+          "FAIL",
+          "PENDING"
+        ]
+      },
+      "unless": null,
+      "requirement": "Overall result (report header) — Overall result must be PASS only if ALL conditions below are met. If any single condition fails, overall result must be FAIL.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.overall_result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
+    }
+  }
+}

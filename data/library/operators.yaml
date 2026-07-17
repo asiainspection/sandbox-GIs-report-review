@@ -1,32 +1,59 @@
-# Claude cheat sheet — operators
-# Give this file to Claude with the checkpoint.
-# Real functions live in src/primitives.py — this file is names + one-line meaning only.
+# Claude / ops cheat sheet — operators
+# Pair with check_format.yaml + report_fields.yaml
 #
-# Write checks in compact form (see check_format.yaml), e.g.:
-#   check: no_language(chinese)
-#   check: count_at_least(1)
-#   check: extract("Quote the sentence that …")
-#
-# Prefer deterministic ops. extract / vision = let LLM decide.
+# Real implementations: src/primitives.py
+# Prefer: deterministic → extract + contains/matches → extract_bool (rare) → vision
 
 operators:
 
-  # --- deterministic (apply to `where`) ---
+  # --- deterministic (apply to `where`) — USE THESE FIRST ---
   present: "field is non-blank"
-  equals: "field equals an exact value — equals(PENDING)"
-  in_set: "field is one of a list — in_set(YES, NO)"
-  matches: "field matches a regex — matches(\"\\\\d+%\")"
-  no_language: "field has no chars of a language — no_language(chinese)"
-  contains: "field contains a substring — contains(\"not ok\")"
-  has_number: "field text contains at least one digit"
-  compare: "compare field vs value/field — compare(>=, 1) or compare(other_field, !=)"
+  equals: "exact value — equals(PENDING)"
+  in_set: "one of — in_set(PASS, FAIL, NOT_APPLICABLE)"
+  matches: "regex — matches(\"\\\\d+%\")"
+  no_language: "no chars of a language — no_language(chinese)"
+  contains: "substring — contains(\"Adhesive test on the date code waived\")  ← prefer for mandatory remarks"
+  has_number: "text contains at least one digit"
+  compare: "compare — compare(>=, 1)"
   count_at_least: "count >= N — count_at_least(1)"
   count_at_most: "count <= N — count_at_most(0) for no photos"
   ratio_at_least: "where[0]/where[1] >= min — ratio_at_least(0.8)"
-  scan_present: "term appears in report — scan_present(\"GSS\")"
+  scan_present: "term appears in report text — scan_present(\"GSS\")"
   scan_absent: "term must never appear — scan_absent(\"Golden Sample\")"
-  filename_matches: "attachment filename matches pattern"
+  filename_matches: "attachment filename glob — filename_matches(\"Measurement Chart-*.xlsx\")"
 
-  # --- let LLM decide (model quotes / sees; Python still decides) ---
-  extract: "LLM quotes one fact from where — extract(\"…question…\")"
-  vision: "LLM answers one yes/no about photo content — vision(\"…question…\")"
+  # --- LLM grounds a fact; Python still decides ---
+  extract: |
+    Quote ONE string from the bound field.
+    ALWAYS allow null: extract("Quote the <X> from this field, or null")
+    ALWAYS pair with contains / matches / equals / in_set in the same check list.
+    GOOD: extract("Quote the date-code exemption remark, or null")
+    BAD:  extract("Summarize whether the GI requirement is met")
+
+  extract_bool: |
+    Short yes/no about ONE observable fact on the bound field ONLY.
+    GOOD: extract_bool("Does this comment name a 3M tape model?")
+    BAD:  extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+    BAD:  extract_bool("Does this field evidence satisfy: <pasted What to check>?")
+    If Correct example has a fixed sentence → do NOT use extract_bool; use contains.
+
+  vision: |
+    Yes/no about visible pixels. where must be photo_content (or captions).
+    GOOD: vision("Does the photo show the product front view upright?")
+    BAD:  vision("Is the photo requirement satisfied?")
+    BAD:  vision(...) with where: report.product_label
+
+# ---------------------------------------------------------------------------
+# BANNED QUESTION FRAGMENTS (compiler / authors must reject)
+# ---------------------------------------------------------------------------
+banned_question_substrings:
+  - "satisfy the GI"
+  - "satisfy the GI requirement"
+  - "satisfy the requirement"
+  - "Does this field evidence satisfy"
+  - "Does the bound remark/comment satisfy"
+  - "correctly filled"
+  - "does this pass"
+  - "according to the rule"
+  - "per the requirement"
+  - "as required by the GI"

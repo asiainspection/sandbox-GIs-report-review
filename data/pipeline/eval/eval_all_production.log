@@ -1,0 +1,184 @@
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/williambrun/Documents/test_GI_reports/.venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+Mode: production (run_production_review)
+Model: gemini-3.1-flash-lite
+Clients: ['cemaco', 'dfi', 'hallmark', 'new_era', 'ribkoff', 'tpw']
+Vision: off
+
+========================================================================
+CEMACO — checkable=12/37 (32.4%) pending=0 unauthored=13 advisory=10
+========================================================================
+  [corrected] Q2519476686 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=5 total_flags=5 $0.0002 0.9s flags=['1_2_1', '1_2_3', '2_2_3', '3_3_2', '6_1_2']
+  [corrected] Q2601959645 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=4 total_flags=4 $0.0002 1.0s flags=['1_2_1', '2_2_3', '3_3_2', '6_1_2']
+  [corrected] Q2605650175 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=5 total_flags=5 $0.0002 1.2s flags=['1_2_1', '1_2_3', '2_2_3', '3_3_2', '6_1_2']
+  [corrected] Q2610766318 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=4 total_flags=4 $0.0001 0.9s flags=['1_2_1', '2_2_3', '3_3_2', '6_1_2']
+  [flawed] SKIP Q2519476686_flawed: no checkable labels for report_q2519476686_flawed
+  [flawed] SKIP Q2601959645_flawed: no checkable labels for report_q2601959645_flawed
+  [flawed] SKIP Q2605650175_flawed: no checkable labels for report_q2605650175_flawed
+  [flawed] SKIP Q2610766318_flawed: no checkable labels for report_q2610766318_flawed
+
+========================================================================
+DFI — checkable=38/50 (76.0%) pending=0 unauthored=12 advisory=0
+========================================================================
+  [corrected] Q2614313993 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=10 total_flags=10 $0.0008 1.5s flags=['1_1_2', '1_1_6', '3_1_2', '4_2_2', '5_2_3', '5_2_5', '5_2_6', '5_4_3', '6_1_1', '6_1_3']
+  [corrected] Q2615301660 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=12 total_flags=12 $0.0009 1.7s flags=['1_1_2', '1_1_3', '1_1_4', '3_1_2', '4_2_2', '5_1_2', '5_2_5', '5_2_6', '5_4_3', '6_1_1', '6_1_3', '6_1_7']
+  [corrected] Q2616195180 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=10 total_flags=10 $0.0005 1.2s flags=['1_1_2', '1_1_3', '4_2_2', '5_1_2', '5_2_5', '5_2_6', '5_4_3', '6_1_1', '6_1_3', '6_1_7']
+  [corrected] dfi_correct …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=12 total_flags=12 $0.0004 1.1s flags=['1_1_2', '1_1_3', '4_2_2', '5_2_5', '5_2_6', '5_3_1', '5_3_2', '5_4_3', '6_1_1', '6_1_3', '6_1_5', '6_1_7']
+  [flawed] Q2614313993_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.09 R=1.00 caught=['2_2_2'] missed=[] extra=['1_1_2', '1_1_6', '3_1_2', '4_2_2', '5_2_3', '5_2_5', '5_2_6', '5_4_3', '6_1_1', '6_1_3'] $0.0008 1.5s
+  [flawed] Q2615301660_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.07 R=0.50 caught=['2_2_2'] missed=['5_4_2'] extra=['1_1_2', '1_1_3', '1_1_4', '3_1_2', '4_2_2', '5_1_2', '5_2_5', '5_2_6', '5_3_1', '5_3_2', '5_4_3', '6_1_1', '6_1_3', '6_1_7'] $0.0002 0.9s
+  [flawed] Q2616195180_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.09 R=1.00 caught=['2_2_2'] missed=[] extra=['1_1_2', '1_1_3', '4_2_2', '5_1_2', '5_2_5', '5_2_6', '5_4_3', '6_1_1', '6_1_3', '6_1_7'] $0.0005 1.3s
+  [flawed] SKIP dfi_flawed: no checkable labels for dfi_flawed
+  -> dfi macro P=0.083 R=0.833 | corrected FPs=44
+
+========================================================================
+HALLMARK — checkable=117/166 (70.5%) pending=0 unauthored=18 advisory=31
+========================================================================
+  [corrected] 1HGO3708 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=58 total_flags=58 $0.0048 6.3s flags=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'smp_5_12', 'smp_5_16', 'smp_5_18', 'smp_5_24', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_27', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_37', 'spec_6_38', 'spec_6_39', 'spec_6_4', 'spec_6_40', 'spec_6_41', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'sum_12_1', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8']
+  [corrected] 1SOX2223 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=58 total_flags=58 $0.0029 3.8s flags=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'rpt_10_4', 'smp_5_12', 'smp_5_16', 'smp_5_17', 'smp_5_18', 'smp_5_20', 'smp_5_21', 'smp_5_22', 'smp_5_24', 'smp_5_25', 'smp_5_26', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_4', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8']
+  [corrected] 5QGO2803 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=61 total_flags=61 $0.0026 3.4s flags=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'rpt_10_4', 'smp_5_12', 'smp_5_16', 'smp_5_18', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_10', 'spec_6_11', 'spec_6_12', 'spec_6_13', 'spec_6_14', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_27', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_4', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'spec_6_6', 'spec_6_7', 'spec_6_8', 'sum_12_1', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8']
+  [flawed] 1HGO3708_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.03 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'smp_5_12', 'smp_5_16', 'smp_5_18', 'smp_5_24', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_27', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_37', 'spec_6_38', 'spec_6_39', 'spec_6_4', 'spec_6_40', 'spec_6_41', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'sum_12_1', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8'] $0.0048 6.8s
+  [flawed] 1SOX2223_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.03 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'rpt_10_4', 'smp_5_12', 'smp_5_16', 'smp_5_17', 'smp_5_18', 'smp_5_20', 'smp_5_21', 'smp_5_22', 'smp_5_24', 'smp_5_25', 'smp_5_26', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_4', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8'] $0.0029 3.7s
+  [flawed] 5QGO2803_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.03 R=1.00 caught=['rpt_10_10', 'wm_9_6'] missed=[] extra=['cs_4_2', 'cs_4_3', 'cs_4_4', 'cs_4_7', 'cs_4_8', 'doc_1_11', 'doc_1_14', 'doc_1_4', 'doc_1_6', 'meas_7_1', 'meas_7_2', 'meas_7_3', 'rpt_10_11', 'rpt_10_13', 'rpt_10_4', 'smp_5_12', 'smp_5_16', 'smp_5_18', 'smp_5_27', 'smp_5_28', 'smp_5_30', 'smp_5_4', 'smp_5_5', 'smp_5_6', 'smp_5_7', 'smp_5_9', 'spec_6_1', 'spec_6_10', 'spec_6_11', 'spec_6_12', 'spec_6_13', 'spec_6_14', 'spec_6_15', 'spec_6_17', 'spec_6_2', 'spec_6_26', 'spec_6_27', 'spec_6_28', 'spec_6_29', 'spec_6_3', 'spec_6_30', 'spec_6_31', 'spec_6_32', 'spec_6_34', 'spec_6_36', 'spec_6_4', 'spec_6_42', 'spec_6_44', 'spec_6_45', 'spec_6_5', 'spec_6_6', 'spec_6_7', 'spec_6_8', 'sum_12_1', 'sum_12_2', 'tst_8_10', 'tst_8_14', 'tst_8_2', 'tst_8_3', 'tst_8_7', 'tst_8_8'] $0.0026 3.4s
+  -> hallmark macro P=0.033 R=1.000 | corrected FPs=177
+
+========================================================================
+NEW_ERA — checkable=40/49 (81.6%) pending=0 unauthored=3 advisory=6
+========================================================================
+  [corrected] Q2616171227 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=19 total_flags=19 $0.0027 3.2s flags=['1_2_1', '1_2_2', '1_2_3', '3_2_4', '3_2_5', '3_2_6', '5_1_2', '5_1_4', '6_1_1', '6_1_3', '6_2_1', '6_2_3', '6_2_4', '6_4_1', '6_4_2', '7_1_1', '7_8_1', '8_1_2', '9_1_1']
+  [corrected] Q2616262288 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=11 total_flags=11 $0.0022 2.2s flags=['1_2_1', '1_2_2', '1_2_3', '3_2_5', '5_1_2', '5_1_4', '6_1_3', '6_2_4', '6_4_2', '7_1_1', '7_8_1']
+  [corrected] Q2616292623 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=16 total_flags=16 $0.0018 2.7s flags=['1_2_1', '1_2_2', '2_2_1', '5_1_2', '5_1_4', '6_1_3', '6_2_3', '6_2_4', '7_1_1', '7_2_1', '7_3_1', '7_4_1', '7_5_1', '7_6_1', '7_7_1', '7_8_1']
+  [flawed] Q2616171227_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.05 R=1.00 caught=['6_1_2'] missed=[] extra=['1_2_1', '1_2_2', '1_2_3', '3_2_4', '3_2_5', '3_2_6', '5_1_2', '5_1_4', '6_1_1', '6_1_3', '6_2_1', '6_2_3', '6_2_4', '6_4_1', '6_4_2', '7_1_1', '7_8_1', '8_1_2', '9_1_1'] $0.0027 3.2s
+  [flawed] Q2616262288_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.08 R=1.00 caught=['6_1_2'] missed=[] extra=['1_2_1', '1_2_2', '1_2_3', '3_2_5', '5_1_2', '5_1_4', '6_1_3', '6_2_4', '6_4_2', '7_1_1', '7_8_1'] $0.0022 2.1s
+  [flawed] Q2616292623_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.06 R=1.00 caught=['6_1_2'] missed=[] extra=['1_2_1', '1_2_2', '2_2_1', '5_1_2', '5_1_4', '6_1_3', '6_2_3', '6_2_4', '7_1_1', '7_2_1', '7_3_1', '7_4_1', '7_5_1', '7_6_1', '7_7_1', '7_8_1'] $0.0018 2.6s
+  -> new_era macro P=0.064 R=1.000 | corrected FPs=46
+
+========================================================================
+RIBKOFF — checkable=36/56 (64.3%) pending=5 unauthored=10 advisory=5
+========================================================================
+  [corrected] Q2613916538_Jun29 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=1 total_flags=1 $0.0007 1.3s flags=['3_2_3']
+  [corrected] Q2614146161 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=0 total_flags=2 $0.0007 1.5s flags=['3_1_2', '5_2_1']
+  [corrected] Q2614154465_Jun29 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=3 total_flags=5 $0.0010 2.5s flags=['1_3_2', '3_1_2', '4_1_5', '4_1_6', '4_1_8']
+  [corrected] Q2614157738_271904 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=2 total_flags=5 $0.0007 1.5s flags=['1_1_1', '3_1_2', '4_1_5', '4_1_6', '5_2_1']
+  [corrected] Q2614430288 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=2 total_flags=4 $0.0008 2.2s flags=['1_3_2', '3_1_2', '3_2_3', '4_1_3']
+  [corrected] Q2614430689 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=1 total_flags=1 $0.0008 1.5s flags=['3_2_3']
+  [corrected] Q2614489409 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=3 total_flags=5 $0.0007 1.5s flags=['3_1_2', '3_2_3', '4_1_8', '5_2_4', '5_2_6']
+  [flawed] Q2613916538_Jun29_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=1.00 R=1.00 caught=['3_1_6', '3_2_3', '5_2_2'] missed=[] extra=[] $0.0007 1.3s
+  [flawed] Q2614146161_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.86 R=1.00 caught=['3_1_6', '3_1_7', '3_2_3', '5_1_1', '5_2_1', '5_2_2'] missed=[] extra=['3_1_2'] $0.0007 1.5s
+  [flawed] Q2614154465_Jun29_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.38 R=1.00 caught=['3_1_7', '3_2_3', '5_2_1'] missed=[] extra=['1_3_2', '3_1_2', '4_1_5', '4_1_6', '4_1_8'] $0.0010 2.4s
+  [flawed] Q2614157738_271904_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.43 R=1.00 caught=['3_1_7', '5_1_1', '5_2_1'] missed=[] extra=['1_1_1', '3_1_2', '4_1_5', '4_1_6'] $0.0007 1.4s
+  [flawed] Q2614430288_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.43 R=1.00 caught=['1_3_2', '3_1_7', '5_1_1'] missed=[] extra=['1_2_1', '3_1_2', '3_2_3', '4_1_3'] $0.0013 2.0s
+  [flawed] Q2614430689_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.86 R=1.00 caught=['1_2_1', '1_3_2', '3_1_6', '3_1_7', '5_1_1', '5_2_2'] missed=[] extra=['3_2_3'] $0.0004 1.2s
+  [flawed] Q2614489409_flawed …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    P=0.30 R=1.00 caught=['1_3_2', '3_1_6', '5_2_2'] missed=[] extra=['1_2_1', '3_1_2', '3_2_3', '4_1_3', '4_1_8', '5_2_4', '5_2_6'] $0.0005 1.2s
+  -> ribkoff macro P=0.607 R=1.000 | corrected FPs=12
+
+========================================================================
+TPW — checkable=16/41 (39.0%) pending=0 unauthored=21 advisory=2
+========================================================================
+  [corrected] Q2611142925 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=2 total_flags=4 $0.0005 1.3s flags=['2_1_2', '2_1_3', '7_1_2', '7_2_4']
+  [corrected] Q2614472847_2 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=3 total_flags=4 $0.0020 2.9s flags=['2_1_2', '2_1_3', '6_1_2', '7_2_4']
+  [corrected] Q2614472847_4 …
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Warning: there are non-text parts in the response: ['thought_signature'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+    blocking FPs=3 total_flags=4 $0.0019 2.7s flags=['2_1_2', '2_1_3', '6_1_2', '7_2_4']
+  [flawed] SKIP Q2611142925_flawed: no checkable labels for report_q2611142925_flawed
+  [flawed] SKIP Q2614472847_2_flawed: no checkable labels for report_q2614472847_2_flawed
+  [flawed] SKIP Q2614472847_4_flawed: no checkable labels for report_q2614472847_4_flawed
+
+Wrote /Users/williambrun/Documents/test_GI_reports/data/pipeline/eval/eval_all_results.json
+GLOBAL production: P=0.123 R=0.975 corrected accuracy=0.951 FPs=305
+Matplotlib is building the font cache; this may take a moment.
+Wrote plot /Users/williambrun/Documents/test_GI_reports/data/pipeline/eval/eval_all_pr.png
