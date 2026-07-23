@@ -244,10 +244,11 @@ def _build_extract_prompt(items: list[ExtractItem]) -> str:
     lines = [
         "You ground atomic facts for a compliance engine. Answer ONLY from the evidence shown.",
         "Do NOT decide pass/fail or violations — only extract factual values.",
-        'Return JSON: {"answers": [{"id": "...", "value": ..., "evidence": "short quote"}]}',
+        'Return JSON: {"answers": [{"id": "...", "value": ..., "evidence": "short quote from content:"}]}',
         "Use null for value when not found.",
         "For boolean questions return true or false.",
         "For string questions return the quoted text (or null).",
+        "evidence must quote the bound field content — never invent a Requirement line.",
         "",
     ]
     for item in items:

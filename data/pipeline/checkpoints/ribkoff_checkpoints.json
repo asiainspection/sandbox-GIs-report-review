@@ -1,260 +1,236 @@
 {
   "meta": {
-    "name": "Joseph Ribkoff Inspection Report Review – Rules Reference",
-    "source": "data/clients/ribkoff/gi/rules.md",
-    "generated_at": "2026-07-17T04:40:54Z",
-    "check_blocks": 56,
-    "checkpoint_count": 56
+    "name": "Ribkoff from Excel",
+    "checkpoint_count": 29,
+    "source": "data/clients/ribkoff/gi_authoring_ribkoff.xlsx"
   },
   "checkpoints": [
     {
-      "id": "1_1_1",
-      "section": "general_report_setup",
-      "requirement": "Inspection site address — report header / Factory Review checklist — Verify the full factory address is written in English and includes street, building, floor, city, province/state, country, and postal code. Address must not contain Chinese characters.",
-      "severity": "MINOR",
+      "id": "a_1_1",
+      "section": "rules",
+      "requirement": "Factory address — Factory address should include the complete factory address and postal code",
+      "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the address field only",
-      "source_rule_id": "1.1.1",
-      "source_lines": {
-        "start": 195,
-        "end": 213
-      },
-      "context": "QUESTION — check the address field only",
+      "scope_detail": "",
+      "source_rule_id": "A.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "report.factory_address"
         ],
         "when": null,
-        "check": [
-          "present",
-          "no_language(chinese)"
-        ]
+        "check": "extract_bool(\"Does this address include street/building, city, country, and a postal/zip code?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "1_1_2",
-      "section": "general_report_setup",
-      "requirement": "Is the factory/workshop location same as booked? — Factory Review checklist — Confirm the on-site factory address matches the address recorded in the booking. If they differ, a clear remark must be added to the Inspector's Remark / Other Remarks section.",
+      "id": "a_1_2",
+      "section": "rules",
+      "requirement": "Factory address — Factory address should be in English (no Chinese)",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check factory address against booking details",
-      "source_rule_id": "1.1.2",
-      "source_lines": {
-        "start": 214,
-        "end": 230
-      },
-      "context": "FULL REPORT — cross-check factory address against booking details",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.1.2",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "out_of_report:booking"
+          "report.factory_address"
         ],
         "when": null,
-        "check": null
+        "check": "no_language(chinese)",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "1_2_1",
-      "section": "general_report_setup",
-      "requirement": "Inspector's Remark — report header summary — Verify that a complete list of all defects found is provided, broken down by PO number, with a structured format: \"PO xxx: X pcs defect found / Total: X% defect found.\" If large quantities of defective units are found in the bulk, this must be clearly explained at the beginning of this section.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check defect list in remarks against defect details in the Workmanship section",
-      "source_rule_id": "1.2.1",
-      "source_lines": {
-        "start": 235,
-        "end": 251
-      },
-      "context": "FULL REPORT — cross-check defect list in remarks against defect details in the Workmanship section",
+      "id": "a_2_1",
+      "section": "rules",
+      "requirement": "Inspector remark — Inspector remark should list all defects found broken down by PO number with a total defect %",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.2.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "report.global_remark"
         ],
-        "when": null,
-        "check": "extract(\"Does the inspector remark list defects broken down by PO number and include a total defect percentage? Quote the sentence or null if absent.\")"
+        "when": {
+          "op": "_macro_ref",
+          "check": "compare(>, 0)",
+          "where": [
+            "report.defect_count"
+          ]
+        },
+        "check": "extract_bool(\"Does this remark list defects broken down by PO number and include a total defect percentage?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "1_3_1",
-      "section": "general_report_setup",
-      "requirement": "Available Quantity Check — Quantity & Packaging checklist — Verify production status thresholds are met before proceeding with inspection. For PSI: finished quantity must be 100% AND packed quantity must be ≥ 80% to proceed. For DUPRO: both finished and packed quantities must be > 20% to proceed. If thresholds are not met, inform Quality and issue a missing inspection report.",
+      "id": "a_3_1",
+      "section": "rules",
+      "requirement": "Defects photo content — Untrimmed threads longer than 1/4 inch should be classified MAJOR; shorter than 1/4 inch MINOR",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the quantity fields in the Available Quantity Check section",
-      "source_rule_id": "1.3.1",
-      "source_lines": {
-        "start": 256,
-        "end": 278
-      },
-      "context": "QUESTION — check the quantity fields in the Available Quantity Check section",
+      "scope_detail": "",
+      "source_rule_id": "A.3.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "product._first.real_packed_quantity",
-          "product._first.ordered_quantity"
+          {
+            "kind": "checklist",
+            "match": [
+              "defects"
+            ],
+            "field": "photo_content"
+          }
         ],
-        "when": null,
-        "check": "ratio_at_least(0.8)"
+        "when": {
+          "op": "_macro_ref",
+          "check": "defects_name_any(\"untrimmed\", \"thread\")",
+          "where": [
+            "report.defects"
+          ]
+        },
+        "check": "vision(\"For untrimmed-thread defects, is any thread longer than about 1/4 inch classified as MINOR?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "1_3_2",
-      "section": "general_report_setup",
-      "requirement": "Available Quantity Details table — Quantity & Packaging checklist — Verify that any discrepancy between the booking quantity and the on-site quantity (shortage or overage) is clearly noted in the report with an explanation.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check ordered quantity against produced and packed quantities",
-      "source_rule_id": "1.3.2",
-      "source_lines": {
-        "start": 279,
-        "end": 295
-      },
-      "context": "FULL REPORT — cross-check ordered quantity against produced and packed quantities",
-      "check_block": {
-        "where": [
-          "report.global_remark"
-        ],
-        "when": "product._first.real_packed_quantity != product._first.ordered_quantity",
-        "check": "extract(\"Quote the sentence explaining the quantity shortage or overage vs booking, or null if absent.\")"
-      }
-    },
-    {
-      "id": "1_4_1",
-      "section": "general_report_setup",
-      "requirement": "Summary review — end of report — For any \"No\" response recorded anywhere in the Inspection Details fields, a corresponding explanation must be present in the Summary Review section.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check all \"No\" responses throughout the report against the Summary Review section",
-      "source_rule_id": "1.4.1",
-      "source_lines": {
-        "start": 300,
-        "end": 318
-      },
-      "context": "FULL REPORT — cross-check all \"No\" responses throughout the report against the Summary Review section",
-      "check_block": {
-        "where": [
-          "report.global_remark"
-        ],
-        "when": null,
-        "check": "extract_bool(\"For every 'No' answer recorded in inspection details, is there a matching explanation in the summary review or global remark? Answer true only if all are explained.\")"
-      }
-    },
-    {
-      "id": "2_1_1",
-      "section": "documents_and_booking_verification",
-      "requirement": "PO ref and SKU — report header, care label, hangtag, carton marking — Confirm that the style number and PO number on the on-site product identification (care label header, barcode hangtag, shipping carton) exactly match the booking information. If they do not match, the service must be treated as failed, a missed inspection report issued, and the reason clearly stated.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check booking style number and PO number against care label, hangtag, and carton markings",
-      "source_rule_id": "2.1.1",
-      "source_lines": {
-        "start": 325,
-        "end": 341
-      },
-      "context": "FULL REPORT — cross-check booking style number and PO number against care label, hangtag, and carton markings",
-      "check_block": {
-        "where": [
-          "out_of_report:booking"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "2_1_2",
-      "section": "documents_and_booking_verification",
-      "requirement": "Color code / description — General Information and product identification labels — If the color code or description on site does not match the booking, proceed with the inspection. Record the actual color(s) and quantity breakdown in the report with a remark identifying the discrepancy.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check booking color information against on-site labels and hangtags",
-      "source_rule_id": "2.1.2",
-      "source_lines": {
-        "start": 342,
-        "end": 358
-      },
-      "context": "FULL REPORT — cross-check booking color information against on-site labels and hangtags",
-      "check_block": {
-        "where": [
-          "out_of_report:booking"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "2_1_3",
-      "section": "documents_and_booking_verification",
-      "requirement": "Lot number — hangtag vs. carton marking — Verify that the lot number on the hangtag matches the lot number on the shipping carton. If they do not match, mark this as Failed and add a remark.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "cross-check lot number across hangtag and carton within the Specifications section",
-      "source_rule_id": "2.1.3",
-      "source_lines": {
-        "start": 359,
-        "end": 375
-      },
-      "context": "SECTION — cross-check lot number across hangtag and carton within the Specifications section",
-      "check_block": {
-        "where": [
-          "report.global_remark"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Do the lot numbers on hangtags match the lot numbers on shipping cartons? Answer true only if they match or a clear discrepancy remark is present.\")"
-      }
-    },
-    {
-      "id": "2_2_1",
-      "section": "documents_and_booking_verification",
-      "requirement": "Are the QIMA documents signed? — Factory Review checklist — Confirm that the Factory Disclaimer, Draft Report, and COC are all signed by both the inspector and the factory representative. Photos of all signed documents must be included in the report.",
+      "id": "a_3_2",
+      "section": "rules",
+      "requirement": "Defects — All dirt/stain defects should be classified MAJOR",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the signed documents field and verify photos are present",
-      "source_rule_id": "2.2.1",
-      "source_lines": {
-        "start": 380,
-        "end": 396
-      },
-      "context": "QUESTION — check the signed documents field and verify photos are present",
+      "scope_detail": "",
+      "source_rule_id": "A.3.2",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "checklist.are_the_qima_documents_signed.photo_count"
+          "report.defects"
         ],
-        "when": null,
-        "check": "count_at_least(3)"
+        "when": {
+          "op": "_macro_ref",
+          "check": "defects_name_any(\"dirt\", \"stain\")",
+          "where": [
+            "report.defects"
+          ]
+        },
+        "check": "extract_bool(\"Are all dirt or stain defects classified as MAJOR?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "3_1_1",
-      "section": "packaging",
-      "requirement": "Random carton selection — Product Specifications checklist — Confirm that cartons were selected fully randomly. If random selection was not possible, the result must be marked as Failed.",
+      "id": "a_3_3",
+      "section": "rules",
+      "requirement": "Defects — All stitching defects should be classified MAJOR",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the random carton selection result field",
-      "source_rule_id": "3.1.1",
-      "source_lines": {
-        "start": 403,
-        "end": 419
-      },
-      "context": "QUESTION — check the random carton selection result field",
+      "scope_detail": "",
+      "source_rule_id": "A.3.3",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "checklist.random_carton_selection.result"
+          "report.defects"
         ],
-        "when": null,
-        "check": "in_set(PASS, FAIL)"
+        "when": {
+          "op": "_macro_ref",
+          "check": "defects_name_any(\"stitching\")",
+          "where": [
+            "report.defects"
+          ]
+        },
+        "check": "extract_bool(\"Are all stitching defects classified as MAJOR?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "3_1_2",
-      "section": "packaging",
-      "requirement": "Outer Packing & Shipping Marks — Product Specifications checklist — Verify the carton side reads \"Made in China / Fabrique en Chine.\" If the wording is incorrect (e.g., \"Fait en Chine\"), record a MINOR defect remark but do not fail this section. Misspellings of color and country of origin on the carton are also MINOR defects requiring a remark but not a failure.",
-      "severity": "MINOR",
+      "id": "a_3_4",
+      "section": "rules",
+      "requirement": "Defects photo count — Each defect type should have at most 5 photos",
+      "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the outer packing field and any associated remarks",
-      "source_rule_id": "3.1.2",
-      "source_lines": {
-        "start": 420,
-        "end": 439
-      },
-      "context": "QUESTION — check the outer packing field and any associated remarks",
+      "scope_detail": "",
+      "source_rule_id": "A.3.4",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defects"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_most(5)",
+        "row_type": "Rule",
+        "for_each": "each defect"
+      }
+    },
+    {
+      "id": "a_3_5",
+      "section": "rules",
+      "requirement": "Defects — For multiple references or colors, only 1 photo per color should be added per defect",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.3.5",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": "extract_bool(\"When the same defect appears on multiple colors or references, is there at most 1 photo per color?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_4_1",
+      "section": "rules",
+      "requirement": "Product Style & Construction photo count — One photo is required for each specifications checkpoint; duplicated photos should be avoided",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.4.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "style",
+              "construction"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_4_2",
+      "section": "rules",
+      "requirement": "Outer Packing & Shipping Marks: Front & Side photo count — Outer packing photos should include boxes on pallets, seals, and labelling on the side of the boxes",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.4.2",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
@@ -267,224 +243,120 @@
               "front",
               "side"
             ],
-            "field": "comment"
+            "field": "photo_count"
           }
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": "count_at_least(3)",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "3_1_3",
-      "section": "packaging",
-      "requirement": "Outer Packing & Shipping Marks — Product Specifications checklist / report photos — Verify that photos of (1) cartons stacked on pallets, (2) carton seals, and (3) labelling on the side of boxes are included in the report under the Specifications section.",
-      "severity": "MINOR",
-      "scope_type": "SECTION",
-      "scope_detail": "check that the 3 required photo types are present in the Specifications section",
-      "source_rule_id": "3.1.3",
-      "source_lines": {
-        "start": 440,
-        "end": 456
-      },
-      "context": "SECTION — check that the 3 required photo types are present in the Specifications section",
-      "check_block": {
-        "where": [
-          "checklist.outer_packing_shipping_marks_front_side.photo_count"
-        ],
-        "when": null,
-        "check": "count_at_least(3)"
-      }
-    },
-    {
-      "id": "3_1_4",
-      "section": "packaging",
-      "requirement": "Inner Packing & Unit Packing — Product Specifications checklist — Verify availability of mold prevention unit (anti-mold sheet or desiccant pack) and vent hole as specified in the tech pack. All products must have anti-mold sheets or desiccant packs.",
+      "id": "a_5_1",
+      "section": "rules",
+      "requirement": "Carton drop test photo count — Carton-drop photos should not be included when the test passed; only include if the test fails",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the inner packing checkpoint result and comments",
-      "source_rule_id": "3.1.4",
-      "source_lines": {
-        "start": 457,
-        "end": 476
-      },
-      "context": "QUESTION — check the inner packing checkpoint result and comments",
+      "scope_detail": "",
+      "source_rule_id": "A.5.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
             "kind": "checklist",
             "match": [
-              "inner",
-              "packing",
-              "unit",
-              "packing"
+              "carton",
+              "drop",
+              "test"
             ],
-            "field": "comment"
+            "field": "photo_count"
+          }
+        ],
+        "when": {
+          "op": "_macro_ref",
+          "check": "equals(PASS)",
+          "where": [
+            {
+              "kind": "checklist",
+              "match": [
+                "carton",
+                "drop",
+                "test"
+              ],
+              "field": "result"
+            }
+          ]
+        },
+        "check": "count_at_most(0)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_6_1",
+      "section": "rules",
+      "requirement": "Product Logo result — Product logo should be checked carefully on samples including sewn-on trims; do not mark N/A or “no product logo” when a logo is present",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.6.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "logo"
+            ],
+            "field": "result"
           }
         ],
         "when": null,
-        "check": null
+        "check": "in_set(PASS, FAIL, Pending)",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "3_1_5",
-      "section": "packaging",
-      "requirement": "Match packing info — Product Specifications checklist — Verify that the PO number, item/style number, and product description on the product identification inside the carton match the information on the corresponding export carton marking.",
+      "id": "a_7_1",
+      "section": "rules",
+      "requirement": "Outer Packing: Assortment, Dimensions & Weight photo content — Photos of measuring the boxes should not be included",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "cross-check inner product ID against outer carton marking",
-      "source_rule_id": "3.1.5",
-      "source_lines": {
-        "start": 477,
-        "end": 493
-      },
-      "context": "SECTION — cross-check inner product ID against outer carton marking",
-      "check_block": {
-        "where": [
-          "checklist.match_packing_info.result"
-        ],
-        "when": null,
-        "check": "equals(PASS)"
-      }
-    },
-    {
-      "id": "3_1_6",
-      "section": "packaging",
-      "requirement": "Carton drop test — Product Specifications checklist / report photos — Photos of the carton drop test must NOT be included in the report unless the test fails. Only a failure requires photos.",
-      "severity": "MINOR",
       "scope_type": "QUESTION",
-      "scope_detail": "check the photo content for the carton drop test checkpoint",
-      "source_rule_id": "3.1.6",
-      "source_lines": {
-        "start": 494,
-        "end": 510
-      },
-      "context": "QUESTION — check the photo content for the carton drop test checkpoint",
+      "scope_detail": "",
+      "source_rule_id": "A.7.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "checklist.carton_drop_test.photo_count"
-        ],
-        "when": "checklist.carton_drop_test.result equals PASS",
-        "check": "count_at_most(0)"
-      }
-    },
-    {
-      "id": "3_1_7",
-      "section": "packaging",
-      "requirement": "Outer Packing: Assortment, Dimensions & Weight — Product Specifications checklist / report photos — Photos of measuring the boxes (tape measure applied to carton sides or weight scale reading) must NOT be included in the report. Only the dimensions/weight results table and carton overview photos are required.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the photo content for this checkpoint",
-      "source_rule_id": "3.1.7",
-      "source_lines": {
-        "start": 511,
-        "end": 527
-      },
-      "context": "QUESTION — check the photo content for this checkpoint",
-      "check_block": {
-        "where": [
-          "checklist.outer_packing_assortment_dimensions_weight.photo_count"
+          {
+            "kind": "checklist",
+            "match": [
+              "outer",
+              "packing",
+              "assortment",
+              "dimensions",
+              "weight"
+            ],
+            "field": "photo_content"
+          }
         ],
         "when": null,
-        "check": "count_at_most(0)"
+        "check": "vision(\"Does any photo show a tape measure on the carton or measuring the boxes?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "3_1_8",
-      "section": "packaging",
-      "requirement": "Folding method — Inspector's Remark / Other Remarks — If the folding method on site differs from the tech pack specification, record this in the Other Remarks section. Do not fail the Specifications section for this reason.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check folding method against tech pack and note in remarks if different",
-      "source_rule_id": "3.1.8",
-      "source_lines": {
-        "start": 528,
-        "end": 544
-      },
-      "context": "FULL REPORT — cross-check folding method against tech pack and note in remarks if different",
-      "check_block": {
-        "where": [
-          "out_of_report:spec_sheet"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "3_1_9",
-      "section": "packaging",
-      "requirement": "Swift attaches — serial tags / Inspector's Remark — Swift attaches for serial tags must be black. If they are clear/transparent, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the swift attach color on serial tags",
-      "source_rule_id": "3.1.9",
-      "source_lines": {
-        "start": 545,
-        "end": 561
-      },
-      "context": "QUESTION — check the swift attach color on serial tags",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
-      }
-    },
-    {
-      "id": "3_1_10",
-      "section": "packaging",
-      "requirement": "Joker tags — denim pants only / Inspector's Remark — For denim pants, joker tags must be sewn on with thread. If attached with black plastic swift attaches instead, record this as a MINOR defect in the Other Remarks section. Do not fail the Specifications section.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check joker tag attachment method on denim pants only",
-      "source_rule_id": "3.1.10",
-      "source_lines": {
-        "start": 562,
-        "end": 578
-      },
-      "context": "QUESTION — check joker tag attachment method on denim pants only",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
-      }
-    },
-    {
-      "id": "3_2_1",
-      "section": "packaging",
-      "requirement": "Product Labels — Product Specifications checklist / report photos — Verify that all hang tags and care labels are photographed together and grouped in the Product Labels section of the report. Do not scatter label photos across different sections.",
-      "severity": "MINOR",
-      "scope_type": "SECTION",
-      "scope_detail": "check that all label types (main label, care label, hangtags) are present together in the same section",
-      "source_rule_id": "3.2.1",
-      "source_lines": {
-        "start": 583,
-        "end": 599
-      },
-      "context": "SECTION — check that all label types (main label, care label, hangtags) are present together in the same section",
-      "check_block": {
-        "where": [
-          "checklist.product_labels.photo_count"
-        ],
-        "when": null,
-        "check": "count_at_least(1)"
-      }
-    },
-    {
-      "id": "3_2_2",
-      "section": "packaging",
-      "requirement": "Product Labels — style number, PO, color, lot number consistency — Verify that the style number, PO number, color(s), and lot number are visible and consistent across: (1) the care and content label header (style number and PO number only), (2) the serial barcode hangtag (style number, color(s), PO number, lot number), and (3) the shipping carton marking (style number, color(s), sizes, PO number, lot number).",
+      "id": "a_8_1",
+      "section": "rules",
+      "requirement": "Product Labels photo count — All hang tags and care labels should appear together under Product Labels",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check booking information against all 3 product identification components",
-      "source_rule_id": "3.2.2",
-      "source_lines": {
-        "start": 600,
-        "end": 619
-      },
-      "context": "FULL REPORT — cross-check booking information against all 3 product identification components",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.8.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
@@ -493,626 +365,78 @@
               "product",
               "labels"
             ],
-            "field": "comment"
-          }
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "3_2_3",
-      "section": "packaging",
-      "requirement": "Product Logo — Product Specifications checklist — Carefully check the physical product for the brand logo, including on sewn-on trims and interior labels. Do not mark as N/A or \"no product logo\" without a thorough check of all surfaces and trims.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the Product Logo result field and associated photos",
-      "source_rule_id": "3.2.3",
-      "source_lines": {
-        "start": 620,
-        "end": 636
-      },
-      "context": "QUESTION — check the Product Logo result field and associated photos",
-      "check_block": {
-        "where": [
-          "checklist.product_logo.result"
-        ],
-        "when": null,
-        "check": "checklist.product_logo.result != NOT_APPLICABLE"
-      }
-    },
-    {
-      "id": "3_2_4",
-      "section": "packaging",
-      "requirement": "Product Labels — brand logo comparison vs. approval sample — If there is any visual variation or damage to the brand logo label between the approval sample and the bulk, the report must be marked FAIL. Brand logo variation is a CRITICAL defect.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check brand logo label between approval sample and bulk",
-      "source_rule_id": "3.2.4",
-      "source_lines": {
-        "start": 637,
-        "end": 653
-      },
-      "context": "FULL REPORT — cross-check brand logo label between approval sample and bulk",
-      "check_block": {
-        "where": [
-          "checklist.product_style_construction.result"
-        ],
-        "when": null,
-        "check": "equals(PASS)"
-      }
-    },
-    {
-      "id": "3_2_5",
-      "section": "packaging",
-      "requirement": "Size tab — Product Specifications checklist — If there is any visual variation between the approval sample size tab and the production size tab, the report must be marked FAIL. Size tab variation is a MAJOR defect.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "compare bulk size tab against approval sample within the Specifications section",
-      "source_rule_id": "3.2.5",
-      "source_lines": {
-        "start": 654,
-        "end": 673
-      },
-      "context": "SECTION — compare bulk size tab against approval sample within the Specifications section",
-      "check_block": {
-        "where": [
-          {
-            "kind": "section",
-            "match": [
-              "product",
-              "specifications"
-            ],
-            "field": "comment"
-          }
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "3_2_6",
-      "section": "packaging",
-      "requirement": "Care content label — language sequence — Misprinting or variation in the sequence of languages on care content labels compared to the approval sample is NOT a reason to fail the report.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the care label language sequence against approval sample",
-      "source_rule_id": "3.2.6",
-      "source_lines": {
-        "start": 674,
-        "end": 690
-      },
-      "context": "QUESTION — check the care label language sequence against approval sample",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Is the care/content label language sequence correct per the GI rule?\")"
-      }
-    },
-    {
-      "id": "3_2_7",
-      "section": "packaging",
-      "requirement": "Hangers — Product Specifications checklist (when applicable) — If the lot is to be shipped on hangers, verify that hangers bear the Joseph Ribkoff logo as specified in the tech pack.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check hanger specification against tech pack when shipping on hangers is required",
-      "source_rule_id": "3.2.7",
-      "source_lines": {
-        "start": 691,
-        "end": 710
-      },
-      "context": "QUESTION — check hanger specification against tech pack when shipping on hangers is required",
-      "check_block": {
-        "where": [
-          {
-            "kind": "section",
-            "match": [
-              "product",
-              "specifications"
-            ],
-            "field": "comment"
-          }
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "4_1_1",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Classify untrimmed thread ends by length using the photo as evidence.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity assigned to each untrimmed thread defect entry",
-      "source_rule_id": "4.1.1",
-      "source_lines": {
-        "start": 717,
-        "end": 739
-      },
-      "context": "QUESTION — check the severity assigned to each untrimmed thread defect entry",
-      "check_block": {
-        "where": [
-          "workmanship.found_critical",
-          "workmanship.max_defects_critical"
-        ],
-        "when": null,
-        "check": "workmanship.found_critical <= workmanship.max_defects_critical"
-      }
-    },
-    {
-      "id": "4_1_2",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — All dirt and stain defects must be classified as MAJOR, regardless of size or location.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity assigned to any dirt/stain defect entry",
-      "source_rule_id": "4.1.2",
-      "source_lines": {
-        "start": 740,
-        "end": 756
-      },
-      "context": "QUESTION — check the severity assigned to any dirt/stain defect entry",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'dirt'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_1_3",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — All stitching defects must be classified as MAJOR.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity assigned to any stitching defect entry",
-      "source_rule_id": "4.1.3",
-      "source_lines": {
-        "start": 757,
-        "end": 773
-      },
-      "context": "QUESTION — check the severity assigned to any stitching defect entry",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'stitch'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_1_4",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Yarn defects and holes must be classified as MAJOR.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity assigned to any yarn defect or hole entry",
-      "source_rule_id": "4.1.4",
-      "source_lines": {
-        "start": 774,
-        "end": 790
-      },
-      "context": "QUESTION — check the severity assigned to any yarn defect or hole entry",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'yarn'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_1_5",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Wrinkles, over-press marks, or creases visible from 1 meter away must be classified as MAJOR.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity of any wrinkle or press mark defect entry",
-      "source_rule_id": "4.1.5",
-      "source_lines": {
-        "start": 791,
-        "end": 807
-      },
-      "context": "QUESTION — check the severity of any wrinkle or press mark defect entry",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'wrinkle'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_1_6",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Any seam with excessive puckering, poor tension, or linking that causes the seam to open must be classified as MAJOR.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the severity assigned to any seam quality defect entry",
-      "source_rule_id": "4.1.6",
-      "source_lines": {
-        "start": 808,
-        "end": 824
-      },
-      "context": "QUESTION — check the severity assigned to any seam quality defect entry",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'pucker'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_1_7",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Any product whose shape or form differs from the specifications or approval sample must be classified as a MAJOR workmanship defect.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check product form against approval sample and tech pack",
-      "source_rule_id": "4.1.7",
-      "source_lines": {
-        "start": 825,
-        "end": 841
-      },
-      "context": "FULL REPORT — cross-check product form against approval sample and tech pack",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "4_1_8",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section — Any trim that is missing, not installed securely, or falling off must be classified as MAJOR. Trim placement and installation must conform to the tech pack and/or approval sample.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check trim installation against tech pack and approval sample",
-      "source_rule_id": "4.1.8",
-      "source_lines": {
-        "start": 842,
-        "end": 858
-      },
-      "context": "FULL REPORT — cross-check trim installation against tech pack and approval sample",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Are all 'defect'-related defects classified as MAJOR?\")"
-      }
-    },
-    {
-      "id": "4_2_1",
-      "section": "workmanship",
-      "requirement": "Defects checklist — Workmanship section / report photos — Include a maximum of 5 photos per defect type. If the same defect is found on more than 5 units, upload only 5 representative photos and document the total count in the report. For multiple references or colors, include only 1 photo per color.",
-      "severity": "MINOR",
-      "scope_type": "SECTION",
-      "scope_detail": "check the number of photos per defect entry in the Workmanship section",
-      "source_rule_id": "4.2.1",
-      "source_lines": {
-        "start": 863,
-        "end": 879
-      },
-      "context": "SECTION — check the number of photos per defect entry in the Workmanship section",
-      "check_block": {
-        "where": [
-          "report.defects_without_photo"
-        ],
-        "when": null,
-        "check": "equals(0)"
-      }
-    },
-    {
-      "id": "5_1_1",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions Result — Product Dimensions SL checklist; Attachments section — Verify that the measurement chart uses the correct Joseph Ribkoff mandatory POM template for the product category (see table below), that the style number in the chart matches the report SKU, and that the attached Excel file is named exactly \"Measurement Chart - [style number]\" (e.g., \"Measurement Chart - 261740.xlsx\").",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check SKU in chart against report header; check file name in Attachments",
-      "source_rule_id": "5.1.1",
-      "source_lines": {
-        "start": 886,
-        "end": 917
-      },
-      "context": "FULL REPORT — cross-check SKU in chart against report header; check file name in Attachments",
-      "check_block": {
-        "where": [
-          "checklist.product_dimensions_result.attachment_filenames"
-        ],
-        "when": null,
-        "check": "filename_matches(\"Measurement Chart-*.xlsx\")"
-      }
-    },
-    {
-      "id": "5_1_2",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions Result — measurement chart (Excel attachment) / report result field — All out-of-tolerance measurements must be highlighted in yellow in the Excel file. Apply the tolerance rule as follows: if all out-of-tolerance values are within ±1/8\", classify as MINOR — add a remark and do not fail the section. If any tolerance exceeds ±1/8\", highlight in yellow with red text — the measurement section must be marked FAIL.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check highlighting in the attached measurement chart and the result field",
-      "source_rule_id": "5.1.2",
-      "source_lines": {
-        "start": 918,
-        "end": 934
-      },
-      "context": "QUESTION — check highlighting in the attached measurement chart and the result field",
-      "check_block": {
-        "where": [
-          "checklist.product_dimensions_result.attachment_content"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_1_3",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions Result — header row and content of measurement chart — Verify that (1) no column is left empty, (2) the style number is written in the chart header, (3) top-row bulk measurements are identified by size and/or color, and (4) no typo errors exist (e.g., letters entered in numeric result cells).",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check chart structure and content for completeness and accuracy",
-      "source_rule_id": "5.1.3",
-      "source_lines": {
-        "start": 935,
-        "end": 951
-      },
-      "context": "QUESTION — check chart structure and content for completeness and accuracy",
-      "check_block": {
-        "where": [
-          "checklist.product_dimensions_result.attachment_content"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_1_4",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions Result — checklist photos and attachments — Measurement chart screenshots (print screen of POM) and the Excel file must both be uploaded exclusively in the Product Dimensions Result section. Product weight photos must NOT appear in this section. The print screen must be legible and not blurry.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
-      "source_rule_id": "5.1.4",
-      "source_lines": {
-        "start": 952,
-        "end": 968
-      },
-      "context": "SECTION — confirm measurement content is only in the Product Dimensions section, weight photos are absent, and print screen is readable",
-      "check_block": {
-        "where": [
-          "checklist.product_dimensions_result.attachment_filenames"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_1_5",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions — total sample size (denim category only) — For denim products, 20 units must be measured (effective September 10, 2021), using sampling level S4 or Level 1 based on booking quantity.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "check total units measured for denim products",
-      "source_rule_id": "5.1.5",
-      "source_lines": {
-        "start": 969,
-        "end": 985
-      },
-      "context": "QUESTION — check total units measured for denim products",
-      "check_block": {
-        "where": [
-          "out_of_report:spec_sheet"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_2_1",
-      "section": "tests_and_measurements",
-      "requirement": "Tests checklist — all test checkpoints / report photos — Include only 1 photo per test in the checklist. For failed tests, provide only 1 photo per failure. Do not upload multiple photos for the same test.",
-      "severity": "MINOR",
-      "scope_type": "SECTION",
-      "scope_detail": "check the number of photos per test checkpoint",
-      "source_rule_id": "5.2.1",
-      "source_lines": {
-        "start": 990,
-        "end": 1009
-      },
-      "context": "SECTION — check the number of photos per test checkpoint",
-      "check_block": {
-        "where": [
-          {
-            "kind": "section",
-            "match": [
-              "checkpoints"
-            ],
             "field": "photo_count"
           }
         ],
         "when": null,
-        "check": "count_at_most(1)"
+        "check": "count_at_least(1)",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "5_2_2",
-      "section": "tests_and_measurements",
-      "requirement": "Stitch density check — Tests checklist / report photos — The stitch count per inch must be clearly stated as a numeric value in the report, with a supporting photo taken from a seam assembly — not from sewing on the main label.",
-      "severity": "MINOR",
+      "id": "a_9_1",
+      "section": "rules",
+      "requirement": "Approval Sample Comparison photo count — Approval sample comparison should show on-site product vs approval sample side by side",
+      "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the stitch density result and photo source",
-      "source_rule_id": "5.2.2",
-      "source_lines": {
-        "start": 1010,
-        "end": 1028
-      },
-      "context": "QUESTION — check the stitch density result and photo source",
-      "check_block": {
-        "where": [
-          "checklist.stitch_density_check.comment"
-        ],
-        "when": null,
-        "check": [
-          "present",
-          "has_number"
-        ]
-      }
-    },
-    {
-      "id": "5_2_3",
-      "section": "tests_and_measurements",
-      "requirement": "Ironing, washing, treatment check — Tests checklist / report photos — Include clear photos of both the approval sample and the bulk product side by side, each with a caption identifying which is which.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check that both approval and bulk sample photos are present and labeled",
-      "source_rule_id": "5.2.3",
-      "source_lines": {
-        "start": 1029,
-        "end": 1048
-      },
-      "context": "QUESTION — check that both approval and bulk sample photos are present and labeled",
+      "scope_detail": "",
+      "source_rule_id": "A.9.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
             "kind": "checklist",
             "match": [
-              "ironing",
-              "washing",
-              "treatment",
-              "check"
-            ],
-            "field": "photo_content"
-          }
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_2_4",
-      "section": "tests_and_measurements",
-      "requirement": "Barcode scanning test — Tests checklist / report photos — The UPC 13 scanner must be used (not UPC 12). Upload 1 photo per barcode type present on the product. If a barcode scan result is missing a leading zero, record this as a remark but do not fail this section.",
-      "severity": "MINOR",
-      "scope_type": "QUESTION",
-      "scope_detail": "check the barcode type used, the photo count per barcode type, and the interpretation of results",
-      "source_rule_id": "5.2.4",
-      "source_lines": {
-        "start": 1049,
-        "end": 1068
-      },
-      "context": "QUESTION — check the barcode type used, the photo count per barcode type, and the interpretation of results",
-      "check_block": {
-        "where": [
-          {
-            "kind": "checklist",
-            "match": [
-              "barcode",
-              "scanning",
-              "test"
+              "approval",
+              "sample",
+              "comparison"
             ],
             "field": "photo_count"
           }
         ],
         "when": null,
-        "check": "count_at_least(1)"
+        "check": "count_at_least(1)",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "5_2_5",
-      "section": "tests_and_measurements",
-      "requirement": "Symmetry check — Tests checklist / report photos — A verification of the front facing must be done and must be visible in the report. Fold the product on its symmetry axis or use a measurement tool to compare. The result and a supporting photo must be present.",
-      "severity": "MINOR",
+      "id": "a_9_2",
+      "section": "rules",
+      "requirement": "Approval Sample Comparison photo caption — Approval sample comparison should include a caption that identifies the approval sample",
+      "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the symmetry check result and supporting photo",
-      "source_rule_id": "5.2.5",
-      "source_lines": {
-        "start": 1069,
-        "end": 1088
-      },
-      "context": "QUESTION — check the symmetry check result and supporting photo",
+      "scope_detail": "",
+      "source_rule_id": "A.9.2",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
             "kind": "checklist",
             "match": [
-              "symmetry",
-              "check"
+              "approval",
+              "sample",
+              "comparison"
             ],
-            "field": "photo_count"
+            "field": "photo_captions"
           }
         ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Does any caption identify which item is the approval sample?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "5_2_6",
-      "section": "tests_and_measurements",
-      "requirement": "Denim pants — leg twisting / fit model — If leg twisting is identified during inspection of denim pants, the pants must be fitted on a fit model to validate the finding. Clear front and back view photos must be taken on the fit model and uploaded.",
+      "id": "a_9_3",
+      "section": "rules",
+      "requirement": "Approval Sample Comparison photo content — Approval sample photos should clearly show the approval sample next to the bulk product",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check whether a fit model was used when leg twisting was identified",
-      "source_rule_id": "5.2.6",
-      "source_lines": {
-        "start": 1089,
-        "end": 1105
-      },
-      "context": "QUESTION — check whether a fit model was used when leg twisting was identified",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "5_2_7",
-      "section": "tests_and_measurements",
-      "requirement": "Tests checklist — fit model photos (all products) — Samples must be tried on a fit model and photos provided in the report.",
-      "severity": "TO_CONFIRM",
-      "scope_type": "QUESTION",
-      "scope_detail": "check that fit model photos are present for the product inspected",
-      "source_rule_id": "5.2.7",
-      "source_lines": {
-        "start": 1106,
-        "end": 1127
-      },
-      "context": "QUESTION — check that fit model photos are present for the product inspected",
-      "check_block": {
-        "where": [
-          {
-            "kind": "section",
-            "match": [
-              "checkpoints"
-            ],
-            "field": "photo_content"
-          }
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_3_1",
-      "section": "tests_and_measurements",
-      "requirement": "Approval Sample Comparison — Product Specifications checklist / report photos — Each approval sample comparison photo must show the on-site bulk product and the approval sample physically side by side. Each photo must have a caption explicitly identifying which item is the approval sample. The approval sample is identified by a green \"QIMA SAMPLE\" tag; if the tag is missing, note this in the Other Remarks section.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "check all approval sample comparison photos in the Specifications section",
-      "source_rule_id": "5.3.1",
-      "source_lines": {
-        "start": 1132,
-        "end": 1151
-      },
-      "context": "SECTION — check all approval sample comparison photos in the Specifications section",
+      "scope_detail": "",
+      "source_rule_id": "A.9.3",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
@@ -1126,155 +450,351 @@
           }
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": "vision(\"Does the photo show the approval sample next to the bulk product (e.g. green QIMA SAMPLE tag visible)?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "6_1_1",
-      "section": "report_photos",
-      "requirement": "Starting pictures — report photo section — Verify that a starting photo is present showing the inspector standing in front of the factory logo or name (factory identifier clearly visible).",
+      "id": "a_10_1",
+      "section": "rules",
+      "requirement": "Product Dimensions Result photo content — Product weight photos should not appear under Product Dimensions Result",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
-      "scope_detail": "check the Starting Pictures section",
-      "source_rule_id": "6.1.1",
-      "source_lines": {
-        "start": 1158,
-        "end": 1174
-      },
-      "context": "QUESTION — check the Starting Pictures section",
+      "scope_detail": "",
+      "source_rule_id": "A.10.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.overall_result"
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "photo_content"
+          }
         ],
         "when": null,
-        "check": "in_set(PASS, FAIL, PENDING)"
+        "check": "vision(\"Does any photo show a weight scale or product-weight reading?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "6_1_2",
-      "section": "report_photos",
-      "requirement": "All checklist sections — report photos throughout — Exactly 1 photo per checkpoint is required. Duplicate photos must not appear in the report. General factory environment photos (exterior, inspector walking around) must not be added.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "review all photo placements and counts throughout the report",
-      "source_rule_id": "6.1.2",
-      "source_lines": {
-        "start": 1175,
-        "end": 1191
-      },
-      "context": "FULL REPORT — review all photo placements and counts throughout the report",
+      "id": "a_11_1",
+      "section": "rules",
+      "requirement": "Product Dimensions Result file name — SKU number in the measurement file should match the product description / style in the report",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.11.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.attachment_filenames"
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_filenames"
+          }
         ],
         "when": null,
-        "check": null
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
-      "id": "6_1_3",
-      "section": "report_photos",
-      "requirement": "All photos — report-wide — All photos must have captions describing what they show. A photo without a caption is a reportable issue.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "check that every photo in the report is accompanied by a caption",
-      "source_rule_id": "6.1.3",
-      "source_lines": {
-        "start": 1192,
-        "end": 1208
-      },
-      "context": "FULL REPORT — check that every photo in the report is accompanied by a caption",
+      "id": "a_11_2",
+      "section": "rules",
+      "requirement": "Product Dimensions Result file content — All out-of-tolerance values in the measurement file should be highlighted",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.11.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_content"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_11_3",
+      "section": "rules",
+      "requirement": "Product Dimensions Result file content — POM out-of-tolerance calculation should include the +/- 1/8\" tolerance; if beyond that, measurement should fail or out-of-tolerance count should be written",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.11.3",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_content"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_12_1",
+      "section": "rules",
+      "requirement": "Zipper test photo count — Each test in the checklist should include only one photo; avoid multiple photos per test",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.12.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "zipper",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_most(1)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_12_2",
+      "section": "rules",
+      "requirement": "Zipper test photo count — Failed tests should provide only one photo per failure",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.12.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "zipper",
+              "test"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": {
+          "op": "_macro_ref",
+          "check": "equals(FAIL)",
+          "where": [
+            {
+              "kind": "checklist",
+              "match": [
+                "zipper",
+                "test"
+              ],
+              "field": "result"
+            }
+          ]
+        },
+        "check": "count_at_most(1)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_13_1",
+      "section": "rules",
+      "requirement": "Stitch density check comment — Stitch density should state the stitches-per-inch count clearly",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.13.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "stitch",
+              "density",
+              "check"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": "extract_bool(\"Does this comment state a stitches-per-inch count?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_13_2",
+      "section": "rules",
+      "requirement": "Stitch density check photo content — Stitch density photo should be from seam assembly, not from sewing on the main label",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.13.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "stitch",
+              "density",
+              "check"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Is the stitch-count photo taken from a seam assembly (not the main label seam)?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_14_1",
+      "section": "rules",
+      "requirement": "Ironing, washing, treatment check photo count — Ironing check should show clear photos of the approval sample next to the bulk product",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.14.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "ironing",
+              "washing",
+              "treatment",
+              "check"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": {
+          "op": "_macro_ref",
+          "check": "in_set(PASS, FAIL)",
+          "where": [
+            {
+              "kind": "checklist",
+              "match": [
+                "ironing",
+                "washing",
+                "treatment",
+                "check"
+              ],
+              "field": "result"
+            }
+          ]
+        },
+        "check": "count_at_least(2)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "a_15_1",
+      "section": "rules",
+      "requirement": "All captions — General pictures should not be added to the report",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.15.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "report.all_captions"
         ],
         "when": null,
-        "check": null
+        "check": "extract_bool(\"Are all captions strictly related to the product inspection, with no general factory-exterior or environment shots?\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "6_1_4",
-      "section": "report_photos",
-      "requirement": "Product Dimensions Result — report photos and attachments — Measurement chart screenshots and the Excel file must be uploaded only in the Product Dimensions Result section. Verify these materials do not appear in any other section of the report.",
-      "severity": "MINOR",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "confirm measurement chart content appears only in the Product Dimensions Result section",
-      "source_rule_id": "6.1.4",
-      "source_lines": {
-        "start": 1209,
-        "end": 1225
-      },
-      "context": "FULL REPORT — confirm measurement chart content appears only in the Product Dimensions Result section",
+      "id": "a_16_1",
+      "section": "rules",
+      "requirement": "Product Dimensions Result file name — Measurement attachment file name should be “Measurement Chart - style number”",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.16.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "checklist.product_dimensions_result.attachment_filenames"
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_filenames"
+          }
         ],
         "when": null,
-        "check": null
+        "check": "filename_matches(\"Measurement Chart-{style}.xlsx\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "7_1_1",
-      "section": "aql_sampling_summary",
-      "requirement": "Workmanship sampling standards — Workmanship section header — Verify the workmanship inspection uses the correct sampling level and AQL values.",
+      "id": "a_16_2",
+      "section": "rules",
+      "requirement": "Product Dimensions Result file content — Measurement chart should avoid typo errors (e.g. letters in numeric result cells)",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check the AQL values displayed in the Workmanship section header against the above",
-      "source_rule_id": "7.1.1",
-      "source_lines": {
-        "start": 1230,
-        "end": 1251
-      },
-      "context": "FULL REPORT — cross-check the AQL values displayed in the Workmanship section header against the above",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "A.16.2",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "workmanship.aql_level_major"
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "attachment_content"
+          }
         ],
         "when": null,
-        "check": "equals(2.5)"
-      }
-    },
-    {
-      "id": "7_1_2",
-      "section": "aql_sampling_summary",
-      "requirement": "Product Dimensions SL checklist — sampling header — Verify the measurement sampling uses the correct level and AQL.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check measurement sampling level and unit count against the above requirements",
-      "source_rule_id": "7.1.2",
-      "source_lines": {
-        "start": 1252,
-        "end": 1274
-      },
-      "context": "FULL REPORT — cross-check measurement sampling level and unit count against the above requirements",
-      "check_block": {
-        "where": [
-          "workmanship.aql_level_minor"
-        ],
-        "when": null,
-        "check": "equals(4.0)"
-      }
-    },
-    {
-      "id": "8_1_1",
-      "section": "pass_fail_decision_logic",
-      "requirement": "Overall result — report header — The overall result must be PASS only if ALL conditions below are met. Any single failing condition must result in a FAIL overall result.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check overall result against all section results and defect counts",
-      "source_rule_id": "8.1.1",
-      "source_lines": {
-        "start": 1279,
-        "end": 1353
-      },
-      "context": "FULL REPORT — cross-check overall result against all section results and defect counts",
-      "check_block": {
-        "where": [
-          "product._first.real_packed_quantity",
-          "product._first.ordered_quantity"
-        ],
-        "when": "report.overall_result equals PASS",
-        "check": "ratio_at_least(0.8)"
+        "check": null,
+        "row_type": "Rule"
       }
     }
   ]

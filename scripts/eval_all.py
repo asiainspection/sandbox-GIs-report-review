@@ -34,12 +34,15 @@ from review import run_production_review  # noqa: E402
 DEFAULT_MODEL = "gemini-3.1-flash-lite"
 
 
-def _checkable_ids(specs: dict[str, dict[str, Any]]) -> set[str]:
+def _checkable_ids(specs: dict[str, dict[str, Any]], *, include_vision: bool = True) -> set[str]:
     """Only specs the production engine can actually evaluate today."""
     out: set[str] = set()
     for cid, sp in specs.items():
-        if str(sp.get("status_class") or "") == "checkable" and sp.get("then"):
-            out.add(cid)
+        if str(sp.get("status_class") or "") != "checkable" or not sp.get("then"):
+            continue
+        if not include_vision and str(sp.get("processor") or "").lower() == "vision":
+            continue
+        out.add(cid)
     return out
 
 
@@ -228,14 +231,15 @@ def main() -> None:
             continue
 
         specs = _load_specs(cps)
-        checkable = _checkable_ids(specs)
+        checkable = _checkable_ids(specs, include_vision=enable_vision)
         cov = _spec_coverage(specs)
         total_specs += cov["total"]
         total_checkable += len(checkable)
+        vision_note = "" if enable_vision else " (vision excluded from P/R)"
         print(
             f"\n{'=' * 72}\n{gi.upper()} — checkable={len(checkable)}/{cov['total']} "
             f"({cov['coverage_pct']:.1f}%) pending={cov['pending']} "
-            f"unauthored={cov['unauthored']} advisory={cov['advisory']}\n{'=' * 72}",
+            f"unauthored={cov['unauthored']} advisory={cov['advisory']}{vision_note}\n{'=' * 72}",
             flush=True,
         )
 

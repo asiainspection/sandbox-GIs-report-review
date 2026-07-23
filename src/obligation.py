@@ -129,6 +129,9 @@ def validate_predicate(node: dict[str, Any] | None, errors: list[str], path: str
             has_binding = bool(node.get("binding"))
             if not (has_two or has_const or has_left_const or node.get("selector") or has_binding):
                 errors.append(f"{path}: compare needs selector+value or left+right")
+        elif op == "defects_name_any":
+            if not node.get("names"):
+                errors.append(f"{path}: defects_name_any missing names")
         elif op == "filename_matches":
             if not node.get("selector") and not node.get("binding"):
                 errors.append(f"{path}: filename_matches missing selector")
@@ -201,4 +204,15 @@ def load_checkspecs(path: str | Any) -> dict[str, dict[str, Any]]:
     if not p.exists():
         return {}
     data = json.loads(p.read_text(encoding="utf-8"))
-    return data.get("specs") or {}
+    if not isinstance(data, dict):
+        return {}
+    # Prefer wrapped {"specs": {...}} (compile_gi); also accept flat id→spec maps
+    # written by excel_to_checkpoints / older exporters.
+    if isinstance(data.get("specs"), dict):
+        return {k: v for k, v in data["specs"].items() if isinstance(v, dict)}
+    skip = {"meta", "schema_version", "source_hash", "generated_at"}
+    return {
+        k: v
+        for k, v in data.items()
+        if k not in skip and isinstance(v, dict) and (v.get("checkpoint_id") or v.get("then") or v.get("requirement"))
+    }

@@ -40,9 +40,9 @@ the most authoritative source, as it reflects what QIMAone actually requires in 
 
 
 ```check
-where: [report.inspector_text]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: null
 ```
 
 ---
@@ -58,7 +58,7 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 ```check
 where: [report.global_remark]
 when: null
-check: extract_bool("Does this field evidence satisfy: If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.?")
+check: null
 ```
 
 ---
@@ -76,9 +76,9 @@ check: extract_bool("Does this field evidence satisfy: If goods are split across
 
 
 ```check
-where: [product._first.real_packed_quantity]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark state the finished quantity, packed quantity, and packed ratio?")
 ```
 
 ---
@@ -94,7 +94,7 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```check
 where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark reference an original report number for a re-inspection?")
 ```
 
 ---
@@ -110,7 +110,7 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```check
 where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: null
 ```
 
 ---
@@ -171,7 +171,7 @@ where:
     match: [approval, sample, comparison]
     field: photo_count
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: count_at_least(1)
 ```
 
 ---
@@ -196,7 +196,7 @@ where:
     match: [random, carton, selection]
     field: result
 when: null
-check: null
+check: equals(PASSED)
 ```
 
 ---
@@ -214,9 +214,9 @@ check: null
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.sample_size_major]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -230,9 +230,9 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where: [report.po_reference]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -255,9 +255,9 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.sample_size_major]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -271,9 +271,9 @@ check: present
 
 
 ```check
-where: [report.inspector_text]
+where: [out_of_report:booking]
 when: null
-check: extract_bool("Does this field evidence satisfy: If the Advice List identifies an 'NFL' program, all 8 selected POs must come from the NFL PO list.?")
+check: null
 ```
 
 ---
@@ -287,9 +287,9 @@ check: extract_bool("Does this field evidence satisfy: If the Advice List identi
 
 
 ```check
-where: [report.factory_name]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark state that specific POs were selected per client instruction?")
 ```
 
 ---
@@ -303,9 +303,9 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.inspector_text]
+where: [out_of_report:spec_sheet]
 when: null
-check: extract_bool("Does this field evidence satisfy: When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.?")
+check: null
 ```
 
 ---
@@ -325,9 +325,9 @@ check: extract_bool("Does this field evidence satisfy: When a garment item has m
 
 
 ```check
-where: [report.defect_count]
+where: [report.defects]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -345,9 +345,9 @@ check: present
 
 
 ```check
-where: [report.all_text]
-when: null
-check: scan_absent("Golden Sample")
+where: [report.inspector_text]
+when: report.defect_count equals 0
+check: scan_absent("Folding Issue")
 ```
 
 ---
@@ -385,7 +385,7 @@ check: null
 ```check
 where: [report.defects]
 when: null
-check: extract_bool("Does this field evidence satisfy: For cap products, only two defect levels exist — 'Critical' and 'Non-Critical' — not Major/Minor as used for garments.?")
+check: extract_bool("Does this field use 'Critical' and 'Non Critical' as the defect severity labels, not 'Major' and 'Minor'?")
 ```
 
 ---
@@ -417,7 +417,7 @@ check: null
 ```check
 where: [report.defects]
 when: null
-check: extract_bool("Does this field evidence satisfy: A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached?")
+check: null
 ```
 
 ---
@@ -431,7 +431,7 @@ check: extract_bool("Does this field evidence satisfy: A label more than 2mm off
 
 
 ```check
-where: [out_of_report:spec_sheet]
+where: [out_of_report:sop]
 when: null
 check: null
 ```
@@ -451,7 +451,7 @@ check: null
 
 
 ```check
-where: [report.defects]
+where: [report.defect_count]
 when: null
 check: null
 ```
@@ -467,9 +467,9 @@ check: null
 
 
 ```check
-where: [report.po_reference]
+where: [report.attachment_filenames]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -489,9 +489,12 @@ check: present
 
 
 ```check
-where: [report.inspector_text]
+where:
+  - kind: checklist
+    match: [weight, check]
+    field: result
 when: null
-check: extract_bool("Does this field evidence satisfy: Result must always be recorded as N/A.?")
+check: equals(NOT_APPLICABLE)
 ```
 
 ---
@@ -526,7 +529,7 @@ where:
     match: [product, dimensions, result]
     field: result
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: equals(NOT_APPLICABLE)
 ```
 
 ---
@@ -544,9 +547,9 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.inspector_text]
+where: [out_of_report:spec_sheet]
 when: null
-check: extract_bool("Does this field evidence satisfy: For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), no?")
+check: null
 ```
 
 ---
@@ -560,9 +563,9 @@ check: extract_bool("Does this field evidence satisfy: For all 59FIFTY cap style
 
 
 ```check
-where: [report.defect_count]
+where: [report.attachment_filenames]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -577,9 +580,9 @@ check: present
 
 
 ```check
-where: [report.inspector_text]
+where: [workmanship.measurement_level]
 when: null
-check: extract_bool("Does this field evidence satisfy: Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each?")
+check: null
 ```
 
 ---
@@ -593,9 +596,14 @@ check: extract_bool("Does this field evidence satisfy: Cap measurement sampling 
 
 
 ```check
-where: [report.global_remark]
+where:
+  - kind: checklist
+    match: [garment, measurement]
+    field: comment
 when: null
-check: extract_bool("Does this field evidence satisfy: When a garment measurement is out of tolerance, the result must be N/A with the comment 'Subject to Client's Evaluation.?")
+check:
+  - extract("Quote the comment text for this out-of-tolerance measurement, or null")
+  - contains("Subject to Client's Evaluation")
 ```
 
 ---
@@ -613,7 +621,7 @@ check: extract_bool("Does this field evidence satisfy: When a garment measuremen
 
 
 ```check
-where: [out_of_report:ip]
+where: [report.attachment_filenames]
 when: null
 check: null
 ```
@@ -633,9 +641,9 @@ check: null
 
 
 ```check
-where: [report.inspector_text]
+where: [report.all_text]
 when: null
-check: extract_bool("Does this field evidence satisfy: Must NOT be performed for New Era Cap inspections.?")
+check: scan_absent("Carton Drop Test")
 ```
 
 ---
@@ -649,9 +657,12 @@ check: extract_bool("Does this field evidence satisfy: Must NOT be performed for
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: checklist
+    match: [wet, dry, rub, test]
+    field: comment
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -671,9 +682,9 @@ check: present
 
 
 ```check
-where: [report.product_label]
+where: [report.all_captions]
 when: null
-check: extract_bool("Does this field evidence satisfy: A group picture of all SKUs/items inspected must appear on the report's front page.?")
+check: null
 ```
 
 ---
@@ -687,9 +698,12 @@ check: extract_bool("Does this field evidence satisfy: A group picture of all SK
 
 
 ```check
-where: [report.defect_count]
+where:
+  - kind: checklist
+    match: [defect, breakdown]
+    field: photo_count
 when: null
-check: present
+check: count_at_least(1)
 ```
 
 ---
@@ -707,9 +721,12 @@ check: present
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [outer, carton]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.?")
+check: count_at_least(4)
 ```
 
 ---
@@ -727,9 +744,12 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Sele
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [inner, carton]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Pro?")
+check: count_at_least(6)
 ```
 
 ---
@@ -747,9 +767,12 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Sele
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [products]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (com?")
+check: count_at_least(5)
 ```
 
 ---
@@ -767,9 +790,12 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Fron
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [specification, label]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracki?")
+check: count_at_least(6)
 ```
 
 ---
@@ -787,9 +813,12 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Comp
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [checking]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Chec?")
+check: count_at_least(6)
 ```
 
 ---
@@ -807,9 +836,12 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Func
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: section
+    match: [moisture, checking]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.?")
+check: count_at_least(4)
 ```
 
 ---
@@ -827,9 +859,9 @@ check: extract_bool("Does this field evidence satisfy: Report must include: Fron
 
 
 ```check
-where: [report.inspector_text]
+where: [report.defects_without_photo]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: equals(0)
 ```
 
 ---
@@ -847,9 +879,9 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 
 
 ```check
-where: [out_of_report:ip]
+where: [report.attachment_filenames]
 when: null
-check: null
+check: filename_matches("New Era Cap LLC_Measurement Defect AQL Table*.xls")
 ```
 
 ---
@@ -874,9 +906,9 @@ check: null
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.aql_level_major]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -890,9 +922,9 @@ check: present
 
 
 ```check
-where: [report.inspector_text]
+where: [out_of_report:booking]
 when: null
-check: extract_bool("Does this field evidence satisfy: If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes pr?")
+check: null
 ```
 
 ---
@@ -910,9 +942,9 @@ check: extract_bool("Does this field evidence satisfy: If the Advice List specif
 
 
 ```check
-where: [report.inspector_text]
+where: [product._first.real_packed_quantity, product._first.expected_packed_quantity]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: ratio_at_least(0.8)
 ```
 
 ---
@@ -926,9 +958,9 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 
 
 ```check
-where: [report.overall_result]
-when: null
-check: in_set(PASS, FAIL, PENDING)
+where: [workmanship.found_critical]
+when: workmanship.result equals PASS
+check: equals(0)
 ```
 
 ---
@@ -942,9 +974,9 @@ check: in_set(PASS, FAIL, PENDING)
 
 
 ```check
-where: [report.defect_count]
+where: [report.global_remark]
 when: null
-check: present
+check: extract_bool("Does this remark confirm that defective units were repaired or replaced rather than collected as samples?")
 ```
 
 ---

@@ -34,9 +34,11 @@ PRIMITIVE_OPS = frozenset(
         "count_at_least",
         "ratio_at_least",
         "filename_matches",
+        "defects_name_any",
         "all_of",
         "any_of",
         "not",
+        "each",
         "atom",
         "vision",
         "true",
@@ -69,15 +71,40 @@ def _resolved_from_node(node: dict[str, Any], ctx: EvalContext) -> list[Resolved
     return resolve_where_bindings([selector], ctx.facts, ctx.semantic)
 
 
-def _requires_fields_resolved(node: dict[str, Any], ctx: EvalContext) -> bool:
+def _requires_fields_status(node: dict[str, Any], ctx: EvalContext) -> str:
+    """Return 'ok' | 'unresolved' | 'blank' for requires_fields gates."""
     requires = node.get("requires_fields") or []
     if not requires:
-        return True
+        return "ok"
     resolved = resolve_where_bindings(requires, ctx.facts, ctx.semantic)
-    return any(not _is_blank_value(rf.value) for rf in resolved)
+    if not resolved:
+        return "unresolved"
+    if any(not _is_blank_value(rf.value) for rf in resolved):
+        return "ok"
+    return "blank"
+
+
+def _requires_fields_resolved(node: dict[str, Any], ctx: EvalContext) -> bool:
+    return _requires_fields_status(node, ctx) == "ok"
 
 
 _CJK_RE = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]")
+
+# Checklist / overall result dropdown aliases across GIs (API uses NOT_APPLICABLE;
+# authors often write N/A; inspectors sometimes write PASSED).
+_RESULT_ALIASES = {
+    "PASS": "PASS",
+    "PASSED": "PASS",
+    "FAIL": "FAIL",
+    "FAILED": "FAIL",
+    "PENDING": "PENDING",
+    "N/A": "N/A",
+    "NA": "N/A",
+    "N.A": "N/A",
+    "N.A.": "N/A",
+    "NOT_APPLICABLE": "N/A",
+    "NOTAPPLICABLE": "N/A",
+}
 
 
 @dataclass
@@ -97,6 +124,20 @@ class EvalContext:
 def _norm_text(value: Any) -> str:
     return str(value or "").strip().upper()
 
+
+def _norm_comparable(value: Any) -> str:
+    """Normalize text for equals/in_set, including result dropdown aliases."""
+    text = _norm_text(value)
+    if not text:
+        return ""
+    key = text.replace(" ", "_").replace("-", "_")
+    # Also accept "NOT APPLICABLE" → NOT_APPLICABLE via space→underscore above.
+    compact = key.replace("_", "")
+    if key in _RESULT_ALIASES:
+        return _RESULT_ALIASES[key]
+    if compact in _RESULT_ALIASES:
+        return _RESULT_ALIASES[compact]
+    return text
 
 def _bool_atom(answer: AtomAnswer | None) -> bool | None:
     if answer is None or answer.value is None:
@@ -135,11 +176,20 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
 
     if op == "atom":
         atom_id = str(node.get("id") or "")
-        if not _requires_fields_resolved(node, ctx):
+        role = str(node.get("role") or "boolean")
+        req_status = _requires_fields_status(node, ctx)
+        if req_status == "unresolved":
             return EvalResult(None, "bound field missing", f"atom:{atom_id}:unresolved")
+        if req_status == "blank":
+            # Field is present but empty. For "AI yes/no (flag if false)", blank
+            # evidence cannot satisfy the requirement → fail without calling the LLM.
+            if role in ("required_true", "boolean"):
+                return EvalResult(False, "required field blank", f"atom:{atom_id}:blank")
+            if role == "excuse":
+                return EvalResult(False, "excuse field blank", f"atom:{atom_id}:blank")
+            return EvalResult(None, "bound field blank", f"atom:{atom_id}:blank")
         answers = ctx.atom_answers or {}
         answer = answers.get(atom_id)
-        role = str(node.get("role") or "boolean")
         # Quote atoms: extraction only — a following deterministic op decides.
         # Gate: missing/null quote => unable; otherwise pass (True) so all_of continues.
         if role == "quote":
@@ -207,6 +257,43 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
             return EvalResult(None, inner.evidence, "primitive:not")
         return EvalResult(not inner.value, inner.evidence, "primitive:not")
 
+    if op == "each":
+        # Iterate an array-of-dicts source; the nested predicate reads the
+        # current element via `item.<field>` selectors. ALL elements must
+        # satisfy it (empty source = vacuously satisfied).
+        source = str(node.get("source") or "")
+        arr = resolve_selector(source, ctx.facts, ctx.semantic) if source else None
+        if arr is None:
+            return EvalResult(None, f"{source}=missing", "primitive:each:missing")
+        if not isinstance(arr, list):
+            return EvalResult(None, f"{source} not iterable", "primitive:each:notlist")
+        item_node = node.get("item") or {}
+        if not arr:
+            return EvalResult(True, f"{source} empty (vacuously true)", "primitive:each:empty")
+        results: list[EvalResult] = []
+        fail_ev = ""
+        for idx, elem in enumerate(arr):
+            if not isinstance(elem, dict):
+                continue
+            child_facts = dict(ctx.facts)
+            for key, val in elem.items():
+                child_facts[f"item.{key}"] = val
+            child = EvalContext(
+                facts=child_facts, semantic=ctx.semantic, atom_answers=ctx.atom_answers
+            )
+            res = eval_predicate(item_node, child)
+            results.append(res)
+            if res.value is False and not fail_ev:
+                fail_ev = f"item[{idx}]: {res.evidence}"
+        values = [r.value for r in results]
+        if not values:
+            return EvalResult(None, f"{source}: no row objects", "primitive:each:norows")
+        if any(v is False for v in values):
+            return EvalResult(False, fail_ev or "an item failed", "primitive:each:fail")
+        if any(v is None for v in values):
+            return EvalResult(None, "an item could not be checked", "primitive:each:unknown")
+        return EvalResult(True, f"{source}: all {len(values)} items ok", "primitive:each:all")
+
     selector = str(node.get("selector") or "")
     binding = node.get("binding")
     if binding:
@@ -235,24 +322,46 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         atom_id = str(node.get("id") or selector)
         return eval_predicate({"op": "atom", "id": atom_id, "role": node.get("role", "boolean")}, ctx)
 
-    # Multi-selector ops resolve their own fields — don't early-exit on empty `selector`.
-    if op in ("compare", "ratio_at_least"):
+    # Multi-selector / self-contained ops — don't early-exit on empty `selector`.
+    if op in ("compare", "ratio_at_least", "defects_name_any"):
         pass
     elif actual is None and op not in ("is_blank", "exists"):
         return EvalResult(None, f"{selector}=missing", f"primitive:{op}:missing")
+
+    if op == "defects_name_any":
+        names = [str(n).lower() for n in (node.get("names") or []) if str(n).strip()]
+        if not names:
+            return EvalResult(None, "defects_name_any missing names", "primitive:defects_name_any")
+        defects = resolve_selector("report.defects", ctx.facts, semantic=ctx.semantic)
+        if defects is None:
+            return EvalResult(None, "report.defects missing", "primitive:defects_name_any")
+        rows = defects if isinstance(defects, list) else []
+        hits = []
+        for d in rows:
+            if not isinstance(d, dict):
+                continue
+            label = str(d.get("name") or "").lower()
+            if any(n in label for n in names):
+                hits.append(label)
+        ok = len(hits) > 0
+        return EvalResult(
+            ok,
+            f"defects_name_any({names}) hits={hits[:5]} total={len(rows)}",
+            "primitive:defects_name_any",
+        )
 
     if op == "equals":
         expected = node.get("expected")
         try:
             same = float(actual) == float(expected)
         except (TypeError, ValueError):
-            same = _norm_text(actual) == _norm_text(expected)
+            same = _norm_comparable(actual) == _norm_comparable(expected)
         evidence = f"{selector}={actual}, expected={expected}"
         return EvalResult(same, evidence, "primitive:equals")
 
     if op == "in_set":
-        options = {_norm_text(v) for v in (node.get("values") or [])}
-        ok = _norm_text(actual) in options
+        options = {_norm_comparable(v) for v in (node.get("values") or [])}
+        ok = _norm_comparable(actual) in options
         return EvalResult(ok, f"{selector}={actual}, in={sorted(options)}", "primitive:in_set")
 
     if op == "matches":
@@ -373,8 +482,8 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
             }
             ok = bool(ops.get(cmp, left_f == right_f))
         else:
-            ln = _norm_text(left_f)
-            rn = _norm_text(right_f)
+            ln = _norm_comparable(left_f)
+            rn = _norm_comparable(right_f)
             if cmp in ("!=", "<>"):
                 ok = ln != rn
             else:
@@ -383,6 +492,7 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         return EvalResult(ok, evidence, "primitive:compare")
 
     if op == "filename_matches":
+        import fnmatch
         raw = actual
         if isinstance(raw, list):
             filenames = raw
@@ -391,30 +501,22 @@ def eval_predicate(node: dict[str, Any], ctx: EvalContext) -> EvalResult:
         else:
             filenames = []
         if not filenames:
-            return EvalResult(None, "no filenames", "primitive:filename_matches")
-        style = str(node.get("style_number") or _infer_style_number(ctx) or "")
-        pattern = str(node.get("pattern") or "Measurement Chart-{style}.xlsx")
-        expected = pattern.replace("{style}", style)
-        actual_name = str(filenames[0])
-        norm_a = actual_name.lower().replace(" ", "").replace("_", "-")
-        norm_e = expected.lower().replace(" ", "").replace("_", "-")
-        if norm_a == norm_e:
-            return EvalResult(True, f"filename={actual_name}", "primitive:filename_matches")
-        wrong_template = "chart-format" in actual_name.lower() or "chart_format" in actual_name.lower()
-        if style and style in actual_name and wrong_template:
-            return EvalResult(
-                False,
-                f"filename={actual_name}, expected={expected}",
-                "primitive:filename_matches",
-            )
-        if style and style not in actual_name:
-            return EvalResult(False, f"missing style {style}", "primitive:filename_matches")
-        if wrong_template:
-            return EvalResult(
-                False,
-                f"wrong template: {actual_name}",
-                "primitive:filename_matches",
-            )
-        return EvalResult(True, f"filename={actual_name}", "primitive:filename_matches")
+            return EvalResult(False, "no filenames to match", "primitive:filename_matches")
+            
+        pattern = str(node.get("pattern") or "*").strip()
+        # Optionally inject dynamic `{style}` if it's in the pattern
+        if "{style}" in pattern:
+            style = str(node.get("style_number") or _infer_style_number(ctx) or "")
+            pattern = pattern.replace("{style}", style)
+
+        # Normalize spaces/case for robust matching
+        norm_pattern = pattern.lower().replace(" ", "")
+        
+        for actual_name in filenames:
+            norm_name = str(actual_name).lower().replace(" ", "")
+            if fnmatch.fnmatch(norm_name, norm_pattern):
+                return EvalResult(True, f"filename={actual_name} matched {pattern}", "primitive:filename_matches")
+                
+        return EvalResult(False, f"none of {filenames} matched {pattern}", "primitive:filename_matches")
 
     return EvalResult(None, f"unhandled {op}", "primitive:unhandled")

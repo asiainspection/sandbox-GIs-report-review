@@ -188,7 +188,16 @@ def values_to_strings(value: Any) -> list[str]:
     if isinstance(value, list):
         return [clean_text(v) for v in value if clean_text(v)]
     if isinstance(value, dict):
+        # Hallmark YES_NO / PASS_FAIL often store {"value": true/false, ...}
+        if "value" in value and not isinstance(value.get("value"), (dict, list)):
+            inner = value.get("value")
+            if isinstance(inner, bool):
+                return ["Yes" if inner else "No"]
+            text = clean_text(inner)
+            return [text] if text else []
         return []
+    if isinstance(value, bool):
+        return ["Yes" if value else "No"]
     return [clean_text(value)] if clean_text(value) else []
 
 
@@ -243,7 +252,16 @@ def walk_checklist_elements(
             )
             continue
 
-        if element_type in {"MULTIPLE_CHOICE", "TEXT", "NUMBER", "BOOLEAN", "DATE"}:
+        # YES_NO / PASS_FAIL are Hallmark's dominant leaf types (not just MULTIPLE_CHOICE).
+        if element_type in {
+            "MULTIPLE_CHOICE",
+            "TEXT",
+            "NUMBER",
+            "BOOLEAN",
+            "DATE",
+            "YES_NO",
+            "PASS_FAIL",
+        }:
             photos, spotlight, photo_captions = photo_details(element.get("images"))
             items.append(
                 CheckItem(
@@ -280,10 +298,12 @@ def collect_defects(defects_checklist: dict[str, Any]) -> list[dict[str, Any]]:
                 for inst in instances
                 if comment_message(inst.get("comment"))
             ]
-            defect_images = defect.get("images") or []
+            # Instance images only — template defect.images are gallery placeholders
+            # and inflate photo_count (often ~60) when merged.
+            defect_images: list[Any] = []
             for inst in instances:
                 defect_images.extend(inst.get("images") or [])
-            photos, _, photo_captions = photo_details(defect_images)
+            photo_count, _, photo_captions = photo_details(defect_images)
             found.append(
                 {
                     "category": category_name,
@@ -291,7 +311,8 @@ def collect_defects(defects_checklist: dict[str, Any]) -> list[dict[str, Any]]:
                     "classification": clean_text(defect.get("classification")),
                     "quantity": total_qty,
                     "comments": comments,
-                    "photos": photos,
+                    "photos": photo_count,
+                    "photo_count": photo_count,
                     "photo_captions": photo_captions,
                 }
             )

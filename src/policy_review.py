@@ -9,13 +9,6 @@ from typing import Any
 
 from cascade import DEFAULT_CONFIDENCE_THRESHOLD, run_cascade
 from checkspec import resolve_specs
-from atom_cache import (
-    apply_cache_to_items,
-    load_atom_cache,
-    merge_answers_into_cache,
-    report_cache_key,
-    save_atom_cache,
-)
 from fact_extractor import (
     AtomAnswer,
     ExtractItem,
@@ -23,6 +16,7 @@ from fact_extractor import (
 )
 from fact_index import build_fact_index
 from gi_review import (
+    DEFAULT_GEMINI_MODEL,
     CheckpointResult,
     ReviewRun,
     UsageStats,
@@ -193,10 +187,14 @@ def run_policy_review(
 
     root = project_root or _project_root()
     api_key, default_judge = load_env(root)
-    judge = judge_model or default_judge
-    extractor = extract_model or os.environ.get("GI_EXTRACT_MODEL", "gemini-2.5-flash-lite").strip()
+    judge = judge_model or default_judge or DEFAULT_GEMINI_MODEL
+    extractor = (
+        extract_model
+        or os.environ.get("GI_EXTRACT_MODEL")
+        or DEFAULT_GEMINI_MODEL
+    ).strip()
     if not extractor:
-        extractor = "gemini-2.5-flash-lite"
+        extractor = DEFAULT_GEMINI_MODEL
     vision_model = os.environ.get("GI_VISION_MODEL", extractor).strip() or extractor
     strict = strict_blocking_enabled() if strict_blocking is None else strict_blocking
 
@@ -236,13 +234,9 @@ def run_policy_review(
     atom_items = _build_obligation_extract_items(
         specs, checkpoints_by_id, ir, working_facts, semantic, ground="atom"
     )
-    cache_key = report_cache_key(report)
-    atom_disk = load_atom_cache(root, cache_key)
-    atom_misses, atom_hits = apply_cache_to_items(atom_items, atom_disk)
-    atom_answers.update(atom_hits)
     _pipeline_log(
         "4/6 ground_atoms",
-        f"atom_leaves={len(atom_items)} cache_hits={len(atom_hits)} misses={len(atom_misses)} model={extractor}",
+        f"atom_leaves={len(atom_items)} model={extractor}",
     )
 
     # Vision WHEN is json-only — overlap photo download+vision with atom LLM work.
@@ -250,13 +244,12 @@ def run_policy_review(
 
     def _run_atoms() -> tuple[UsageStats, dict[str, AtomAnswer]]:
         local_usage = UsageStats()
-        local_answers = dict(atom_answers)
+        local_answers: dict[str, AtomAnswer] = {}
         if not atom_items:
             return local_usage, local_answers
-        if atom_misses:
-            batch = run_extract_batches(client, extractor, atom_misses, checkpoints_by_id)
-            local_usage.add_usage(batch.usage)
-            local_answers.update(batch.answers)
+        batch = run_extract_batches(client, extractor, atom_items, checkpoints_by_id)
+        local_usage.add_usage(batch.usage)
+        local_answers.update(batch.answers)
         cascade = run_cascade(
             client,
             extractor,  # same model; null-only retry, no judge
@@ -265,8 +258,6 @@ def run_policy_review(
         )
         local_usage.add_usage(cascade.usage)
         local_answers = cascade.answers
-        updated = merge_answers_into_cache(atom_disk, atom_items, local_answers)
-        save_atom_cache(root, cache_key, updated)
         return local_usage, local_answers
 
     def _run_vision() -> tuple[UsageStats, dict[str, AtomAnswer], list[VisionItem], dict[str, list[Path]]]:

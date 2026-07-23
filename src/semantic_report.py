@@ -369,12 +369,19 @@ def _defects_from_checklists(report: dict[str, Any]) -> list[dict[str, Any]]:
     defects: list[dict[str, Any]] = []
     for checklist in extract_checklists(report.get("result") or {}):
         for defect in checklist.get("defects") or []:
+            photos = defect.get("photos")
+            if defect.get("photo_count") is not None:
+                photo_count = int(defect.get("photo_count") or 0)
+            elif isinstance(photos, list):
+                photo_count = len(photos)
+            else:
+                photo_count = int(photos or 0)
             defects.append(
                 {
                     "name": defect.get("name", ""),
                     "classification": defect.get("classification", ""),
                     "quantity": defect.get("quantity", 0),
-                    "photo_count": defect.get("photos", 0),
+                    "photo_count": photo_count,
                     "photo_captions": defect.get("photo_captions", []),
                 }
             )

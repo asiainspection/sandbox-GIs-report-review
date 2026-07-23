@@ -1,4 +1,9 @@
-"""Build checkpoints JSON from rules.md (prose + ```check blocks)."""
+"""Build checkpoints JSON from rules.md.
+
+Supports:
+  - legacy prose + ```check fences
+  - harness format (**id:** / **check:** / **where:** / **action:** …)
+"""
 
 from __future__ import annotations
 
@@ -20,12 +25,15 @@ from rules_to_checkpoints import rules_to_checkpoints  # noqa: E402
 def build_checkpoints(rules_md: Path) -> dict:
     markdown = rules_md.read_text(encoding="utf-8")
     parsed = parse_rules(markdown)
-    blocks = extract_check_blocks(markdown)
+    # Harness parse already embeds check_blocks; extract_check_blocks also
+    # compiles harness → same shape for legacy fences.
+    blocks = parsed.get("check_blocks") or extract_check_blocks(markdown)
     checkpoints = rules_to_checkpoints(parsed["rules"], check_blocks=blocks)
     return {
         "meta": {
             "name": parsed.get("title") or rules_md.stem,
             "source": str(rules_md),
+            "format": parsed.get("format") or "legacy",
             "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "check_blocks": len(blocks),
             "checkpoint_count": len(checkpoints),

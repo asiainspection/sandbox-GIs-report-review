@@ -115,11 +115,11 @@ to at least one rule, checklist row, or documented exclusion below.
 
 ```check
 where:
-  - kind: section
-    match: [product, packing, packaging]
+  - kind: checklist
+    match: [packing, list]
     field: attachment_filenames
 when: null
-check: null
+check: present
 ```
 
 ---
@@ -157,10 +157,7 @@ check: null
 
 
 ```check
-where:
-  - kind: checklist
-    match: [product, dimensions, details]
-    field: comment
+where: [product._first.real_packed_quantity]
 when: null
 check: null
 ```
@@ -176,9 +173,9 @@ check: null
 
 
 ```check
-where: [report.inspector_text]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: null
 ```
 
 ---
@@ -194,7 +191,7 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 ```check
 where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark state that no finished/packed product was available on arrival?")
 ```
 
 ---
@@ -212,9 +209,12 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.defect_count]
+where:
+  - kind: section
+    match: [checkpoints]
+    field: comment
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this comment name a specific item or SKU associated with the issue described?")
 ```
 
 ---
@@ -228,9 +228,12 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.attachment_filenames]
+where:
+  - kind: checklist
+    match: [small, parts]
+    field: photo_count
 when: null
-check: present
+check: count_at_most(1)
 ```
 
 ---
@@ -249,11 +252,11 @@ check: present
 
 ```check
 where:
-  - kind: section
-    match: [product, specifications]
-    field: photo_count
+  - kind: checklist
+    match: [approval, sample]
+    field: comment
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: null
 ```
 
 ---
@@ -267,10 +270,7 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where:
-  - kind: section
-    match: [product, specifications]
-    field: attachment_filenames
+where: [out_of_report:booking]
 when: null
 check: null
 ```
@@ -290,12 +290,9 @@ check: null
 
 
 ```check
-where:
-  - kind: checklist
-    match: [product, and, carton, weight, check]
-    field: attachment_filenames
+where: [report.attachment_filenames]
 when: null
-check: null
+check: filename_matches("*Carton Measurements and Weight*v2*")
 ```
 
 ---
@@ -309,9 +306,12 @@ check: null
 
 
 ```check
-where: [report.all_text]
+where:
+  - kind: checklist
+    match: [product, and, carton, weight, check]
+    field: attachment_content
 when: null
-check: scan_absent("Golden Sample")
+check: null
 ```
 
 ---
@@ -330,9 +330,12 @@ check: scan_absent("Golden Sample")
 
 
 ```check
-where: [report.attachment_filenames]
+where:
+  - kind: checklist
+    match: [product, and, carton, weight, check]
+    field: attachment_content
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -346,9 +349,12 @@ check: present
 
 
 ```check
-where: [report.attachment_filenames]
+where:
+  - kind: checklist
+    match: [product, and, carton, weight, check]
+    field: attachment_content
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -384,7 +390,7 @@ check: extract_bool("Are all 'rust'-related defects classified as Critical?")
 ```check
 where: [report.defect_count]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -428,7 +434,7 @@ where:
     match: [checkpoints]
     field: photo_captions
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this photo caption state a model/item number, a test name, a weight applied, and a result/remark?")
 ```
 
 ---
@@ -442,9 +448,12 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [product._first.unit]
+where:
+  - kind: checklist
+    match: [door, drawer, function, stability]
+    field: comment
 when: null
-check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?")
+check: null
 ```
 
 ---
@@ -459,11 +468,11 @@ check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and 
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
-    field: photo_count
+  - kind: checklist
+    match: [stability, test]
+    field: photo_captions
 when: null
-check: null
+check: matches("\\d+\\s*kg")
 ```
 
 ---
@@ -480,9 +489,9 @@ check: null
 where:
   - kind: checklist
     match: [static, loading, test]
-    field: photo_count
+    field: comment
 when: null
-check: count_at_most(0)
+check: extract_bool("Does this comment state both a model/item number and a weight value?")
 ```
 
 ---
@@ -518,9 +527,9 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
-    field: comment
+  - kind: checklist
+    match: [care, label]
+    field: result
 when: null
 check: null
 ```
@@ -678,7 +687,7 @@ where:
     match: [checkpoints]
     field: photo_captions
 when: null
-check: count_at_least(1)
+check: null
 ```
 
 ---
@@ -792,7 +801,7 @@ where:
     match: [carton, condition, product, after, the, drop]
     field: photo_count
 when: null
-check: null
+check: count_at_least(1)
 ```
 
 ---
@@ -846,9 +855,9 @@ check: null
 
 
 ```check
-where: [report.factory_name]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark state that the factory refused to follow the client standard or sample size, and that the quality team was informed of the reason?")
 ```
 
 ---
@@ -862,9 +871,9 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.overall_result]
+where: [report.global_remark]
 when: null
-check: in_set(PASS, FAIL, PENDING)
+check: null
 ```
 
 ---
@@ -878,9 +887,9 @@ check: in_set(PASS, FAIL, PENDING)
 
 
 ```check
-where: [report.factory_name]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark state that the factory refused to sign the draft report and that the quality team was informed of the reason?")
 ```
 
 ---

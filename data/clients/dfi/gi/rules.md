@@ -34,7 +34,7 @@ Each rule entry contains:
 ```check
 where: [report.supplier_name, report.factory_name]
 when: null
-check: 
+check:
   - present
   - no_language(chinese)
 ```
@@ -48,11 +48,10 @@ check:
 **Error example:** Name field reads "1_4894514123593 [Q2608117119_1]" (SKU string left unreplaced)
 **Correct example:** Name field reads "Mannings Guardian Honey Moisturising Lip Balm 4.5g"
 
-
 ```check
 where: [report.product_label]
 when: null
-check: extract_bool("Is the product name a real product name (not a SKU/barcode string)?")
+check: extract_bool("Is this field a readable product name rather than a SKU or barcode string?")
 ```
 
 ---
@@ -66,9 +65,11 @@ check: extract_bool("Is the product name a real product name (not a SKU/barcode 
 
 
 ```check
-where: [report.inspector_text]
+where: [report.po_reference]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check:
+  - present
+  - extract_bool("Does this field contain only the text 'N/A' or an actual PO number, with no extra explanatory text?")
 ```
 
 ---
@@ -84,7 +85,7 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 ```check
 where: [report.inspector_text]
 when: null
-check: extract_bool("If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?")
+check: null
 ```
 
 ---
@@ -100,7 +101,7 @@ check: extract_bool("If MFG/EXP/Batch are all N/A, is that combination explicitl
 ```check
 where: [report.production_site]
 when: null
-check: 
+check:
   - present
   - no_language(chinese)
 ```
@@ -118,7 +119,7 @@ check:
 ```check
 where: [product._first.unit]
 when: null
-check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and not 'Other'?")
+check: extract_bool("Does this field show a real unit value rather than the word 'Other'?")
 ```
 
 ---
@@ -138,7 +139,7 @@ check: extract_bool("Is the quantity unit a real unit (Pcs/Boxes/Packs/…) and 
 ```check
 where: [report.overall_result]
 when: null
-check: in_set(PASS, FAIL, PENDING)
+check: null
 ```
 
 ---
@@ -152,9 +153,11 @@ check: in_set(PASS, FAIL, PENDING)
 
 
 ```check
-where: [report.overall_result]
-when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+where: [report.global_remark]
+when: report.overall_result equals PENDING
+check:
+  - matches("The inspection result is (Pending|Failed) due to")
+  - contains("are presented to the factory")
 ```
 
 ---
@@ -168,9 +171,9 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.inspector_text]
+where: [report.global_remark]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: extract_bool("Does this remark contain Chinese text other than a date code copied directly from the product?")
 ```
 
 ---
@@ -188,11 +191,12 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 **Error example:** Attachment absent, or filename reads "DFI测量表_20260402.xlsx"
 **Correct example:** Attachment present with filename "DFI Sampling Plan R-Cloud-Q2603753830 sample.xlsx"
 
-
 ```check
 where: [report.attachment_filenames]
 when: null
-check: present
+check:
+  - present
+  - no_language(chinese)
 ```
 
 ---
@@ -208,11 +212,13 @@ check: present
 **Error example:** GSS field = "No — GSS not available" but overall result = PASS
 **Correct example:** GSS field = "Yes" for a PASS report; GSS field = "No" with a Pending overall result and remark explaining the situation
 
-
 ```check
-where: [report.overall_result]
-when: null
-check: in_set(PASS, FAIL, PENDING)
+where:
+  - kind: checklist
+    match: [green, seal, sample, gss]
+    field: values
+when: report.overall_result equals PASS
+check: equals(Yes)
 ```
 
 ---
@@ -226,9 +232,11 @@ check: in_set(PASS, FAIL, PENDING)
 
 
 ```check
-where: [checklist.green_seal_sample_gss.comment]
+where: [report.inspector_text, report.all_captions]
 when: null
-check: scan_absent("sample")
+check:
+  - scan_absent("Golden Sample")
+  - scan_absent("Approved Sample")
 ```
 
 ---
@@ -244,10 +252,10 @@ check: scan_absent("sample")
 ```check
 where:
   - kind: checklist
-    match: [re, sealed, green, seal, sample, re]
+    match: [resealed, green, seal, sample]
     field: photo_count
 when: null
-check: null
+check: count_at_least(1)
 ```
 
 ---
@@ -272,7 +280,7 @@ where:
     match: [carton, shipping, mark]
     field: photo_count
 when: null
-check: null
+check: count_at_least(2)
 ```
 
 ---
@@ -288,10 +296,10 @@ check: null
 ```check
 where:
   - kind: checklist
-    match: [carton, check, dimensions, and, weight]
+    match: [carton, check, dimensions, weight]
     field: comment
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: null
 ```
 
 ---
@@ -309,9 +317,12 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 
 ```check
-where: [report.defect_count]
+where:
+  - kind: checklist
+    match: [individual, pack]
+    field: applicable
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -331,9 +342,9 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.inspection_level]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -347,9 +358,9 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.sample_size_critical, workmanship.max_defects_critical]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -363,9 +374,9 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.aql_level_critical, workmanship.aql_level_major, workmanship.aql_level_minor]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -379,9 +390,12 @@ check: present
 
 
 ```check
-where: [report.defect_count]
+where:
+  - kind: checklist
+    match: [colors, labels, artworks, accessories, markings]
+    field: values
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -399,9 +413,9 @@ check: present
 
 
 ```check
-where: [report.defects]
-when: null
-check: null
+where: [report.inspector_text]
+when: report.defect_count equals 0
+check: contains("No Defects Found")
 ```
 
 ---
@@ -417,7 +431,7 @@ check: null
 ```check
 where: [report.inspector_text]
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: null
 ```
 
 ---
@@ -431,7 +445,7 @@ check: extract_bool("Does this field satisfy the GI requirement stated for this 
 
 
 ```check
-where: [report.defects]
+where: [report.defect_count]
 when: null
 check: null
 ```
@@ -472,9 +486,12 @@ check: null
 
 
 ```check
-where: [report.inspector_text]
+where:
+  - kind: checklist
+    match: [date, code, check]
+    field: comment
 when: null
-check: extract_bool("If MFG/EXP/Batch are all N/A, is that combination explicitly justified in remarks?")
+check: null
 ```
 
 ---
@@ -493,7 +510,7 @@ where:
     match: [date, code, check]
     field: comment
 when: null
-check: null
+check: extract_bool("Does this comment show each batch or sub-product's date code on its own separate line, rather than merged into one line?")
 ```
 
 ---
@@ -510,9 +527,9 @@ check: null
 where:
   - kind: checklist
     match: [barcode, details]
-    field: result
+    field: comment
 when: null
-check: null
+check: present
 ```
 
 ---
@@ -528,11 +545,10 @@ check: null
 **Error example:** Report measures carton dimensions even though no carton dimension spec is claimed on the label, while the claimed volume (500 ml) is left unmeasured
 **Correct example:** Only the specs printed on the packaging are measured: quantity (30 pcs), volume (500 ml), dimension (if claimed)
 
-
 ```check
 where:
-  - kind: section
-    match: [dfi, product, dimensions, weights]
+  - kind: checklist
+    match: [product, dimensions, weights]
     field: comment
 when: null
 check: null
@@ -547,12 +563,11 @@ check: null
 **Error example:** Product net weight label claim = 4.500g; actual measured = 4.480g; result recorded as PASS
 **Correct example:** Product net weight = 4.480g < 4.500g label claim → result = FAIL
 
-
 ```check
 where:
-  - kind: section
-    match: [dfi, product, dimensions, weights]
-    field: comment
+  - kind: checklist
+    match: [product, dimensions, weights]
+    field: result
 when: null
 check: null
 ```
@@ -569,11 +584,13 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [dfi, product, dimensions, weights]
+  - kind: checklist
+    match: [product, dimensions, weights]
     field: comment
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check:
+  - contains("the tolerance range of")
+  - matches("\\d+(\\.\\d+)?\\s*(cm|mm|g|kg)?\\s*[–-]\\s*\\d+(\\.\\d+)?")
 ```
 
 ---
@@ -588,8 +605,8 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 ```check
 where:
-  - kind: section
-    match: [dfi, product, dimensions, weights]
+  - kind: checklist
+    match: [product, dimensions, weights]
     field: comment
 when: null
 check: null
@@ -606,9 +623,12 @@ check: null
 
 
 ```check
-where: [report.inspector_text]
+where:
+  - kind: checklist
+    match: [product, dimensions, weights]
+    field: comment
 when: null
-check: extract_bool("Does this field evidence satisfy: For Protection Mask products, the individual mask net weight must always be measured and recorded, even if no weight spe?")
+check: null
 ```
 
 ---
@@ -622,9 +642,12 @@ check: extract_bool("Does this field evidence satisfy: For Protection Mask produ
 
 
 ```check
-where: [report.inspector_text]
+where:
+  - kind: checklist
+    match: [product, dimensions, weights]
+    field: comment
 when: null
-check: extract_bool("Does this field evidence satisfy: For health products (identified by a Nutrition Information Panel on the label), both total net weight and individual ser?")
+check: null
 ```
 
 ---
@@ -643,11 +666,11 @@ check: extract_bool("Does this field evidence satisfy: For health products (iden
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
+  - kind: checklist
+    match: [carton, drop, test]
     field: result
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: null
 ```
 
 ---
@@ -662,11 +685,11 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
-    field: result
+  - kind: checklist
+    match: [carton, drop, test]
+    field: comment
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check: null
 ```
 
 ---
@@ -685,8 +708,8 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 
 ```check
 where: [report.overall_result]
-when: null
-check: in_set(PASS, FAIL, PENDING)
+when: checklist.adhesive_test.result equals FAIL
+check: equals(PENDING)
 ```
 
 ---
@@ -698,11 +721,10 @@ check: in_set(PASS, FAIL, PENDING)
 **Error example:** Adhesive test remark reads "PASSED. Checked ok." with no tape model mentioned
 **Correct example:** Adhesive test remark reads "PASSED. Checked ok, and the tape model was 3M 500."
 
-
 ```check
 where: [checklist.adhesive_test.comment]
 when: null
-check: 
+check:
   - extract("Quote the tape model stated in this comment, or null")
   - matches("3M ?(500|600P|810)")
 ```
@@ -718,12 +740,11 @@ check:
 
 
 ```check
-where:
-  - kind: section
-    match: [checkpoints]
-    field: comment
+where: [checklist.adhesive_test.comment]
 when: null
-check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
+check:
+  - extract("Quote the date-code exemption remark from this comment, or null")
+  - contains("Adhesive test on the date code waived due to limitation of the can and ink")
 ```
 
 ---
@@ -743,10 +764,10 @@ check: extract_bool("Does the bound remark/comment satisfy the GI requirement?")
 ```check
 where:
   - kind: checklist
-    match: [rubbing, marking, test]
-    field: comment
+    match: [rubbing, test]
+    field: photo_count
 when: null
-check: null
+check: count_at_least(2)
 ```
 
 ---
@@ -766,9 +787,9 @@ check: null
 
 
 ```check
-where: [report.product_label]
+where: [report.all_captions]
 when: null
-check: extract_bool("Does this field evidence satisfy: The cover photo must show the Consumer Pack (retail packaging), frontal angle, vertical orientation, with the full produ?")
+check: null
 ```
 
 ---
@@ -783,11 +804,11 @@ check: extract_bool("Does this field evidence satisfy: The cover photo must show
 
 ```check
 where:
-  - kind: section
-    match: [product, specifications, packaging]
+  - kind: checklist
+    match: [green, seal, sample, gss]
     field: photo_count
 when: null
-check: null
+check: count_at_least(2)
 ```
 
 ---
@@ -802,8 +823,8 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [product, specifications, packaging]
+  - kind: checklist
+    match: [green, seal, sample, gss]
     field: photo_count
 when: null
 check: count_at_least(1)
@@ -818,11 +839,10 @@ check: count_at_least(1)
 **Error example:** Sample size = 8 but only 3 weight photos uploaded; scale display not readable in photos
 **Correct example:** 8 photos of weight measurement, one per sample; scale display showing the reading clearly in each photo
 
-
 ```check
 where:
-  - kind: section
-    match: [dfi, product, dimensions, weights]
+  - kind: checklist
+    match: [product, dimensions, weights]
     field: photo_count
 when: null
 check: count_at_least(1)
@@ -837,14 +857,13 @@ check: count_at_least(1)
 **Error example:** Only one after-drop photo of the carton exterior; no photo showing the interior product condition
 **Correct example:** Three-stage photo set: intact carton before drop; carton being dropped; carton opened after test showing interior product condition
 
-
 ```check
 where:
   - kind: checklist
     match: [carton, drop, test]
     field: photo_count
 when: null
-check: count_at_least(1)
+check: count_at_least(3)
 ```
 
 ---
@@ -862,6 +881,9 @@ where:
   - kind: checklist
     match: [adhesive, test]
     field: photo_count
+  - kind: checklist
+    match: [rubbing, test]
+    field: photo_count
 when: null
 check: count_at_least(1)
 ```
@@ -878,11 +900,11 @@ check: count_at_least(1)
 
 ```check
 where:
-  - kind: section
+  - kind: checklist
     match: [factory, review]
     field: photo_count
 when: null
-check: count_at_least(1)
+check: count_at_least(4)
 ```
 
 ---
@@ -898,11 +920,10 @@ check: count_at_least(1)
 **Error example:** Workmanship defect photo shows an inspector's face clearly visible while holding the product
 **Correct example:** Photos show product and defect areas only; faces are not identifiable
 
-
 ```check
 where: [report.all_captions]
 when: null
-check: extract_bool("Does this field evidence satisfy: No photo in the report may show a worker's face, name badge, or ID in a way that identifies the individual. If visible, ?")
+check: null
 ```
 
 ---
@@ -928,9 +949,9 @@ check: extract_bool("Does this field evidence satisfy: No photo in the report ma
 
 
 ```check
-where: [report.defect_count]
+where: [workmanship.inspection_level, workmanship.aql_level_critical, workmanship.aql_level_major, workmanship.aql_level_minor]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -974,7 +995,7 @@ check: present
 ```check
 where: [report.overall_result]
 when: null
-check: in_set(PASS, FAIL, PENDING)
+check: null
 ```
 
 ---
@@ -990,7 +1011,7 @@ check: in_set(PASS, FAIL, PENDING)
 ```check
 where: [report.overall_result]
 when: null
-check: in_set(PASS, FAIL, PENDING)
+check: null
 ```
 
 ---

@@ -84,8 +84,10 @@ SUFFIX_REGISTRY: dict[str, FieldClass] = {
     "attachment_content": FieldClass(
         "file_content", "file", FEASIBLE_PENDING, "report_attachments", pending_processor="xlsx"
     ),
+    # Vision path is implemented (policy_review + vision_extract). Keep checkable so
+    # harness `needs vision` on photo content actually runs instead of pending Unable.
     "photo_content": FieldClass(
-        "image", "vision", FEASIBLE_PENDING, "report_images", pending_processor="vision"
+        "image", "vision", FEASIBLE_NOW, "report_images", pending_processor="vision"
     ),
 }
 

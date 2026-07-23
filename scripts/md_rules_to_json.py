@@ -123,6 +123,19 @@ def parse_rule(block: list[tuple[int, str]], section: str, subsection: str) -> d
 
 
 def parse_rules(markdown: str) -> dict[str, Any]:
+    # Harness format (id/check/where/action) — no ```check fences.
+    try:
+        from harness_rules import is_harness_rules_markdown, parse_harness_rules
+    except ImportError:  # pragma: no cover — scripts/ on path without src/
+        import sys
+        from pathlib import Path
+
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+        from harness_rules import is_harness_rules_markdown, parse_harness_rules
+
+    if is_harness_rules_markdown(markdown):
+        return parse_harness_rules(markdown)
+
     lines = markdown.splitlines()
     title = lines[0].lstrip("# ").strip() if lines and lines[0].startswith("# ") else ""
     sources = ""

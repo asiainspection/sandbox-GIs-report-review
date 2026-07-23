@@ -12,21 +12,22 @@ from check_block import extract_check_blocks  # noqa: E402
 from md_rules_to_json import parse_rules  # noqa: E402
 from rules_to_checkpoints import rule_to_checkpoint, rules_to_checkpoints, severity_from_rule  # noqa: E402
 
-RULES_MD = ROOT / "data/clients/ribkoff/gi/rules.md"
+# Legacy format (```check fences) lives in the pre-harness archive.
+LEGACY_MD = ROOT / "data/clients/ribkoff/gi/_archive/rules_pre_harness_20260721.md"
 
 
 class RulesToCheckpointsTests(unittest.TestCase):
     def test_rule_to_checkpoint_carries_check_block(self) -> None:
-        parsed = parse_rules(RULES_MD.read_text(encoding="utf-8"))
-        blocks = extract_check_blocks(RULES_MD.read_text(encoding="utf-8"))
+        parsed = parse_rules(LEGACY_MD.read_text(encoding="utf-8"))
+        blocks = extract_check_blocks(LEGACY_MD.read_text(encoding="utf-8"))
         rule = next(item for item in parsed["rules"] if item["id"] == "3.1.6")
         checkpoint = rule_to_checkpoint(rule, check_blocks=blocks)
         self.assertIn("check_block", checkpoint)
-        self.assertEqual(checkpoint["check_block"]["data_source"], "in_report")
+        self.assertIsNotNone(checkpoint["check_block"].get("where"))
 
     def test_rules_to_checkpoints_count(self) -> None:
-        parsed = parse_rules(RULES_MD.read_text(encoding="utf-8"))
-        markdown = RULES_MD.read_text(encoding="utf-8")
+        parsed = parse_rules(LEGACY_MD.read_text(encoding="utf-8"))
+        markdown = LEGACY_MD.read_text(encoding="utf-8")
         checkpoints = rules_to_checkpoints(parsed["rules"], markdown=markdown)
         self.assertEqual(len(checkpoints), len(parsed["rules"]))
         with_blocks = sum(1 for cp in checkpoints if cp.get("check_block"))

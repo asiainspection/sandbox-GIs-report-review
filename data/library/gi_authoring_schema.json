@@ -1,0 +1,210 @@
+{
+  "schema_version": 2,
+  "title": "GI check authoring",
+  "description": "One row = one atomic check. 'Look at' + 'Check part' replace the old single 'where' string (export joins them). 'For each' is the iterator/scope. 'Rule type' is a closed enum mapping to harness actions.",
+  "source_docs": [
+    "data/library/harness_actions.md",
+    "data/library/harness_where.md"
+  ],
+  "fields": [
+    {
+      "key": "id",
+      "label": "ID",
+      "type": "string",
+      "required": true
+    },
+    {
+      "key": "section",
+      "label": "Section",
+      "type": "string",
+      "required": false
+    },
+    {
+      "key": "rule",
+      "label": "Rule \u2014 what must be true",
+      "type": "string",
+      "required": true,
+      "ui": "textarea"
+    },
+    {
+      "key": "applies_when",
+      "label": "Applies when",
+      "type": "string",
+      "required": false,
+      "ui": "select",
+      "enum": [
+        "@C1",
+        "@C1 AND @C2",
+        "@C1 OR @C2",
+        "NOT @C1"
+      ],
+      "help": "Blank = always. Else @C1 or @C1 AND @C2 linking Condition rows. No free prose."
+    },
+    {
+      "key": "for_each",
+      "label": "Repeat for",
+      "type": "enum",
+      "required": false,
+      "ui": "select",
+      "enum": [
+        "each defect",
+        "each SKU / reference",
+        "each PO",
+        "each photo",
+        "each checkpoint in section"
+      ],
+      "help": "Iterator only (each defect/SKU/PO). NOT product type or PSI \u2014 those are Condition rows."
+    },
+    {
+      "key": "look_at",
+      "label": "Look at",
+      "type": "string",
+      "required": true,
+      "ui": "combobox",
+      "suggestions": [
+        "Factory address",
+        "Factory name",
+        "Supplier name",
+        "Production site",
+        "Inspector remark",
+        "Overall result",
+        "Inspection type",
+        "PO reference",
+        "Product name",
+        "SKU",
+        "Ordered quantity",
+        "Packed quantity",
+        "Produced quantity",
+        "Unit",
+        "Major AQL",
+        "Minor AQL",
+        "Critical AQL",
+        "Workmanship result",
+        "Defects",
+        "Defect count",
+        "Full report text",
+        "All captions",
+        "Booking",
+        "Spec sheet",
+        "Email",
+        "SOP"
+      ],
+      "pattern_hint": "Required. Cover field from list, or checkpoint name copied exactly from the sample report."
+    },
+    {
+      "key": "check_part",
+      "label": "Check part",
+      "type": "enum",
+      "required": false,
+      "ui": "select",
+      "enum": [
+        "result",
+        "comment",
+        "values",
+        "photo count",
+        "photo caption",
+        "photo content",
+        "file name",
+        "file content"
+      ],
+      "help": "Which part of a checklist checkpoint. Blank for a cover field."
+    },
+    {
+      "key": "rule_type",
+      "label": "Rule type",
+      "type": "enum",
+      "required": true,
+      "ui": "select",
+      "enum": [
+        "Must be filled in",
+        "Must be in English",
+        "Must equal",
+        "Must be one of",
+        "Must contain text",
+        "Must not contain text",
+        "Number greater than",
+        "Number less than",
+        "Defect type includes",
+        "At least N",
+        "At most N",
+        "Ratio at least",
+        "File name matches",
+        "AI document check",
+        "AI yes/no (flag if false)",
+        "AI photo check (flag if false)",
+        "Manual review"
+      ],
+      "actions": {
+        "Must be filled in": "is present",
+        "Must be in English": "is in English",
+        "Must equal": "equals",
+        "Must be one of": "is one of",
+        "Must contain text": "contains phrase",
+        "Must not contain text": "term must not appear",
+        "Number greater than": "number greater than",
+        "Number less than": "number less than",
+        "Defect type includes": "defect type includes",
+        "At least N": "at least N photos",
+        "At most N": "at most N photos",
+        "Ratio at least": "ratio at least",
+        "File name matches": "filename matches",
+        "AI document check": "LLM quote then match",
+        "AI yes/no (flag if false)": "LLM yes/no",
+        "AI photo check (flag if false)": "needs vision",
+        "Manual review": "manual review"
+      }
+    },
+    {
+      "key": "value",
+      "label": "Value",
+      "type": "string",
+      "required": false,
+      "ui": "combobox",
+      "suggestions": [
+        "PASS",
+        "FAIL",
+        "Pending",
+        "N/A",
+        "NOT_APPLICABLE",
+        "PASS, FAIL",
+        "PASS, FAIL, Pending",
+        "Pre-Shipment Inspection",
+        "During Production Inspection",
+        "0",
+        "1",
+        "2",
+        "3",
+        "5"
+      ],
+      "help": "For Must equal / Must be one of prefer PASS, FAIL, Pre-Shipment Inspection\u2026. Soft list; custom OK for AI questions."
+    },
+    {
+      "key": "example",
+      "label": "Example",
+      "type": "string",
+      "required": false,
+      "ui": "textarea"
+    }
+  ],
+  "export": {
+    "csv_columns": [
+      "id",
+      "row_type",
+      "section",
+      "rule",
+      "applies_when",
+      "for_each",
+      "look_at",
+      "check_part",
+      "rule_type",
+      "value",
+      "example"
+    ],
+    "sheet": "Checks",
+    "where_from": [
+      "look_at",
+      "check_part"
+    ],
+    "action_from": "rule_type"
+  }
+}

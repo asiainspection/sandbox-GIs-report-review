@@ -52,7 +52,7 @@ fields:
   report.tests_result: "tests result summary [enum|structured|now]"
   report.destinations: "shipment destination names [text|structured|now]"
   report.all_text: "all report text including templates (prefer report.inspector_text for banned-term scans) [text|text|now]"
-  report.inspector_text: "inspector remarks, comments, captions only (use for scan_absent / scan_present) [text|text|now]"
+  report.inspector_text: "inspector remarks, comments, captions only (use for scan_absent) [text|text|now]"
   report.all_captions: "all photo captions (for scan) [text|text|now]"
   report.attachment_filenames: "all attachment filenames [filename|file|now]"
   report.defect_count: "number of workmanship defects recorded [number|structured|now]"

@@ -44,7 +44,7 @@ def pricing_for_model(model: str) -> dict[str, float]:
     if model in MODEL_PRICING:
         return MODEL_PRICING[model]
     if "lite" in model.lower():
-        return MODEL_PRICING["gemini-2.5-flash-lite"]
+        return MODEL_PRICING["gemini-3.1-flash-lite"]
     return MODEL_PRICING["gemini-2.5-flash"]
 
 

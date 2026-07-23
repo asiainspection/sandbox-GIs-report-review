@@ -48,9 +48,12 @@ check: null
 
 
 ```check
-where: [report.product_label]
+where:
+  - kind: checklist
+    match: [specification]
+    field: comment
 when: null
-check: extract_bool("Does this field evidence satisfy: Confirm the report references the client's product specification (artwork, color, label, barcode, shipping mark) for eac?")
+check: null
 ```
 
 ---
@@ -84,9 +87,11 @@ check: present
 
 
 ```check
-where: [out_of_report:booking]
+where: [report.factory_address]
 when: null
-check: null
+check:
+  - present
+  - no_language(chinese)
 ```
 
 ---
@@ -121,7 +126,7 @@ check: count_at_least(1)
 ```check
 where: [report.attachment_filenames]
 when: null
-check: present
+check: null
 ```
 
 ---
@@ -139,7 +144,7 @@ check: present
 
 
 ```check
-where: [out_of_report:spec_sheet]
+where: [out_of_report:sop]
 when: null
 check: null
 ```
@@ -174,9 +179,9 @@ check: null
 
 
 ```check
-where: [report.supplier_name]
+where: [out_of_report:sop]
 when: null
-check: extract_bool("Does this field evidence satisfy: If the inspection takes place in a warehouse that does not belong to the factory or the supplier, the inspector must con?")
+check: null
 ```
 
 ---
@@ -190,7 +195,7 @@ check: extract_bool("Does this field evidence satisfy: If the inspection takes p
 
 
 ```check
-where: [out_of_report:spec_sheet]
+where: [out_of_report:sop]
 when: null
 check: null
 ```
@@ -211,7 +216,7 @@ check: null
 
 
 ```check
-where: [out_of_report:spec_sheet]
+where: [out_of_report:sop]
 when: null
 check: null
 ```
@@ -256,9 +261,12 @@ check: null
 
 
 ```check
-where: [report.all_text]
+where:
+  - kind: checklist
+    match: [product, style, construction]
+    field: comment
 when: null
-check: scan_absent("Golden Sample")
+check: null
 ```
 
 ---
@@ -291,9 +299,12 @@ check: null
 
 
 ```check
-where: [report.inspector_text]
+where:
+  - kind: checklist
+    match: [barcode]
+    field: photo_count
 when: null
-check: extract_bool("Does this field satisfy the GI requirement stated for this checkpoint?")
+check: count_at_least(2)
 ```
 
 ---
@@ -443,9 +454,12 @@ check: null
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: checklist
+    match: [color, box]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: For color/gift boxes, one picture must be taken per surface (e.g., 6 pictures for a 6-sided box); the client's artwork s?")
+check: null
 ```
 
 ---
@@ -465,9 +479,9 @@ check: extract_bool("Does this field evidence satisfy: For color/gift boxes, one
 
 
 ```check
-where: [report.defects]
+where: [report.defects_without_photo]
 when: null
-check: null
+check: equals(0)
 ```
 
 ---
@@ -510,7 +524,7 @@ check: null
 ```check
 where:
   - kind: checklist
-    match: [end, workmanship]
+    match: [workmanship]
     field: comment
 when: null
 check: null
@@ -556,10 +570,7 @@ check: null
 
 
 ```check
-where:
-  - kind: checklist
-    match: [end, workmanship]
-    field: comment
+where: [out_of_report:ip]
 when: null
 check: null
 ```
@@ -584,7 +595,7 @@ where:
     match: [product, dimensions, result]
     field: attachment_filenames
 when: null
-check: null
+check: present
 ```
 
 ---
@@ -603,8 +614,8 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
+  - kind: checklist
+    match: [memory, foam, pillow]
     field: comment
 when: null
 check: null
@@ -622,8 +633,8 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
+  - kind: checklist
+    match: [container, load, check]
     field: comment
 when: null
 check: null
@@ -641,11 +652,11 @@ check: null
 
 ```check
 where:
-  - kind: section
-    match: [checkpoints]
-    field: comment
+  - kind: checklist
+    match: [metal, detection, test]
+    field: result
 when: null
-check: null
+check: present
 ```
 
 ---
@@ -665,9 +676,12 @@ check: null
 
 
 ```check
-where: [report.all_captions]
+where:
+  - kind: checklist
+    match: [product, style, construction]
+    field: photo_count
 when: null
-check: present
+check: count_at_least(1)
 ```
 
 ---
@@ -681,9 +695,12 @@ check: present
 
 
 ```check
-where: [report.product_label]
+where:
+  - kind: checklist
+    match: [product, style, construction]
+    field: photo_count
 when: null
-check: extract_bool("Does this field evidence satisfy: The front view of the product must always be included and placed on the main page for each SKU.?")
+check: count_at_least(1)
 ```
 
 ---

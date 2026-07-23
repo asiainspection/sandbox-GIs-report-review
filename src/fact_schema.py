@@ -214,8 +214,17 @@ def resolve_selector(selector: str, facts: dict[str, Any], semantic: SemanticRep
         if field == "attachment_filenames":
             return item.attachment_filenames
         # Future processors — return sentinel so pending fields resolve to unable, not crash.
-        if field in ("attachment_content", "photo_content"):
+        if field == "attachment_content":
             return "UNPARSED"
+        if field == "photo_content":
+            # Vision loads image bytes separately; resolve to a non-blank locus marker
+            # when photos exist so requires_fields does not treat the binding as missing.
+            if int(getattr(item, "photo_count", 0) or 0) <= 0:
+                return None
+            return {
+                "photo_count": item.photo_count,
+                "captions": list(item.photo_captions or []),
+            }
         return getattr(item, field, None)
 
     if selector.startswith("custom."):
@@ -311,8 +320,15 @@ def _checklist_field_value(item: Any, field: str) -> Any:
         return item.attachment_filenames
     if field == "photo_captions":
         return item.photo_captions
-    if field in ("attachment_content", "photo_content"):
+    if field == "attachment_content":
         return "UNPARSED"
+    if field == "photo_content":
+        if int(getattr(item, "photo_count", 0) or 0) <= 0:
+            return None
+        return {
+            "photo_count": item.photo_count,
+            "captions": list(item.photo_captions or []),
+        }
     return getattr(item, field, None)
 
 
@@ -627,11 +643,17 @@ def build_evidence_payload(
     requirement: str,
     resolved: list[ResolvedField],
 ) -> str:
-    """Structured labeled evidence for LLM atom/vision prompts."""
-    lines: list[str] = []
-    req = str(requirement or "").strip()
-    if req:
-        lines.append(f"Requirement: {req}")
+    """Structured labeled evidence for LLM atom/vision prompts.
+
+    Do not put the GI Requirement line in the evidence block — models echo it as
+    ``evidence`` quotes, which then pollutes findings Original Content.
+    ``requirement`` is kept in the signature for call-site compat only.
+    """
+    _ = requirement
+    lines: list[str] = [
+        "Answer ONLY from the bound field content below.",
+        "evidence must be a short quote copied from content: (never invent a Requirement line).",
+    ]
     if not resolved:
         lines.append("(no bound fields resolved)")
         return "\n".join(lines)[:6000]

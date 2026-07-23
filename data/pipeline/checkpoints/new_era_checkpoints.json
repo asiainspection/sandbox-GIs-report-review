@@ -1,171 +1,159 @@
 {
   "meta": {
-    "name": "New Era Cap Inspection Report Review – Rules Reference",
-    "source": "data/clients/new_era/gi/rules.md",
-    "generated_at": "2026-07-17T04:40:55Z",
-    "check_blocks": 49,
-    "checkpoint_count": 49
+    "name": "new_era from Excel",
+    "checkpoint_count": 49,
+    "source": "data/clients/new_era/gi_authoring_new_era.xlsx"
   },
   "checkpoints": [
     {
       "id": "1_1_1",
-      "section": "general_report_setup",
-      "requirement": "Production status (Finished % / Packed %) — report header / PO & Product details — Verify the inspection was handled per the finished/packed thresholds: 100% finished & ≥80% packed → proceed as standard PSI; 60–80% packed → proceed but remark it as a DUPRO inspection and state packed qty/ratio; ≤59% packed → escalate to the quality team before proceeding.",
+      "section": "rules",
+      "requirement": "Packed quantity — For a PSI, goods must be at least 80% packed (100% finished & >=80% packed to proceed as standard PSI).",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check the inspection type/remark against the actual packed quantity and the overall result",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
       "source_rule_id": "1.1.1",
-      "source_lines": {
-        "start": 34,
-        "end": 49
-      },
-      "context": "FULL REPORT — cross-check the inspection type/remark against the actual packed quantity and the overall result",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.inspector_text"
+          "product._first.real_packed_quantity",
+          "product._first.ordered_quantity"
         ],
-        "when": null,
-        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
+        "when": {
+          "op": "_macro_ref",
+          "check": "equals(Pre-Shipment Inspection)",
+          "where": [
+            "report.inspection_type"
+          ]
+        },
+        "check": "ratio_at_least(0.8)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "1_1_2",
-      "section": "general_report_setup",
-      "requirement": "Warehouse location note (if applicable) — If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.",
+      "section": "rules",
+      "requirement": "Inspector remark — Goods split across two nearby warehouses (3-4 km) is acceptable and needs no escalation.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "1.1.2",
-      "source_lines": {
-        "start": 50,
-        "end": 65
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.?\")"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "1_2_1",
-      "section": "general_report_setup",
-      "requirement": "Inspector's remark — first page of the report — The remark must always state the finished quantity, packed quantity, and packed ratio, regardless of pass/fail result.",
+      "section": "rules",
+      "requirement": "Inspector remark — Inspector remark must state finished qty, packed qty, and packed ratio (regardless of result).",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "1.2.1",
-      "source_lines": {
-        "start": 70,
-        "end": 85
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
-          "product._first.real_packed_quantity"
+          "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": "extract_bool(\"Does this remark state the finished quantity, packed quantity, and packed ratio?\")",
+        "row_type": "Rule"
       }
     },
     {
       "id": "1_2_2",
-      "section": "general_report_setup",
-      "requirement": "Inspector's remark — re-inspection notice — If the inspection is a re-inspection, the inspector must add a remark referencing the original report number.",
+      "section": "rules",
+      "requirement": "Inspector remark — If a re-inspection, the remark must reference the original report number.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "1.2.2",
-      "source_lines": {
-        "start": 86,
-        "end": 101
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "1_2_3",
-      "section": "general_report_setup",
-      "requirement": "Inspector's remark — out-of-tolerance findings — Since the measurement/product-dimensions checkpoint is always recorded as N/A, any out-of-tolerance measurement finding must instead be flagged via a remark on the report's first page.",
+      "section": "rules",
+      "requirement": "Inspector remark — Any out-of-tolerance measurement finding must be flagged in the first-page remark (measurement checkpoint is always N/A).",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against the (always-N/A) measurement section and the Measurement Defect AQL Table attachment",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
       "source_rule_id": "1.2.3",
-      "source_lines": {
-        "start": 102,
-        "end": 117
-      },
-      "context": "FULL REPORT — cross-check against the (always-N/A) measurement section and the Measurement Defect AQL Table attachment",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "2_1_1",
-      "section": "documents_recorded_in_the_report",
-      "requirement": "Supporting documents (PO, spec sheets, measurement sheets, packing list, factory address/contact) — Verify these documents were provided by the factory on-site. If any is missing, this must be remarked in the report.",
+      "section": "rules",
+      "requirement": "Spec sheet — Mandatory pre-inspection docs (PO, spec, measurement sheet, packing list, factory address) provided on-site; if missing, remark it.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "2.1.1",
-      "source_lines": {
-        "start": 124,
-        "end": 139
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "out_of_report:spec_sheet"
         ],
         "when": null,
-        "check": null
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "2_1_2",
-      "section": "documents_recorded_in_the_report",
-      "requirement": "Advice List / Audit Plan — The AQL and sample size used in the report must match what is specified in the Advice List for that specific booking; check the item breakdown and quantity against the list.",
+      "section": "rules",
+      "requirement": "Booking — AQL and sample size must match the Advice List for this booking.",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against Section 8 (AQL / AOQL Summary)",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
       "source_rule_id": "2.1.2",
-      "source_lines": {
-        "start": 140,
-        "end": 155
-      },
-      "context": "FULL REPORT — cross-check against Section 8 (AQL / AOQL Summary)",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "out_of_report:booking"
         ],
         "when": null,
-        "check": null
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "2_2_1",
-      "section": "documents_recorded_in_the_report",
-      "requirement": "Tests checklist — Approval sample comparison — Verify the approval sample was available on-site and identified via signature/seal/comparison to the booking picture/special marking. If not available, the inspection must proceed with a remark added.",
+      "section": "rules",
+      "requirement": "Approval sample comparison photo count — Approval sample comparison must be done with supporting photos.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "2.2.1",
-      "source_lines": {
-        "start": 160,
-        "end": 178
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
@@ -180,22 +168,20 @@
           }
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": "count_at_least(1)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_1_1",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "Tests & checkpoints — Random Carton Selection — Cartons/sampling size must have been selected fully randomly per QIMA's standard process; the checkpoint result must read PASSED if random selection was possible.",
+      "section": "rules",
+      "requirement": "Random carton selection result — Random carton selection checkpoint must read PASSED.",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.1.1",
-      "source_lines": {
-        "start": 185,
-        "end": 203
-      },
-      "context": "SECTION",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
@@ -209,379 +195,371 @@
           }
         ],
         "when": null,
-        "check": null
+        "check": "equals(PASSED)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_1",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "Material Item (MI) selection — A maximum of 20 MI must be checked per Material Description (MD); if workmanship sample size is 750 or 800 pcs, a minimum of 25 MI must be covered.",
+      "section": "rules",
+      "requirement": "Booking — MI selection count must match the Recap Quotation for the workmanship sample size.",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.1",
-      "source_lines": {
-        "start": 208,
-        "end": 223
-      },
-      "context": "SECTION",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.defect_count"
+          "out_of_report:booking"
         ],
         "when": null,
-        "check": "present"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_2",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "PO selection — Regardless of the total number of POs, only the 8 POs with the largest quantity should be selected for regular inspections; if workmanship sample size is 750 or 800 pcs, a minimum of 14 POs must be selected.",
+      "section": "rules",
+      "requirement": "Booking — Only the 8 largest-qty POs selected (14 if SS is 750/800 pcs).",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.2",
-      "source_lines": {
-        "start": 224,
-        "end": 239
-      },
-      "context": "SECTION",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.defect_count"
+          "out_of_report:booking"
         ],
         "when": null,
-        "check": "present"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_3",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "Recap Quotation compliance (Workmanship SS ↔ MI / PO / Shape / MD) — Cross-check the selection against the Recap Quotation table:",
+      "section": "rules",
+      "requirement": "Booking — Selection must match the Recap Quotation table (SS -> MI/PO/Shapes/MD).",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.3",
-      "source_lines": {
-        "start": 240,
-        "end": 264
-      },
-      "context": "FULL REPORT",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.defect_count"
+          "out_of_report:booking"
         ],
         "when": null,
-        "check": "present"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_4",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "PO selection — NFL program — If the Advice List identifies an \"NFL\" program, all 8 selected POs must come from the NFL PO list.",
+      "section": "rules",
+      "requirement": "Booking — If Advice List flags NFL program, all 8 POs must come from the NFL PO list.",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.4",
-      "source_lines": {
-        "start": 265,
-        "end": 280
-      },
-      "context": "SECTION",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.inspector_text"
+          "out_of_report:booking"
         ],
         "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: If the Advice List identifies an 'NFL' program, all 8 selected POs must come from the NFL PO list.?\")"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_5",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "Client-specified PO priority — If New Era Cap explicitly asks the factory to prioritize specific POs, the report must clearly remark that this instruction was followed.",
+      "section": "rules",
+      "requirement": "Inspector remark — If client asked to prioritise specific POs, the remark must state the instruction was followed.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.5",
-      "source_lines": {
-        "start": 281,
-        "end": 296
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
-          "report.factory_name"
+          "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
       "id": "3_2_6",
-      "section": "sampling_po_mi_carton_selection",
-      "requirement": "Garment color/artwork selection — When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.",
+      "section": "rules",
+      "requirement": "Spec sheet — When a garment has >6 colors/artworks, the 6 selected must cover all product types.",
       "severity": "BLOCKING",
-      "scope_type": "SECTION",
+      "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "3.2.6",
-      "source_lines": {
-        "start": 297,
-        "end": 312
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.?\")"
-      }
-    },
-    {
-      "id": "4_1_1",
-      "section": "packaging",
-      "requirement": "Material Item Number (MI) vs. carton sticker — The MI number recorded in the defect table must match the \"Material\" field on the carton box sticker. Note that the MI number is not the official product style number.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "4.1.1",
-      "source_lines": {
-        "start": 319,
-        "end": 334
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "4_2_1",
-      "section": "packaging",
-      "requirement": "Inspector's remark — package deformation — If a workmanship defect is found, the inspector must write down any relevant issue regarding product deformation caused by the packaging (e.g. folding issue). This must not appear elsewhere in the report if no workmanship defect was found.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "4.2.1",
-      "source_lines": {
-        "start": 339,
-        "end": 354
-      },
+      "source_lines": {},
       "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_text"
-        ],
-        "when": null,
-        "check": "scan_absent(\"Golden Sample\")"
-      }
-    },
-    {
-      "id": "5_1_1",
-      "section": "workmanship",
-      "requirement": "Defects checklist used — Cap items must be graded against the Quality Assurance Manual (Rev. 9.1) defect list; garment items must be graded against the NEC Defect Classification List – Apparel.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "5.1.1",
-      "source_lines": {
-        "start": 361,
-        "end": 376
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_1_2",
-      "section": "workmanship",
-      "requirement": "Cap defect severity terminology — For cap products, only two defect levels exist — \"Critical\" and \"Non-Critical\" — not Major/Minor as used for garments.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "5.1.2",
-      "source_lines": {
-        "start": 377,
-        "end": 392
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: For cap products, only two defect levels exist — 'Critical' and 'Non-Critical' — not Major/Minor as used for garments.?\")"
-      }
-    },
-    {
-      "id": "5_1_3",
-      "section": "workmanship",
-      "requirement": "Circumference out-of-tolerance classification — Any out-of-tolerance circumference finding on a cap must be recorded as a CRITICAL defect in the AQL/defect table, not only noted as a measurement footnote.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against Section 6 (Tests and Measurements)",
-      "source_rule_id": "5.1.3",
-      "source_lines": {
-        "start": 393,
-        "end": 408
-      },
-      "context": "FULL REPORT — cross-check against Section 6 (Tests and Measurements)",
-      "check_block": {
-        "where": [
-          "out_of_report:ip"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "5_1_4",
-      "section": "workmanship",
-      "requirement": "Label centering (garment/headwear labels) — A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "5.1.4",
-      "source_lines": {
-        "start": 409,
-        "end": 424
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.defects"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached?\")"
-      }
-    },
-    {
-      "id": "5_1_5",
-      "section": "workmanship",
-      "requirement": "Recurring defect on 20+ pieces — If the same/similar defect is found on 20 or more pieces of bulk production, the back office/SIC must be informed to check with the client whether it should be added as a distinct AQL line item. If no feedback is received, the defect must still be kept in the AQL table as usual (not omitted).",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "5.1.5",
-      "source_lines": {
-        "start": 425,
-        "end": 440
-      },
-      "context": "SECTION",
       "check_block": {
         "where": [
           "out_of_report:spec_sheet"
         ],
         "when": null,
-        "check": null
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
-      "id": "5_2_1",
-      "section": "workmanship",
-      "requirement": "Workmanship section vs. Measurement Defect AQL Table attachment — The total Critical/Major/Minor (or Critical/Non-Critical) defect counts shown under \"Workmanship\" in the report body must exactly equal the totals shown in the attached Measurement Defect AQL Table Excel file.",
+      "id": "4_1_1",
+      "section": "rules",
+      "requirement": "Defects — MI number in the defect table must match the Material field on the carton sticker.",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
+      "scope_type": "QUESTION",
       "scope_detail": "",
-      "source_rule_id": "5.2.1",
-      "source_lines": {
-        "start": 445,
-        "end": 460
-      },
-      "context": "FULL REPORT",
+      "source_rule_id": "4.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           "report.defects"
         ],
         "when": null,
-        "check": null
+        "check": null,
+        "row_type": "Rule"
       }
     },
     {
-      "id": "5_2_2",
-      "section": "workmanship",
-      "requirement": "Excel defect breakdown — PO/MI/silhouette detail — The Excel defect breakdown must always include the PO number inspected, units inspected per PO, the cap silhouette (e.g. 920, 940, 5950), and the MI style number for every row.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "5.2.2",
-      "source_lines": {
-        "start": 461,
-        "end": 476
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.po_reference"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "6_1_1",
-      "section": "tests_and_measurements",
-      "requirement": "Weight Check (full garment) — Result must always be recorded as N/A.",
+      "id": "4_2_1",
+      "section": "rules",
+      "requirement": "Inspector remark — If no workmanship defect is found, no package-deformation remark (e.g. 'Folding Issue') should appear.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
-      "source_rule_id": "6.1.1",
-      "source_lines": {
-        "start": 483,
-        "end": 498
-      },
+      "source_rule_id": "4.2.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.global_remark"
+        ],
+        "when": {
+          "op": "_macro_ref",
+          "check": "equals(0)",
+          "where": [
+            "report.defect_count"
+          ]
+        },
+        "check": "scan_absent(\"Folding Issue\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_1_1",
+      "section": "rules",
+      "requirement": "Defects — Caps graded per QA Manual (Rev 9.1); garments per NEC Apparel defect list.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_1_2",
+      "section": "rules",
+      "requirement": "Full report text — Cap defect severity must use 'Critical'/'Non-Critical', not Major/Minor.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.1.2",
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "report.inspector_text"
         ],
         "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Result must always be recorded as N/A.?\")"
+        "check": "extract_bool(\"Does the defect table use 'Critical' and 'Non Critical' as severity labels, not 'Major' and 'Minor'?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_1_3",
+      "section": "rules",
+      "requirement": "Defects — Out-of-tolerance circumference on a cap must be a CRITICAL defect in the AQL table.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.1.3",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_1_4",
+      "section": "rules",
+      "requirement": "Defects — A label >2mm off-center must be a MAJOR defect with clear photos.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.1.4",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_1_5",
+      "section": "rules",
+      "requirement": "SOP — If a defect recurs on 20+ pieces, inform back office/SIC; keep it in the AQL table regardless.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.1.5",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:sop"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_2_1",
+      "section": "rules",
+      "requirement": "Defect count — Defect counts under Workmanship must equal the totals in the attached Measurement Defect AQL Table.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.2.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defect_count"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "5_2_2",
+      "section": "rules",
+      "requirement": "Defect Breakdown — Excel defect breakdown must include PO#, units/PO, silhouette, and MI style for every row.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "5.2.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defect",
+              "breakdown"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_1_1",
+      "section": "rules",
+      "requirement": "Weight Check result — Weight Check must never carry a pass/fail grade (result stays N/A or blank).",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "weight",
+              "check"
+            ],
+            "field": "result"
+          }
+        ],
+        "when": null,
+        "check": "in_set(N/A, NO_RESULT)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "6_1_2",
-      "section": "tests_and_measurements",
-      "requirement": "Fabric Weight Test (GSM) — Result must always be recorded as N/A.",
+      "section": "rules",
+      "requirement": "Fabric Weight Test result — Fabric Weight Test (GSM) must never carry a pass/fail grade (result stays N/A or blank).",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "6.1.2",
-      "source_lines": {
-        "start": 499,
-        "end": 514
-      },
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
-          "checklist.fabric_weight_test_gsm.result"
+          {
+            "kind": "checklist",
+            "match": [
+              "fabric",
+              "weight",
+              "test"
+            ],
+            "field": "result"
+          }
         ],
         "when": null,
-        "check": "equals(NOT_APPLICABLE)"
+        "check": "in_set(N/A, NO_RESULT)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "6_1_3",
-      "section": "tests_and_measurements",
-      "requirement": "Product Dimensions / Measurement checklist (cap and garment) — The measurement checkpoint itself must always be recorded as N/A; any out-of-tolerance finding is instead flagged only via the first-page remark and the Measurement Defect AQL Table.",
+      "section": "rules",
+      "requirement": "Product Dimensions Result result — Product Dimensions measurement must never carry a pass/fail grade (result stays N/A or blank).",
       "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against Section 1 (Inspector's Remarks) and Section 5 (Workmanship)",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
       "source_rule_id": "6.1.3",
-      "source_lines": {
-        "start": 515,
-        "end": 533
-      },
-      "context": "FULL REPORT — cross-check against Section 1 (Inspector's Remarks) and Section 5 (Workmanship)",
+      "source_lines": {},
+      "context": "QUESTION",
       "check_block": {
         "where": [
           {
@@ -595,469 +573,535 @@
           }
         ],
         "when": null,
-        "check": "extract_bool(\"Does the bound remark/comment satisfy the GI requirement?\")"
+        "check": "in_set(N/A, NO_RESULT)",
+        "row_type": "Rule"
       }
     },
     {
       "id": "6_2_1",
-      "section": "tests_and_measurements",
-      "requirement": "59FIFTY circumference tolerance — For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), not rounded.",
+      "section": "rules",
+      "requirement": "Spec sheet — 59FIFTY caps use special +/-0.3cm circumference tolerance; crown squared off.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
       "source_rule_id": "6.2.1",
-      "source_lines": {
-        "start": 538,
-        "end": 553
-      },
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:spec_sheet"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_2_2",
+      "section": "rules",
+      "requirement": "Defect Breakdown — Measurement Defect AQL Table header fields (QIMA ref, shape, MI, PO, SS) must all be populated.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.2.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defect",
+              "breakdown"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_2_3",
+      "section": "rules",
+      "requirement": "Booking — Cap measurement sampling is always 60 pcs per man-day.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.2.3",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_2_4",
+      "section": "rules",
+      "requirement": "Product Dimensions Result comment — Out-of-tolerance garment measurement must be N/A with comment 'Subject to Client's Evaluation'.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.2.4",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "product",
+              "dimensions",
+              "result"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_3_1",
+      "section": "rules",
+      "requirement": "Moisture Test for Cap comment — Cap moisture test on fixed 12 pcs (3x4 MI, 3+ styles); results in the attached Excel table.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.3.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "moisture",
+              "test",
+              "for",
+              "cap"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "6_4_1",
+      "section": "rules",
+      "requirement": "Full report text — Carton Drop Test must NOT be performed for New Era.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "6.4.1",
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "report.inspector_text"
         ],
         "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), no?\")"
+        "check": "scan_absent(\"Carton Drop Test\")",
+        "row_type": "Rule"
       }
     },
     {
-      "id": "6_2_2",
-      "section": "tests_and_measurements",
-      "requirement": "Measurement Defect AQL Table — header fields — The inspector must use the New Era Cap LLC_Measurement Defect AQL Table template and populate all required header fields: QIMA order ref., cap shape (if applicable), Material Item # (MI), PO, and sample size (measurement).",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "6.2.2",
-      "source_lines": {
-        "start": 554,
-        "end": 569
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "6_2_3",
-      "section": "tests_and_measurements",
-      "requirement": "Cap measurement sample size — Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "6.2.3",
-      "source_lines": {
-        "start": 570,
-        "end": 586
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each?\")"
-      }
-    },
-    {
-      "id": "6_2_4",
-      "section": "tests_and_measurements",
-      "requirement": "Garment measurement out-of-tolerance comment — When a garment measurement is out of tolerance, the result must be N/A with the comment \"Subject to Client's Evaluation.\"",
+      "id": "6_4_2",
+      "section": "rules",
+      "requirement": "Wet Test comment — Wet & Dry Rub Test gray scale grading must be recorded in the comment and meet the acceptance thresholds.",
       "severity": "BLOCKING",
       "scope_type": "QUESTION",
       "scope_detail": "",
-      "source_rule_id": "6.2.4",
-      "source_lines": {
-        "start": 587,
-        "end": 602
-      },
+      "source_rule_id": "6.4.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "wet",
+              "test"
+            ],
+            "field": "comment"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_1_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — A group picture of all inspected SKUs must appear on the report front page.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Is there a group picture showing all inspected SKUs/items together?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_1_2",
+      "section": "rules",
+      "requirement": "Defect Breakdown photo count — A screenshot of the Excel defect breakdown must be embedded in the report body.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.1.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defect",
+              "breakdown"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_2_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Outer carton photos: Selected Carton, Shipping Mark, Carton Label, Barcode Check.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.2.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include Selected Carton, Shipping Mark, Carton Label, and Barcode Check?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_3_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Inner carton photos: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Product View.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.3.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include inner Selected Carton, Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, and All Product View?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_4_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Product photos: Front View, Back View, Main Embroidery, Embroidery Logo, Reference Sample vs Product.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.4.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include Front View, Back View, Main Embroidery, Embroidery Logo, and Reference Sample vs Product comparison?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_5_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Spec/label photos: Compared with Spec, Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracking Label.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.5.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include Compared with Spec, Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, and Tracking Label?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_6_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Checking photos: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Check.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.6.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, and Metal Detection Check?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_7_1",
+      "section": "rules",
+      "requirement": "Mandatory pictures photo content — Moisture checking photos: Front Panel (near Emb), Visor (Upper), Visor (Lower), Sweatband.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.7.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
+          }
+        ],
+        "when": null,
+        "check": "vision(\"Do the photos include Front Panel (near Emb), Visor Upper, Visor Lower, and Sweatband positions?\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "7_8_1",
+      "section": "rules",
+      "requirement": "Defects photo count — Every defect found must have a clear close-up photo.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.8.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defects"
+            ],
+            "field": "photo_count"
+          }
+        ],
+        "when": null,
+        "check": "count_at_least(1)",
+        "row_type": "Rule",
+        "for_each": "each defect"
+      }
+    },
+    {
+      "id": "7_9_1",
+      "section": "rules",
+      "requirement": "Defect Breakdown file name — The completed Measurement Defect AQL Table Excel file must be attached.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "7.9.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "defect",
+              "breakdown"
+            ],
+            "field": "attachment_filenames"
+          }
+        ],
+        "when": null,
+        "check": "filename_matches(\"*Measurement*Defect*AQL*Table*.xls\")",
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "8_1_1",
+      "section": "rules",
+      "requirement": "Booking — AQL/sampling level must match the product category (cap: Maj 1.5; apparel: Maj 2.5).",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "8.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "8_1_2",
+      "section": "rules",
+      "requirement": "Booking — If the Advice List specifies a different sample size/AQL, the Advice List value takes precedence.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "8.1.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "out_of_report:booking"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "9_1_1",
+      "section": "rules",
+      "requirement": "Available Quantity Check result — Quantity section pass/fail decision (>=80% packed) must be justified; unpacked qty stated when failing.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "9.1.1",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          {
+            "kind": "checklist",
+            "match": [
+              "available",
+              "quantity",
+              "check"
+            ],
+            "field": "result"
+          }
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "9_1_2",
+      "section": "rules",
+      "requirement": "Defects — Workmanship passes only if defects are within the AQL acceptance point; any Critical defect triggers FAIL.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "9.1.2",
+      "source_lines": {},
+      "context": "QUESTION",
+      "check_block": {
+        "where": [
+          "report.defects"
+        ],
+        "when": null,
+        "check": null,
+        "row_type": "Rule"
+      }
+    },
+    {
+      "id": "9_1_3",
+      "section": "rules",
+      "requirement": "Inspector remark — No samples collected; defective units repaired/replaced on-site.",
+      "severity": "BLOCKING",
+      "scope_type": "QUESTION",
+      "scope_detail": "",
+      "source_rule_id": "9.1.3",
+      "source_lines": {},
       "context": "QUESTION",
       "check_block": {
         "where": [
           "report.global_remark"
         ],
         "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: When a garment measurement is out of tolerance, the result must be N/A with the comment 'Subject to Client's Evaluation.?\")"
-      }
-    },
-    {
-      "id": "6_3_1",
-      "section": "tests_and_measurements",
-      "requirement": "Moisture Test for Cap — Test must be performed on a fixed 12 pcs (3 pcs × 4 MI styles, covering at least 3 cap styles, e.g. 5950/940/920); results must be updated in the Measurement Defect AQL Table and attached. For knitted/fully-fashioned headwear, only the centre and hem/fold positions need to be checked and recorded.",
-      "severity": "BLOCKING",
-      "scope_type": "SECTION",
-      "scope_detail": "",
-      "source_rule_id": "6.3.1",
-      "source_lines": {
-        "start": 607,
-        "end": 622
-      },
-      "context": "SECTION",
-      "check_block": {
-        "where": [
-          "out_of_report:ip"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "6_4_1",
-      "section": "tests_and_measurements",
-      "requirement": "Carton Drop Test — Must NOT be performed for New Era Cap inspections.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "6.4.1",
-      "source_lines": {
-        "start": 627,
-        "end": 642
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Must NOT be performed for New Era Cap inspections.?\")"
-      }
-    },
-    {
-      "id": "6_4_2",
-      "section": "tests_and_measurements",
-      "requirement": "Wet & Dry Rub Test — Gray scale grading must be recorded in the comments. Acceptance: general colors Dry ≥4.0 / Wet ≥3.0; dark shades/indigo/pigment-dye/garment-dye/flannel/pile/denim fabric Dry 3–4 / Wet 2–3; not applicable to white/cream/ivory colors. Any result below threshold = FAIL. No test photo is required unless the test FAILED.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "6.4.2",
-      "source_lines": {
-        "start": 643,
-        "end": 658
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "7_1_1",
-      "section": "report_photos",
-      "requirement": "Report front page — A group picture of all SKUs/items inspected must appear on the report's front page.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.1.1",
-      "source_lines": {
-        "start": 665,
-        "end": 680
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.product_label"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: A group picture of all SKUs/items inspected must appear on the report's front page.?\")"
-      }
-    },
-    {
-      "id": "7_1_2",
-      "section": "report_photos",
-      "requirement": "Defect Breakdown section — A screenshot of the Excel defect breakdown table must be embedded in the report body (in addition to the file attachment).",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.1.2",
-      "source_lines": {
-        "start": 681,
-        "end": 696
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "7_2_1",
-      "section": "report_photos",
-      "requirement": "Photos — Outer Carton — Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.2.1",
-      "source_lines": {
-        "start": 701,
-        "end": 716
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.?\")"
-      }
-    },
-    {
-      "id": "7_3_1",
-      "section": "report_photos",
-      "requirement": "Photos — Inner Carton — Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Product View.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.3.1",
-      "source_lines": {
-        "start": 721,
-        "end": 736
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Pro?\")"
-      }
-    },
-    {
-      "id": "7_4_1",
-      "section": "report_photos",
-      "requirement": "Photos — Products — Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (comparison).",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.4.1",
-      "source_lines": {
-        "start": 741,
-        "end": 756
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (com?\")"
-      }
-    },
-    {
-      "id": "7_5_1",
-      "section": "report_photos",
-      "requirement": "Photos — Spec & Label — Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracking Label.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.5.1",
-      "source_lines": {
-        "start": 761,
-        "end": 776
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracki?\")"
-      }
-    },
-    {
-      "id": "7_6_1",
-      "section": "report_photos",
-      "requirement": "Photos — Checking — Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Check.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.6.1",
-      "source_lines": {
-        "start": 781,
-        "end": 796
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Chec?\")"
-      }
-    },
-    {
-      "id": "7_7_1",
-      "section": "report_photos",
-      "requirement": "Photos — Moisture Checking (cap) — Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.7.1",
-      "source_lines": {
-        "start": 801,
-        "end": 816
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.all_captions"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.?\")"
-      }
-    },
-    {
-      "id": "7_8_1",
-      "section": "report_photos",
-      "requirement": "Defect checklist photos — Every defect found must have a clear close-up photo with a written explanation of where the defect is located on the garment/headwear.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "7.8.1",
-      "source_lines": {
-        "start": 821,
-        "end": 836
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
-      }
-    },
-    {
-      "id": "7_9_1",
-      "section": "report_photos",
-      "requirement": "Attachments — Defect Breakdown — The completed Measurement Defect AQL Table Excel file must be attached to the report, using the current template version.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against Section 5.2 (defect count match)",
-      "source_rule_id": "7.9.1",
-      "source_lines": {
-        "start": 841,
-        "end": 856
-      },
-      "context": "FULL REPORT — cross-check against Section 5.2 (defect count match)",
-      "check_block": {
-        "where": [
-          "out_of_report:ip"
-        ],
-        "when": null,
-        "check": null
-      }
-    },
-    {
-      "id": "8_1_1",
-      "section": "aql_aoql_summary",
-      "requirement": "Inspection Standards box (Workmanship & Measurement sampling/AQL) — Verify the AQL/sampling level used matches the product category:",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "cross-check against the Advice List (Section 2.1.2)",
-      "source_rule_id": "8.1.1",
-      "source_lines": {
-        "start": 861,
-        "end": 883
-      },
-      "context": "FULL REPORT — cross-check against the Advice List (Section 2.1.2)",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "present"
-      }
-    },
-    {
-      "id": "8_1_2",
-      "section": "aql_aoql_summary",
-      "requirement": "Advice List override — If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes precedence.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "",
-      "source_rule_id": "8.1.2",
-      "source_lines": {
-        "start": 884,
-        "end": 899
-      },
-      "context": "FULL REPORT",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field evidence satisfy: If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes pr?\")"
-      }
-    },
-    {
-      "id": "9_1_1",
-      "section": "pass_fail_decision_logic",
-      "requirement": "Quantity section result — Quantity section must PASS if goods are 100% finished and ≥80% packed. It must FAIL if the packed quantity/ratio does not meet the required threshold (per Section 1.1.1), with the unpacked quantity clearly indicated.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "",
-      "source_rule_id": "9.1.1",
-      "source_lines": {
-        "start": 904,
-        "end": 919
-      },
-      "context": "FULL REPORT",
-      "check_block": {
-        "where": [
-          "report.inspector_text"
-        ],
-        "when": null,
-        "check": "extract_bool(\"Does this field satisfy the GI requirement stated for this checkpoint?\")"
-      }
-    },
-    {
-      "id": "9_1_2",
-      "section": "pass_fail_decision_logic",
-      "requirement": "Overall Workmanship result — Overall Workmanship result must be PASS only if total defects found (per severity) are less than or equal to the acceptance point defined by the AQL table for the sample size used; any Critical defect (AQL 0) triggers FAIL.",
-      "severity": "BLOCKING",
-      "scope_type": "FULL REPORT",
-      "scope_detail": "",
-      "source_rule_id": "9.1.2",
-      "source_lines": {
-        "start": 920,
-        "end": 935
-      },
-      "context": "FULL REPORT",
-      "check_block": {
-        "where": [
-          "report.overall_result"
-        ],
-        "when": null,
-        "check": "in_set(PASS, FAIL, PENDING)"
-      }
-    },
-    {
-      "id": "9_1_3",
-      "section": "pass_fail_decision_logic",
-      "requirement": "Sample collection — No samples should be collected from the inspection. All defective units must be repaired or replaced on-site. No defective product should ever be knowingly shipped to the client.",
-      "severity": "BLOCKING",
-      "scope_type": "QUESTION",
-      "scope_detail": "",
-      "source_rule_id": "9.1.3",
-      "source_lines": {
-        "start": 936,
-        "end": 961
-      },
-      "context": "QUESTION",
-      "check_block": {
-        "where": [
-          "report.defect_count"
-        ],
-        "when": null,
-        "check": "present"
+        "check": null,
+        "row_type": "Rule"
       }
     }
   ]

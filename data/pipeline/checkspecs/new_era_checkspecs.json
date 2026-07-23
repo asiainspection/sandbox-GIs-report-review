@@ -1,72 +1,55 @@
 {
-  "meta": {
-    "source": "/Users/williambrun/Documents/test_GI_reports/data/pipeline/checkpoints/new_era_checkpoints.json",
-    "checkpoint_count": 49,
-    "source_hash": "3cb37cc6e0d670f9",
-    "compiler": "2026-07-17.grounded-where",
-    "sample_report": "/Users/williambrun/Documents/test_GI_reports/data/clients/new_era/corrected/Q2616171227.json"
-  },
+  "meta": {},
   "specs": {
     "1_1_1": {
       "checkpoint_id": "1_1_1",
       "severity": "BLOCKING",
-      "when": null,
+      "when": {
+        "op": "equals",
+        "ground": "json",
+        "selector": "report.inspection_type",
+        "expected": "Pre-Shipment Inspection"
+      },
       "then": {
-        "op": "atom",
-        "id": "1_1_1.check_does_this_field_satisfy_the_gi_requirement_state",
-        "question": "Does this field satisfy the GI requirement stated for this checkpoint?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
+        "op": "ratio_at_least",
+        "numerator": "product._first.real_packed_quantity",
+        "denominator": "product._first.ordered_quantity",
+        "min": 0.8,
+        "ground": "json"
       },
       "unless": null,
-      "requirement": "Production status (Finished % / Packed %) — report header / PO & Product details — Verify the inspection was handled per the finished/packed thresholds: 100% finished & ≥80% packed → proceed as standard PSI; 60–80% packed → proceed but remark it as a DUPRO inspection and state packed qty/ratio; ≤59% packed → escalate to the quality team before proceeding.",
+      "requirement": "Packed quantity — For a PSI, goods must be at least 80% packed (100% finished & >=80% packed to proceed as standard PSI).",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
+      "tier": "deterministic",
       "data_source": "report_content",
       "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.inspector_text"
+          "selector": "product._first.real_packed_quantity"
+        },
+        {
+          "type": "selector",
+          "selector": "product._first.ordered_quantity"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "number",
+      "processor": "structured"
     },
     "1_1_2": {
       "checkpoint_id": "1_1_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "1_1_2.check_does_this_field_evidence_satisfy_if_goods_are_sp",
-        "question": "Does this field evidence satisfy: If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.global_remark"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Warehouse location note (if applicable) — If goods are split across two warehouses that are 3–4 km apart, this is acceptable and does not require escalation.",
+      "requirement": "Inspector remark — Goods split across two nearby warehouses (3-4 km) is acceptable and needs no escalation.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
@@ -83,43 +66,8 @@
       "when": null,
       "then": {
         "op": "atom",
-        "id": "1_2_1.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "product._first.real_packed_quantity"
-          }
-        ]
-      },
-      "unless": null,
-      "requirement": "Inspector's remark — first page of the report — The remark must always state the finished quantity, packed quantity, and packed ratio, regardless of pass/fail result.",
-      "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
-      "where_bindings": [
-        {
-          "type": "selector",
-          "selector": "product._first.real_packed_quantity"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
-    },
-    "1_2_2": {
-      "checkpoint_id": "1_2_2",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": {
-        "op": "atom",
-        "id": "1_2_2.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
+        "id": "1_2_1.check_does_this_remark_state_the_finished_quantity_pac",
+        "question": "Does this remark state the finished quantity, packed quantity, and packed ratio?",
         "role": "required_true",
         "value_type": "boolean",
         "ground": "atom",
@@ -131,7 +79,7 @@
         ]
       },
       "unless": null,
-      "requirement": "Inspector's remark — re-inspection notice — If the inspection is a re-inspection, the inspector must add a remark referencing the original report number.",
+      "requirement": "Inspector remark — Inspector remark must state finished qty, packed qty, and packed ratio (regardless of result).",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
@@ -147,31 +95,40 @@
       "modality": "text",
       "processor": "text"
     },
+    "1_2_2": {
+      "checkpoint_id": "1_2_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Inspector remark — If a re-inspection, the remark must reference the original report number.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.global_remark"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
     "1_2_3": {
       "checkpoint_id": "1_2_3",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "1_2_3.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.global_remark"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Inspector's remark — out-of-tolerance findings — Since the measurement/product-dimensions checkpoint is always recorded as N/A, any out-of-tolerance measurement finding must instead be flagged via a remark on the report's first page.",
+      "requirement": "Inspector remark — Any out-of-tolerance measurement finding must be flagged in the first-page remark (measurement checkpoint is always N/A).",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
@@ -188,7 +145,7 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Supporting documents (PO, spec sheets, measurement sheets, packing list, factory address/contact) — Verify these documents were provided by the factory on-site. If any is missing, this must be remarked in the report.",
+      "requirement": "Spec sheet — Mandatory pre-inspection docs (PO, spec, measurement sheet, packing list, factory address) provided on-site; if missing, remark it.",
       "extract": [],
       "source": "advisory",
       "tier": "deterministic",
@@ -210,7 +167,7 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Advice List / Audit Plan — The AQL and sample size used in the report must match what is specified in the Advice List for that specific booking; check the item breakdown and quantity against the list.",
+      "requirement": "Booking — AQL and sample size must match the Advice List for this booking.",
       "extract": [],
       "source": "advisory",
       "tier": "deterministic",
@@ -231,30 +188,25 @@
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "2_2_1.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "intent",
-            "kind": "checklist",
-            "match": [
-              "approval",
-              "sample",
-              "comparison"
-            ],
-            "field": "photo_count"
-          }
-        ]
+        "op": "count_at_least",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "approval",
+            "sample",
+            "comparison"
+          ],
+          "field": "photo_count"
+        },
+        "min": 1
       },
       "unless": null,
-      "requirement": "Tests checklist — Approval sample comparison — Verify the approval sample was available on-site and identified via signature/seal/comparison to the booking picture/special marking. If not available, the inspection must proceed with a remark added.",
+      "requirement": "Approval sample comparison photo count — Approval sample comparison must be done with supporting photos.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
+      "tier": "deterministic",
       "data_source": "report_content",
       "status_class": "checkable",
       "where_bindings": [
@@ -277,14 +229,28 @@
       "checkpoint_id": "3_1_1",
       "severity": "BLOCKING",
       "when": null,
-      "then": null,
+      "then": {
+        "op": "equals",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "random",
+            "carton",
+            "selection"
+          ],
+          "field": "result"
+        },
+        "expected": "PASSED"
+      },
       "unless": null,
-      "requirement": "Tests & checkpoints — Random Carton Selection — Cartons/sampling size must have been selected fully randomly per QIMA's standard process; the checkpoint result must read PASSED if random selection was possible.",
+      "requirement": "Random carton selection result — Random carton selection checkpoint must read PASSED.",
       "extract": [],
-      "source": "unauthored",
+      "source": "check_block",
       "tier": "deterministic",
-      "status_class": "unauthored",
       "data_source": "report_content",
+      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "intent",
@@ -305,153 +271,106 @@
       "checkpoint_id": "3_2_1",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Material Item (MI) selection — A maximum of 20 MI must be checked per Material Description (MD); if workmanship sample size is 750 or 800 pcs, a minimum of 25 MI must be covered.",
+      "requirement": "Booking — MI selection count must match the Recap Quotation for the workmanship sample size.",
       "extract": [],
-      "source": "check_block",
+      "source": "advisory",
       "tier": "deterministic",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.defect_count"
+          "type": "out_of_report",
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
+      "modality": "none",
+      "processor": "none"
     },
     "3_2_2": {
       "checkpoint_id": "3_2_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "PO selection — Regardless of the total number of POs, only the 8 POs with the largest quantity should be selected for regular inspections; if workmanship sample size is 750 or 800 pcs, a minimum of 14 POs must be selected.",
+      "requirement": "Booking — Only the 8 largest-qty POs selected (14 if SS is 750/800 pcs).",
       "extract": [],
-      "source": "check_block",
+      "source": "advisory",
       "tier": "deterministic",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.defect_count"
+          "type": "out_of_report",
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
+      "modality": "none",
+      "processor": "none"
     },
     "3_2_3": {
       "checkpoint_id": "3_2_3",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Recap Quotation compliance (Workmanship SS ↔ MI / PO / Shape / MD) — Cross-check the selection against the Recap Quotation table:",
+      "requirement": "Booking — Selection must match the Recap Quotation table (SS -> MI/PO/Shapes/MD).",
       "extract": [],
-      "source": "check_block",
+      "source": "advisory",
       "tier": "deterministic",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.defect_count"
+          "type": "out_of_report",
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
+      "modality": "none",
+      "processor": "none"
     },
     "3_2_4": {
       "checkpoint_id": "3_2_4",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "3_2_4.check_does_this_field_evidence_satisfy_if_the_advice_l",
-        "question": "Does this field evidence satisfy: If the Advice List identifies an 'NFL' program, all 8 selected POs must come from the NFL PO list.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "PO selection — NFL program — If the Advice List identifies an \"NFL\" program, all 8 selected POs must come from the NFL PO list.",
+      "requirement": "Booking — If Advice List flags NFL program, all 8 POs must come from the NFL PO list.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "out_of_report",
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "none",
+      "processor": "none"
     },
     "3_2_5": {
       "checkpoint_id": "3_2_5",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "3_2_5.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.factory_name"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Client-specified PO priority — If New Era Cap explicitly asks the factory to prioritize specific POs, the report must clearly remark that this instruction was followed.",
+      "requirement": "Inspector remark — If client asked to prioritise specific POs, the remark must state the instruction was followed.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.factory_name"
+          "selector": "report.global_remark"
         }
       ],
       "schema_version": 1,
@@ -462,81 +381,66 @@
       "checkpoint_id": "3_2_6",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "3_2_6.check_does_this_field_evidence_satisfy_when_a_garment_",
-        "question": "Does this field evidence satisfy: When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Garment color/artwork selection — When a garment item has more than 6 colors or artworks, the 6 colors/artworks selected must cover all product types.",
+      "requirement": "Spec sheet — When a garment has >6 colors/artworks, the 6 selected must cover all product types.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "out_of_report",
+          "kind": "spec_sheet"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "none",
+      "processor": "none"
     },
     "4_1_1": {
       "checkpoint_id": "4_1_1",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Material Item Number (MI) vs. carton sticker — The MI number recorded in the defect table must match the \"Material\" field on the carton box sticker. Note that the MI number is not the official product style number.",
+      "requirement": "Defects — MI number in the defect table must match the Material field on the carton sticker.",
       "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.defect_count"
+          "selector": "report.defects"
         }
       ],
       "schema_version": 1,
-      "modality": "number",
+      "modality": "text",
       "processor": "structured"
     },
     "4_2_1": {
       "checkpoint_id": "4_2_1",
       "severity": "BLOCKING",
-      "when": null,
+      "when": {
+        "op": "equals",
+        "ground": "json",
+        "selector": "report.defect_count",
+        "expected": 0
+      },
       "then": {
         "op": "not",
         "item": {
           "op": "contains",
-          "selector": "report.all_text",
-          "text": "Golden Sample",
+          "selector": "report.global_remark",
+          "text": "Folding Issue",
           "ground": "json"
         }
       },
       "unless": null,
-      "requirement": "Inspector's remark — package deformation — If a workmanship defect is found, the inspector must write down any relevant issue regarding product deformation caused by the packaging (e.g. folding issue). This must not appear elsewhere in the report if no workmanship defect was found.",
+      "requirement": "Inspector remark — If no workmanship defect is found, no package-deformation remark (e.g. 'Folding Issue') should appear.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
@@ -545,7 +449,7 @@
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.all_text"
+          "selector": "report.global_remark"
         }
       ],
       "schema_version": 1,
@@ -558,7 +462,7 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Defects checklist used — Cap items must be graded against the Quality Assurance Manual (Rev. 9.1) defect list; garment items must be graded against the NEC Defect Classification List – Apparel.",
+      "requirement": "Defects — Caps graded per QA Manual (Rev 9.1); garments per NEC Apparel defect list.",
       "extract": [],
       "source": "unauthored",
       "tier": "deterministic",
@@ -580,25 +484,47 @@
       "when": null,
       "then": {
         "op": "atom",
-        "id": "5_1_2.check_does_this_field_evidence_satisfy_for_cap_product",
-        "question": "Does this field evidence satisfy: For cap products, only two defect levels exist — 'Critical' and 'Non-Critical' — not Major/Minor as used for garments.?",
+        "id": "5_1_2.check_does_the_defect_table_use_critical_and_non_criti",
+        "question": "Does the defect table use 'Critical' and 'Non Critical' as severity labels, not 'Major' and 'Minor'?",
         "role": "required_true",
         "value_type": "boolean",
         "ground": "atom",
         "requires_fields": [
           {
             "type": "selector",
-            "selector": "report.defects"
+            "selector": "report.inspector_text"
           }
         ]
       },
       "unless": null,
-      "requirement": "Cap defect severity terminology — For cap products, only two defect levels exist — \"Critical\" and \"Non-Critical\" — not Major/Minor as used for garments.",
+      "requirement": "Full report text — Cap defect severity must use 'Critical'/'Non-Critical', not Major/Minor.",
       "extract": [],
       "source": "check_block",
       "tier": "atoms",
       "data_source": "report_content",
       "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.inspector_text"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "text"
+    },
+    "5_1_3": {
+      "checkpoint_id": "5_1_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Defects — Out-of-tolerance circumference on a cap must be a CRITICAL defect in the AQL table.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
       "where_bindings": [
         {
           "type": "selector",
@@ -609,53 +535,18 @@
       "modality": "text",
       "processor": "structured"
     },
-    "5_1_3": {
-      "checkpoint_id": "5_1_3",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": null,
-      "unless": null,
-      "requirement": "Circumference out-of-tolerance classification — Any out-of-tolerance circumference finding on a cap must be recorded as a CRITICAL defect in the AQL/defect table, not only noted as a measurement footnote.",
-      "extract": [],
-      "source": "advisory",
-      "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "out_of_report",
-      "where_bindings": [
-        {
-          "type": "out_of_report",
-          "kind": "ip"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "none",
-      "processor": "none"
-    },
     "5_1_4": {
       "checkpoint_id": "5_1_4",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "5_1_4.check_does_this_field_evidence_satisfy_a_label_more_th",
-        "question": "Does this field evidence satisfy: A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.defects"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Label centering (garment/headwear labels) — A label more than 2mm off-center (top to bottom) must be classified as a MAJOR defect, with clear defect photos attached.",
+      "requirement": "Defects — A label >2mm off-center must be a MAJOR defect with clear photos.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
@@ -672,7 +563,7 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Recurring defect on 20+ pieces — If the same/similar defect is found on 20 or more pieces of bulk production, the back office/SIC must be informed to check with the client whether it should be added as a distinct AQL line item. If no feedback is received, the defect must still be kept in the AQL table as usual (not omitted).",
+      "requirement": "SOP — If a defect recurs on 20+ pieces, inform back office/SIC; keep it in the AQL table regardless.",
       "extract": [],
       "source": "advisory",
       "tier": "deterministic",
@@ -681,7 +572,7 @@
       "where_bindings": [
         {
           "type": "out_of_report",
-          "kind": "spec_sheet"
+          "kind": "sop"
         }
       ],
       "schema_version": 1,
@@ -694,7 +585,7 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Workmanship section vs. Measurement Defect AQL Table attachment — The total Critical/Major/Minor (or Critical/Non-Critical) defect counts shown under \"Workmanship\" in the report body must exactly equal the totals shown in the attached Measurement Defect AQL Table Excel file.",
+      "requirement": "Defect count — Defect counts under Workmanship must equal the totals in the attached Measurement Defect AQL Table.",
       "extract": [],
       "source": "unauthored",
       "tier": "deterministic",
@@ -703,89 +594,63 @@
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.defects"
+          "selector": "report.defect_count"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
+      "modality": "number",
       "processor": "structured"
     },
     "5_2_2": {
       "checkpoint_id": "5_2_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.po_reference"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Excel defect breakdown — PO/MI/silhouette detail — The Excel defect breakdown must always include the PO number inspected, units inspected per PO, the cap silhouette (e.g. 920, 940, 5950), and the MI style number for every row.",
+      "requirement": "Defect Breakdown — Excel defect breakdown must include PO#, units/PO, silhouette, and MI style for every row.",
       "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.po_reference"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "text",
-      "processor": "structured"
-    },
-    "6_1_1": {
-      "checkpoint_id": "6_1_1",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": {
-        "op": "atom",
-        "id": "6_1_1.check_does_this_field_evidence_satisfy_result_must_alw",
-        "question": "Does this field evidence satisfy: Result must always be recorded as N/A.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
-      "unless": null,
-      "requirement": "Weight Check (full garment) — Result must always be recorded as N/A.",
-      "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
-      "where_bindings": [
-        {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "comment"
         }
       ],
       "schema_version": 1,
       "modality": "text",
       "processor": "text"
     },
-    "6_1_2": {
-      "checkpoint_id": "6_1_2",
+    "6_1_1": {
+      "checkpoint_id": "6_1_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "equals",
+        "op": "in_set",
         "ground": "json",
-        "selector": "checklist.fabric_weight_test_gsm.result",
-        "expected": "NOT_APPLICABLE"
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "weight",
+            "check"
+          ],
+          "field": "result"
+        },
+        "values": [
+          "N/A",
+          "NO_RESULT"
+        ]
       },
       "unless": null,
-      "requirement": "Fabric Weight Test (GSM) — Result must always be recorded as N/A.",
+      "requirement": "Weight Check result — Weight Check must never carry a pass/fail grade (result stays N/A or blank).",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
@@ -793,8 +658,58 @@
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "checklist.fabric_weight_test_gsm.result"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "weight",
+            "check"
+          ],
+          "field": "result"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "enum",
+      "processor": "structured"
+    },
+    "6_1_2": {
+      "checkpoint_id": "6_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": {
+        "op": "in_set",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "fabric",
+            "weight",
+            "test"
+          ],
+          "field": "result"
+        },
+        "values": [
+          "N/A",
+          "NO_RESULT"
+        ]
+      },
+      "unless": null,
+      "requirement": "Fabric Weight Test result — Fabric Weight Test (GSM) must never carry a pass/fail grade (result stays N/A or blank).",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_content",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "fabric",
+            "weight",
+            "test"
+          ],
+          "field": "result"
         }
       ],
       "schema_version": 1,
@@ -806,30 +721,28 @@
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "6_1_3.check_does_the_bound_remark_comment_satisfy_the_gi_req",
-        "question": "Does the bound remark/comment satisfy the GI requirement?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "intent",
-            "kind": "checklist",
-            "match": [
-              "product",
-              "dimensions",
-              "result"
-            ],
-            "field": "result"
-          }
+        "op": "in_set",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "dimensions",
+            "result"
+          ],
+          "field": "result"
+        },
+        "values": [
+          "N/A",
+          "NO_RESULT"
         ]
       },
       "unless": null,
-      "requirement": "Product Dimensions / Measurement checklist (cap and garment) — The measurement checkpoint itself must always be recorded as N/A; any out-of-tolerance finding is instead flagged only via the first-page remark and the Measurement Defect AQL Table.",
+      "requirement": "Product Dimensions Result result — Product Dimensions measurement must never carry a pass/fail grade (result stays N/A or blank).",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
+      "tier": "deterministic",
       "data_source": "report_content",
       "status_class": "checkable",
       "where_bindings": [
@@ -852,130 +765,95 @@
       "checkpoint_id": "6_2_1",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "6_2_1.check_does_this_field_evidence_satisfy_for_all_59fifty",
-        "question": "Does this field evidence satisfy: For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), no?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "59FIFTY circumference tolerance — For all 59FIFTY cap styles only, the circumference special tolerance is +/-0.3cm; crown should be squared off (flat), not rounded.",
+      "requirement": "Spec sheet — 59FIFTY caps use special +/-0.3cm circumference tolerance; crown squared off.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "out_of_report",
+          "kind": "spec_sheet"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "none",
+      "processor": "none"
     },
     "6_2_2": {
       "checkpoint_id": "6_2_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Measurement Defect AQL Table — header fields — The inspector must use the New Era Cap LLC_Measurement Defect AQL Table template and populate all required header fields: QIMA order ref., cap shape (if applicable), Material Item # (MI), PO, and sample size (measurement).",
+      "requirement": "Defect Breakdown — Measurement Defect AQL Table header fields (QIMA ref, shape, MI, PO, SS) must all be populated.",
       "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.defect_count"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
-    },
-    "6_2_3": {
-      "checkpoint_id": "6_2_3",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": {
-        "op": "atom",
-        "id": "6_2_3.check_does_this_field_evidence_satisfy_cap_measurement",
-        "question": "Does this field evidence satisfy: Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
-      "unless": null,
-      "requirement": "Cap measurement sample size — Cap measurement sampling is always 60 pcs total per man-day, generally described as covering 3 cap shapes at 20 pcs each.",
-      "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
-      "where_bindings": [
-        {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "comment"
         }
       ],
       "schema_version": 1,
       "modality": "text",
       "processor": "text"
     },
+    "6_2_3": {
+      "checkpoint_id": "6_2_3",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Booking — Cap measurement sampling is always 60 pcs per man-day.",
+      "extract": [],
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
+      "where_bindings": [
+        {
+          "type": "out_of_report",
+          "kind": "booking"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "none",
+      "processor": "none"
+    },
     "6_2_4": {
       "checkpoint_id": "6_2_4",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "6_2_4.check_does_this_field_evidence_satisfy_when_a_garment_",
-        "question": "Does this field evidence satisfy: When a garment measurement is out of tolerance, the result must be N/A with the comment 'Subject to Client's Evaluation.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.global_remark"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Garment measurement out-of-tolerance comment — When a garment measurement is out of tolerance, the result must be N/A with the comment \"Subject to Client's Evaluation.\"",
+      "requirement": "Product Dimensions Result comment — Out-of-tolerance garment measurement must be N/A with comment 'Subject to Client's Evaluation'.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.global_remark"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "product",
+            "dimensions",
+            "result"
+          ],
+          "field": "comment"
         }
       ],
       "schema_version": 1,
@@ -988,45 +866,47 @@
       "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Moisture Test for Cap — Test must be performed on a fixed 12 pcs (3 pcs × 4 MI styles, covering at least 3 cap styles, e.g. 5950/940/920); results must be updated in the Measurement Defect AQL Table and attached. For knitted/fully-fashioned headwear, only the centre and hem/fold positions need to be checked and recorded.",
+      "requirement": "Moisture Test for Cap comment — Cap moisture test on fixed 12 pcs (3x4 MI, 3+ styles); results in the attached Excel table.",
       "extract": [],
-      "source": "advisory",
+      "source": "unauthored",
       "tier": "deterministic",
-      "status_class": "advisory",
-      "data_source": "out_of_report",
+      "status_class": "unauthored",
+      "data_source": "report_content",
       "where_bindings": [
         {
-          "type": "out_of_report",
-          "kind": "ip"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "moisture",
+            "test",
+            "for",
+            "cap"
+          ],
+          "field": "comment"
         }
       ],
       "schema_version": 1,
-      "modality": "none",
-      "processor": "none"
+      "modality": "text",
+      "processor": "text"
     },
     "6_4_1": {
       "checkpoint_id": "6_4_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "6_4_1.check_does_this_field_evidence_satisfy_must_not_be_per",
-        "question": "Does this field evidence satisfy: Must NOT be performed for New Era Cap inspections.?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
+        "op": "not",
+        "item": {
+          "op": "contains",
+          "selector": "report.inspector_text",
+          "text": "Carton Drop Test",
+          "ground": "json"
+        }
       },
       "unless": null,
-      "requirement": "Carton Drop Test — Must NOT be performed for New Era Cap inspections.",
+      "requirement": "Full report text — Carton Drop Test must NOT be performed for New Era.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
+      "tier": "deterministic",
       "data_source": "report_content",
       "status_class": "checkable",
       "where_bindings": [
@@ -1043,25 +923,23 @@
       "checkpoint_id": "6_4_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.all_captions"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Wet & Dry Rub Test — Gray scale grading must be recorded in the comments. Acceptance: general colors Dry ≥4.0 / Wet ≥3.0; dark shades/indigo/pigment-dye/garment-dye/flannel/pile/denim fabric Dry 3–4 / Wet 2–3; not applicable to white/cream/ivory colors. Any result below threshold = FAIL. No test photo is required unless the test FAILED.",
+      "requirement": "Wet Test comment — Wet & Dry Rub Test gray scale grading must be recorded in the comment and meet the acceptance thresholds.",
       "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "wet",
+            "test"
+          ],
+          "field": "comment"
         }
       ],
       "schema_version": 1,
@@ -1073,50 +951,65 @@
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_1_1.check_does_this_field_evidence_satisfy_a_group_picture",
-        "question": "Does this field evidence satisfy: A group picture of all SKUs/items inspected must appear on the report's front page.?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_1_1.check_is_there_a_group_picture_showing_all_inspected_s",
+        "question": "Is there a group picture showing all inspected SKUs/items together?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.product_label"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Report front page — A group picture of all SKUs/items inspected must appear on the report's front page.",
+      "requirement": "Mandatory pictures photo content — A group picture of all inspected SKUs must appear on the report front page.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.product_label"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_1_2": {
       "checkpoint_id": "7_1_2",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
+        "op": "count_at_least",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "photo_count"
+        },
+        "min": 1
       },
       "unless": null,
-      "requirement": "Defect Breakdown section — A screenshot of the Excel defect breakdown table must be embedded in the report body (in addition to the file attachment).",
+      "requirement": "Defect Breakdown photo count — A screenshot of the Excel defect breakdown must be embedded in the report body.",
       "extract": [],
       "source": "check_block",
       "tier": "deterministic",
@@ -1124,8 +1017,13 @@
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.defect_count"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "photo_count"
         }
       ],
       "schema_version": 1,
@@ -1137,253 +1035,348 @@
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_2_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_2_1.check_do_the_photos_include_selected_carton_shipping_m",
+        "question": "Do the photos include Selected Carton, Shipping Mark, Carton Label, and Barcode Check?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Outer Carton — Report must include: Selected Carton (multiple views), Shipping Mark, Carton Label, Barcode Check.",
+      "requirement": "Mandatory pictures photo content — Outer carton photos: Selected Carton, Shipping Mark, Carton Label, Barcode Check.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_3_1": {
       "checkpoint_id": "7_3_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_3_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Pro?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_3_1.check_do_the_photos_include_inner_selected_carton_inne",
+        "question": "Do the photos include inner Selected Carton, Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, and All Product View?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Inner Carton — Report must include: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Product View.",
+      "requirement": "Mandatory pictures photo content — Inner carton photos: Selected Carton (inner), Inner Box Label, Barcode Scanning, Opened Box, Inner Packing View, All Product View.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_4_1": {
       "checkpoint_id": "7_4_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_4_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (com?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_4_1.check_do_the_photos_include_front_view_back_view_main_",
+        "question": "Do the photos include Front View, Back View, Main Embroidery, Embroidery Logo, and Reference Sample vs Product comparison?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Products — Report must include: Front View, Back View, Main Embroidery, Embroidery Logo, Reference/Approval Sample vs. Product (comparison).",
+      "requirement": "Mandatory pictures photo content — Product photos: Front View, Back View, Main Embroidery, Embroidery Logo, Reference Sample vs Product.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_5_1": {
       "checkpoint_id": "7_5_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_5_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracki?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_5_1.check_do_the_photos_include_compared_with_spec_brand_f",
+        "question": "Do the photos include Compared with Spec, Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, and Tracking Label?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Spec & Label — Report must include: Compared with Spec., Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracking Label.",
+      "requirement": "Mandatory pictures photo content — Spec/label photos: Compared with Spec, Brand/Fibre Label, Sticker on Visor, Hologram Sticker, Barcode Sticker, Tracking Label.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_6_1": {
       "checkpoint_id": "7_6_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_6_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Chec?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_6_1.check_do_the_photos_include_function_check_seam_check_",
+        "question": "Do the photos include Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, and Metal Detection Check?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Checking — Report must include: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Check.",
+      "requirement": "Mandatory pictures photo content — Checking photos: Function Check, Seam Check, Size Check, Visor Curve Height Check, Shape Check, Metal Detection Check.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_7_1": {
       "checkpoint_id": "7_7_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_7_1.check_does_this_field_evidence_satisfy_report_must_inc",
-        "question": "Does this field evidence satisfy: Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.?",
-        "role": "required_true",
+        "op": "vision",
+        "id": "7_7_1.check_do_the_photos_include_front_panel_near_emb_visor",
+        "question": "Do the photos include Front Panel (near Emb), Visor Upper, Visor Lower, and Sweatband positions?",
         "value_type": "boolean",
-        "ground": "atom",
+        "ground": "vision",
         "requires_fields": [
           {
-            "type": "selector",
-            "selector": "report.all_captions"
+            "type": "intent",
+            "kind": "checklist",
+            "match": [
+              "mandatory",
+              "pictures"
+            ],
+            "field": "photo_content"
           }
         ]
       },
       "unless": null,
-      "requirement": "Photos — Moisture Checking (cap) — Report must include: Front Panel (nearby Emb.), Visor (Upper), Visor (Lower), Sweatband.",
+      "requirement": "Mandatory pictures photo content — Moisture checking photos: Front Panel (near Emb), Visor (Upper), Visor (Lower), Sweatband.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
+      "tier": "vision",
+      "data_source": "report_images",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.all_captions"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "mandatory",
+            "pictures"
+          ],
+          "field": "photo_content"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "image",
+      "processor": "vision"
     },
     "7_8_1": {
       "checkpoint_id": "7_8_1",
       "severity": "BLOCKING",
       "when": null,
       "then": {
-        "op": "atom",
-        "id": "7_8_1.check_does_this_field_satisfy_the_gi_requirement_state",
-        "question": "Does this field satisfy the GI requirement stated for this checkpoint?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
+        "op": "each",
+        "source": "report.defects",
+        "item": {
+          "op": "count_at_least",
+          "ground": "json",
+          "selector": "item.photo_count",
+          "min": 1
+        },
+        "ground": "json"
       },
       "unless": null,
-      "requirement": "Defect checklist photos — Every defect found must have a clear close-up photo with a written explanation of where the defect is located on the garment/headwear.",
+      "requirement": "Defects photo count — Every defect found must have a clear close-up photo.",
       "extract": [],
       "source": "check_block",
-      "tier": "atoms",
+      "tier": "deterministic",
       "data_source": "report_content",
       "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defects"
+          ],
+          "field": "photo_count"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "number",
+      "processor": "structured"
     },
     "7_9_1": {
       "checkpoint_id": "7_9_1",
       "severity": "BLOCKING",
       "when": null,
+      "then": {
+        "op": "filename_matches",
+        "ground": "json",
+        "binding": {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "attachment_filenames"
+        },
+        "pattern": "*Measurement*Defect*AQL*Table*.xls"
+      },
+      "unless": null,
+      "requirement": "Defect Breakdown file name — The completed Measurement Defect AQL Table Excel file must be attached.",
+      "extract": [],
+      "source": "check_block",
+      "tier": "deterministic",
+      "data_source": "report_attachments",
+      "status_class": "checkable",
+      "where_bindings": [
+        {
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "defect",
+            "breakdown"
+          ],
+          "field": "attachment_filenames"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "filename",
+      "processor": "file"
+    },
+    "8_1_1": {
+      "checkpoint_id": "8_1_1",
+      "severity": "BLOCKING",
+      "when": null,
       "then": null,
       "unless": null,
-      "requirement": "Attachments — Defect Breakdown — The completed Measurement Defect AQL Table Excel file must be attached to the report, using the current template version.",
+      "requirement": "Booking — AQL/sampling level must match the product category (cap: Maj 1.5; apparel: Maj 2.5).",
       "extract": [],
       "source": "advisory",
       "tier": "deterministic",
@@ -1392,171 +1385,106 @@
       "where_bindings": [
         {
           "type": "out_of_report",
-          "kind": "ip"
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
       "modality": "none",
       "processor": "none"
     },
-    "8_1_1": {
-      "checkpoint_id": "8_1_1",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
-      "unless": null,
-      "requirement": "Inspection Standards box (Workmanship & Measurement sampling/AQL) — Verify the AQL/sampling level used matches the product category:",
-      "extract": [],
-      "source": "check_block",
-      "tier": "deterministic",
-      "data_source": "report_content",
-      "status_class": "checkable",
-      "where_bindings": [
-        {
-          "type": "selector",
-          "selector": "report.defect_count"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
-    },
     "8_1_2": {
       "checkpoint_id": "8_1_2",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "8_1_2.check_does_this_field_evidence_satisfy_if_the_advice_l",
-        "question": "Does this field evidence satisfy: If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes pr?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Advice List override — If the Advice List specifies a sample size or AQL different from the default table above, the Advice List value takes precedence.",
+      "requirement": "Booking — If the Advice List specifies a different sample size/AQL, the Advice List value takes precedence.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
+      "source": "advisory",
+      "tier": "deterministic",
+      "status_class": "advisory",
+      "data_source": "out_of_report",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.inspector_text"
+          "type": "out_of_report",
+          "kind": "booking"
         }
       ],
       "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
+      "modality": "none",
+      "processor": "none"
     },
     "9_1_1": {
       "checkpoint_id": "9_1_1",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "atom",
-        "id": "9_1_1.check_does_this_field_satisfy_the_gi_requirement_state",
-        "question": "Does this field satisfy the GI requirement stated for this checkpoint?",
-        "role": "required_true",
-        "value_type": "boolean",
-        "ground": "atom",
-        "requires_fields": [
-          {
-            "type": "selector",
-            "selector": "report.inspector_text"
-          }
-        ]
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Quantity section result — Quantity section must PASS if goods are 100% finished and ≥80% packed. It must FAIL if the packed quantity/ratio does not meet the required threshold (per Section 1.1.1), with the unpacked quantity clearly indicated.",
+      "requirement": "Available Quantity Check result — Quantity section pass/fail decision (>=80% packed) must be justified; unpacked qty stated when failing.",
       "extract": [],
-      "source": "check_block",
-      "tier": "atoms",
-      "data_source": "report_content",
-      "status_class": "checkable",
-      "where_bindings": [
-        {
-          "type": "selector",
-          "selector": "report.inspector_text"
-        }
-      ],
-      "schema_version": 1,
-      "modality": "text",
-      "processor": "text"
-    },
-    "9_1_2": {
-      "checkpoint_id": "9_1_2",
-      "severity": "BLOCKING",
-      "when": null,
-      "then": {
-        "op": "in_set",
-        "ground": "json",
-        "selector": "report.overall_result",
-        "values": [
-          "PASS",
-          "FAIL",
-          "PENDING"
-        ]
-      },
-      "unless": null,
-      "requirement": "Overall Workmanship result — Overall Workmanship result must be PASS only if total defects found (per severity) are less than or equal to the acceptance point defined by the AQL table for the sample size used; any Critical defect (AQL 0) triggers FAIL.",
-      "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
-          "type": "selector",
-          "selector": "report.overall_result"
+          "type": "intent",
+          "kind": "checklist",
+          "match": [
+            "available",
+            "quantity",
+            "check"
+          ],
+          "field": "result"
         }
       ],
       "schema_version": 1,
       "modality": "enum",
       "processor": "structured"
     },
+    "9_1_2": {
+      "checkpoint_id": "9_1_2",
+      "severity": "BLOCKING",
+      "when": null,
+      "then": null,
+      "unless": null,
+      "requirement": "Defects — Workmanship passes only if defects are within the AQL acceptance point; any Critical defect triggers FAIL.",
+      "extract": [],
+      "source": "unauthored",
+      "tier": "deterministic",
+      "status_class": "unauthored",
+      "data_source": "report_content",
+      "where_bindings": [
+        {
+          "type": "selector",
+          "selector": "report.defects"
+        }
+      ],
+      "schema_version": 1,
+      "modality": "text",
+      "processor": "structured"
+    },
     "9_1_3": {
       "checkpoint_id": "9_1_3",
       "severity": "BLOCKING",
       "when": null,
-      "then": {
-        "op": "not",
-        "item": {
-          "op": "is_blank",
-          "ground": "json",
-          "selector": "report.defect_count"
-        }
-      },
+      "then": null,
       "unless": null,
-      "requirement": "Sample collection — No samples should be collected from the inspection. All defective units must be repaired or replaced on-site. No defective product should ever be knowingly shipped to the client.",
+      "requirement": "Inspector remark — No samples collected; defective units repaired/replaced on-site.",
       "extract": [],
-      "source": "check_block",
+      "source": "unauthored",
       "tier": "deterministic",
+      "status_class": "unauthored",
       "data_source": "report_content",
-      "status_class": "checkable",
       "where_bindings": [
         {
           "type": "selector",
-          "selector": "report.defect_count"
+          "selector": "report.global_remark"
         }
       ],
       "schema_version": 1,
-      "modality": "number",
-      "processor": "structured"
+      "modality": "text",
+      "processor": "text"
     }
   }
 }

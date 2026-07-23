@@ -15,6 +15,7 @@ from field_registry import (
     STATUS_PENDING,
     STATUS_UNAUTHORED,
     STATUS_UNMAPPED,
+    classify_binding,
     derive_feasibility,
 )
 from obligation import ObligationSpec, validate_checkspec
@@ -45,9 +46,12 @@ OPERATORS = frozenset(
         "scan_present",
         "scan_absent",
         "filename_matches",
+        "defects_name_any",
         "extract",
         "extract_bool",
         "vision",
+        "true",
+        "false",
     }
 )
 
@@ -96,6 +100,40 @@ BANNED_QUESTION_SUBSTRINGS = (
 )
 
 INTENT_KINDS = frozenset({"checklist", "section", "caption", "remark", "report", "out_of_report"})
+
+# ---------------------------------------------------------------------------
+# For each (iterator) — human phrase -> array source + element fields it exposes.
+# The nested check reads the current element via `item.<field>`. Only sources
+# backed by a real report array are wired; unknown ones compile to advisory
+# (recorded, not enforced) so authors see it is not evaluated.
+# ---------------------------------------------------------------------------
+FOR_EACH_SOURCES: dict[str, dict[str, Any]] = {
+    "each defect": {
+        "source": "report.defects",
+        "fields": frozenset(
+            {"photo_count", "photo_captions", "classification", "quantity", "name"}
+        ),
+    },
+}
+
+
+def _each_config(for_each: str, where_bindings: list[dict[str, Any]]) -> tuple[str, str] | None:
+    """Resolve a `for each` phrase + where binding to (array source, element field)."""
+    cfg = FOR_EACH_SOURCES.get(str(for_each or "").strip().lower())
+    if not cfg:
+        return None
+    field: str | None = None
+    for binding in where_bindings:
+        if binding.get("type") == "intent" and binding.get("field"):
+            field = str(binding["field"])
+            break
+        sel = str(binding.get("selector") or "")
+        if sel.startswith("checklist.") and sel.count(".") >= 2:
+            field = sel.split(".", 2)[2]
+            break
+    if not field or field not in cfg["fields"]:
+        return None
+    return str(cfg["source"]), field
 
 
 def _slug_rule_id(rule_id: str) -> str:
@@ -229,7 +267,22 @@ def _parse_scalar(value: str) -> Any:
 
 
 def extract_check_blocks(markdown: str) -> dict[str, dict[str, Any]]:
-    """Return {slug_rule_id: parsed_block} from rules.md."""
+    """Return {slug_rule_id: parsed_block} from rules.md.
+
+    Supports:
+      - legacy ```check fences under **ID:**
+      - harness blocks (**id:** / **where:** / **action:** …)
+    """
+    try:
+        from harness_rules import is_harness_rules_markdown, parse_harness_rules
+    except ImportError:  # pragma: no cover
+        is_harness_rules_markdown = None  # type: ignore[assignment]
+        parse_harness_rules = None  # type: ignore[assignment]
+
+    if is_harness_rules_markdown and is_harness_rules_markdown(markdown) and parse_harness_rules:
+        parsed = parse_harness_rules(markdown)
+        return dict(parsed.get("check_blocks") or {})
+
     blocks: dict[str, dict[str, Any]] = {}
     current_id: str | None = None
     pending_block: str | None = None
@@ -327,6 +380,36 @@ def _then_is_vague_llm_judge(then_node: dict[str, Any] | None) -> bool:
     return False
 
 
+def _then_has_llm_leaf(node: dict[str, Any] | None) -> bool:
+    """True if the compiled then contains any atom/vision (LLM-grounded) leaf."""
+    if not isinstance(node, dict):
+        return False
+    if str(node.get("op") or "") in ("atom", "vision"):
+        return True
+    if any(_then_has_llm_leaf(item) for item in node.get("items") or []):
+        return True
+    return _then_has_llm_leaf(node.get("item"))
+
+
+def _llm_grounds_structured_only(
+    then_node: dict[str, Any] | None,
+    where_bindings: list[dict[str, Any]],
+) -> bool:
+    """LLM/vision leaf reading only structured (JSON-authoritative) fields.
+
+    Structured fields carry a directly readable value; letting the LLM decide a
+    yes/no over them is the main source of noisy flags. Detected generically via
+    the field registry (no client-specific field names)."""
+    if not _then_has_llm_leaf(then_node):
+        return False
+    in_report = [
+        b for b in where_bindings if classify_binding(b).data_source != "out_of_report"
+    ]
+    if not in_report:
+        return False
+    return all(classify_binding(b).processor == "structured" for b in in_report)
+
+
 def _attach_requires_fields(node: dict[str, Any] | None, where_bindings: list[dict[str, Any]]) -> None:
     if not node:
         return
@@ -337,7 +420,7 @@ def _attach_requires_fields(node: dict[str, Any] | None, where_bindings: list[di
     if op in ("all_of", "any_of"):
         for item in node.get("items") or []:
             _attach_requires_fields(item, where_bindings)
-    elif op == "not":
+    elif op in ("not", "each"):
         _attach_requires_fields(node.get("item"), where_bindings)
 
 
@@ -506,6 +589,15 @@ def _is_selector(token: str) -> bool:
     return any(token.startswith(p) for p in _SELECTOR_PREFIXES)
 
 
+def _deep_compile_when(node: Any, path: str) -> Any:
+    if isinstance(node, dict):
+        if node.get("op") == "_macro_ref":
+            return _compile_call(str(node["check"]), list(node.get("where") or []), path)
+        return {k: _deep_compile_when(v, path) for k, v in node.items()}
+    if isinstance(node, list):
+        return [_deep_compile_when(v, path) for v in node]
+    return node
+
 def _compile_call(
     call: str,
     where: list[str],
@@ -550,6 +642,13 @@ def _compile_call(
                     "cmp": cmp if cmp != "=" else "==",
                     "ground": "json",
                 }
+
+    if " in_set " in text:
+        left, _, right = text.partition(" in_set ")
+        left = left.strip()
+        if _is_selector(left):
+            values = [_parse_scalar(v.strip()) for v in right.split(",") if v.strip()]
+            return {"op": "in_set", "selector": left, "values": values, "ground": "json"}
 
     infix_ops = (" equals ", " contains ", " matches ")
     for sep in infix_ops:
@@ -741,10 +840,15 @@ def _compile_op_on_where(
             "item": {"op": "contains", "selector": selector, "text": term, "ground": "json"},
         }
 
-    if op == "filename_matches":
-        pattern = str(args[0]) if args else ""
-        selector = where[0] if where else ""
-        return {"op": "filename_matches", "selector": selector, "pattern": pattern, "ground": "json"}
+    if op == "defects_name_any":
+        return {
+            "op": "defects_name_any",
+            "names": [str(a) for a in args],
+            "ground": "json",
+        }
+
+    if op in ("true", "false"):
+        return {"op": op, "ground": "json"}
 
     if op == "compare" and len(args) >= 2:
         first = str(args[0])
@@ -820,6 +924,9 @@ def _compile_single_op(
         return base
     if op == "count_at_most":
         base["max"] = int(args[0]) if args else 0
+        return base
+    if op == "filename_matches":
+        base["pattern"] = str(args[0]) if args else "*"
         return base
     raise ValueError(f"{path}: unsupported op {op!r}")
 
@@ -902,10 +1009,40 @@ def compile_block(
 
     when_node = None
     when_raw = block.get("when")
-    if when_raw not in (None, "null", ""):
+    if isinstance(when_raw, dict):
+        when_node = _deep_compile_when(when_raw, f"{cp_id}.when")
+    elif when_raw not in (None, "null", ""):
         when_node = _compile_call(str(when_raw), where, f"{cp_id}.when", allow_field_refs=True)
 
-    then_node = _compile_calls(block.get("check"), where, f"{cp_id}.check")
+    # For each (iterator): compile the check against `item.<field>` and wrap in
+    # an `each` node over the array source. Unsupported iterators -> advisory.
+    for_each = str(block.get("for_each") or "").strip()
+    each_source: str | None = None
+    compile_where: list[Any] = where
+    if for_each:
+        ecfg = _each_config(for_each, where_bindings)
+        if ecfg is None:
+            return ObligationSpec(
+                checkpoint_id=cp_id,
+                severity=severity,
+                when=None,
+                then=None,
+                requirement=requirement,
+                source="advisory",
+                extract=[],
+            ).to_dict() | {
+                "status_class": STATUS_ADVISORY,
+                "data_source": data_source,
+                "where_bindings": where_bindings,
+                "advisory_reason": f"iterator_not_supported:{for_each}",
+                "schema_version": 1,
+            }
+        each_source, each_field = ecfg
+        compile_where = [f"item.{each_field}"]
+
+    then_node = _compile_calls(block.get("check"), compile_where, f"{cp_id}.check")
+    if each_source:
+        then_node = {"op": "each", "source": each_source, "item": then_node, "ground": "json"}
 
     if _then_is_vague_llm_judge(then_node):
         return ObligationSpec(
@@ -921,6 +1058,23 @@ def compile_block(
             "data_source": data_source,
             "where_bindings": where_bindings,
             "advisory_reason": "vague_llm_question",
+            "schema_version": 1,
+        }
+
+    if _llm_grounds_structured_only(then_node, where_bindings):
+        return ObligationSpec(
+            checkpoint_id=cp_id,
+            severity=severity,
+            when=None,
+            then=None,
+            requirement=requirement,
+            source="advisory",
+            extract=[],
+        ).to_dict() | {
+            "status_class": STATUS_ADVISORY,
+            "data_source": data_source,
+            "where_bindings": where_bindings,
+            "advisory_reason": "llm_on_structured_field",
             "schema_version": 1,
         }
 
